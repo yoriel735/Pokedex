@@ -24,8 +24,8 @@ public class MenuEntrenadores extends javax.swing.JFrame {
 
     /**
      * Creates new form PantallaInicio
-     */
-     DefaultListModel<String> modeloEntrenadores = new DefaultListModel<>();
+     */ 
+     DefaultListModel<Entrenador> modeloEntrenadores = new DefaultListModel<>();
     
     public MenuEntrenadores() {
         initComponents();
@@ -58,7 +58,7 @@ public class MenuEntrenadores extends javax.swing.JFrame {
         jLabel1 = new javax.swing.JLabel();
         MenuEntre = new javax.swing.JPanel();
         AñadirEntrenador = new javax.swing.JButton();
-        jButton2 = new javax.swing.JButton();
+        BotonELiminar = new javax.swing.JButton();
         jButton3 = new javax.swing.JButton();
         jButton4 = new javax.swing.JButton();
         jScrollPane1 = new javax.swing.JScrollPane();
@@ -75,10 +75,10 @@ public class MenuEntrenadores extends javax.swing.JFrame {
             }
         });
 
-        jButton2.setText("Eliminar Entrenador");
-        jButton2.addActionListener(new java.awt.event.ActionListener() {
+        BotonELiminar.setText("Eliminar Entrenador");
+        BotonELiminar.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                jButton2ActionPerformed(evt);
+                BotonELiminarActionPerformed(evt);
             }
         });
 
@@ -114,7 +114,7 @@ public class MenuEntrenadores extends javax.swing.JFrame {
                 .addGroup(MenuEntreLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addComponent(jButton4)
                     .addComponent(AñadirEntrenador)
-                    .addComponent(jButton2)
+                    .addComponent(BotonELiminar)
                     .addComponent(jButton3))
                 .addGap(56, 56, 56))
         );
@@ -126,7 +126,7 @@ public class MenuEntrenadores extends javax.swing.JFrame {
                 .addGap(18, 18, 18)
                 .addComponent(jButton4)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                .addComponent(jButton2)
+                .addComponent(BotonELiminar)
                 .addGap(178, 178, 178)
                 .addComponent(jButton3)
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
@@ -177,7 +177,7 @@ public class MenuEntrenadores extends javax.swing.JFrame {
         dialog.setVisible(true);
     }//GEN-LAST:event_jButton4ActionPerformed
 
-    private void jButton2ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton2ActionPerformed
+    private void BotonELiminarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_BotonELiminarActionPerformed
         //---------------------(eliminar entrenador------------------)
         // Primero obtenemos el entrenador seleccionado en la lista
         String entrenadorSeleccionado = ListaEntrenadores.getSelectedValue();
@@ -206,7 +206,7 @@ public class MenuEntrenadores extends javax.swing.JFrame {
             // DefaultListModel<String> model = (DefaultListModel<String>) ListaEntrenadores.getModel();
             // model.removeElement(entrenadorSeleccionado);
         }
-    }//GEN-LAST:event_jButton2ActionPerformed
+    }//GEN-LAST:event_BotonELiminarActionPerformed
 
     private void jButton3ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton3ActionPerformed
         //(-------------------boton de acceder a pokedex---------------------)
@@ -281,9 +281,9 @@ public class MenuEntrenadores extends javax.swing.JFrame {
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton AñadirEntrenador;
+    private javax.swing.JButton BotonELiminar;
     private javax.swing.JList<String> ListaEntrenadores;
     private javax.swing.JPanel MenuEntre;
-    private javax.swing.JButton jButton2;
     private javax.swing.JButton jButton3;
     private javax.swing.JButton jButton4;
     private javax.swing.JLabel jLabel1;
