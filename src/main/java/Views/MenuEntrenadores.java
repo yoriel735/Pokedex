@@ -24,6 +24,7 @@ public class MenuEntrenadores extends javax.swing.JFrame {
         initComponents();
         imagenFondoEntrenador();
         setLocationRelativeTo(null);
+        setTitle("Selector de Entrenadores");
         this.setResizable(false);
         
         //Para que la lista sea transparente o bueno, tengo el color del fondo
