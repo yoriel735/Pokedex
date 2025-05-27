@@ -3,7 +3,10 @@ package Entidades;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.HashSet;
+import java.util.Set;
 import javax.persistence.Basic;
+import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
@@ -15,6 +18,7 @@ import javax.persistence.ManyToMany;
 import javax.persistence.ManyToOne;
 import javax.persistence.NamedQueries;
 import javax.persistence.NamedQuery;
+import javax.persistence.OneToMany;
 import javax.persistence.Table;
 
 @Entity
@@ -136,6 +140,8 @@ public class Pokemon implements Serializable {
     public void removeHabilidad(Habilidad habilidad) {
         this.listaHabilidades.remove(habilidad);
     }
+    @OneToMany(mappedBy = "pokemon", cascade = CascadeType.ALL)
+private Set<PokemonAtaque> pokemonAtaques = new HashSet<>();
 
     // hashCode, equals, toString
 

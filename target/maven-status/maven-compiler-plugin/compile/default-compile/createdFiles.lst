@@ -15,8 +15,10 @@ Views/MenuEntrenadores$5.class
 Views/Pokedex.class
 controladores/JPanelimagen.class
 Views/VerPokemon.class
+Entidades/PokemonAtaqueId.class
 Views/AñadirEntrenador$1.class
 Views/MenuEntrenadores$3.class
+Entidades/PokemonAtaque.class
 Views/Vistas$1.class
 Views/Pokedex$1.class
 Views/MenuEntrenadores.class

@@ -1,12 +1,14 @@
 /home/yoriel/NetBeansProjects/Pokedex/src/main/java/controladores/JPanelimagen.java
 /home/yoriel/NetBeansProjects/Pokedex/src/main/java/Views/Vistas.java
 /home/yoriel/NetBeansProjects/Pokedex/src/main/java/Views/MenuEntrenadores.java
+/home/yoriel/NetBeansProjects/Pokedex/src/main/java/Entidades/PokemonAtaqueId.java
+/home/yoriel/NetBeansProjects/Pokedex/src/main/java/Entidades/PokemonAtaque.java
 /home/yoriel/NetBeansProjects/Pokedex/src/main/java/Views/EditarEntrenador.java
 /home/yoriel/NetBeansProjects/Pokedex/src/main/java/Views/VerPokemon.java
-/home/yoriel/NetBeansProjects/Pokedex/src/main/java/Views/AñadirEntrenador.java
 /home/yoriel/NetBeansProjects/Pokedex/src/main/java/Views/Pokedex.java
-/home/yoriel/NetBeansProjects/Pokedex/src/main/java/Entidades/Habilidad.java
 /home/yoriel/NetBeansProjects/Pokedex/src/main/java/Entidades/Ataque.java
 /home/yoriel/NetBeansProjects/Pokedex/src/main/java/Views/SeleccionEntrenadores.java
 /home/yoriel/NetBeansProjects/Pokedex/src/main/java/Entidades/Entrenador.java
 /home/yoriel/NetBeansProjects/Pokedex/src/main/java/Entidades/Pokemon.java
+/home/yoriel/NetBeansProjects/Pokedex/src/main/java/Views/AñadirEntrenador.java
+/home/yoriel/NetBeansProjects/Pokedex/src/main/java/Entidades/Habilidad.java

@@ -1,7 +1,10 @@
 package Entidades;
 
 import java.io.Serializable;
+import java.util.HashSet;
+import java.util.Set;
 import javax.persistence.Basic;
+import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
@@ -9,6 +12,7 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.NamedQueries;
 import javax.persistence.NamedQuery;
+import javax.persistence.OneToMany;
 import javax.persistence.Table;
 
 @Entity
@@ -66,6 +70,9 @@ public class Ataque implements Serializable {
         hash += (idAtaque != null ? idAtaque.hashCode() : 0);
         return hash;
     }
+    
+    @OneToMany(mappedBy = "ataque", cascade = CascadeType.ALL)
+    private Set<PokemonAtaque> pokemonAtaques = new HashSet<>();
 
     @Override
     public boolean equals(Object object) {
