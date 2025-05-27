@@ -4,16 +4,17 @@ Views/MenuEntrenadores$6.class
 Views/EditarEntrenador$1$1.class
 Entidades/Ataque.class
 Views/AñadirEntrenador$1$1.class
+Controladores/PruebaConexio.class
 Views/VerPokemon$1.class
 Entidades/Pokemon.class
 Views/EditarEntrenador.class
 Views/AñadirEntrenador.class
 Views/MenuEntrenadores$2.class
+Controladores/EntrenadorController.class
 Views/Vistas.class
 Views/EditarEntrenador$1.class
 Views/MenuEntrenadores$5.class
 Views/Pokedex.class
-controladores/JPanelimagen.class
 Views/VerPokemon.class
 Entidades/PokemonAtaqueId.class
 Views/AñadirEntrenador$1.class
@@ -25,5 +26,6 @@ Views/MenuEntrenadores.class
 Views/MenuEntrenadores$1.class
 Entidades/Habilidad.class
 Views/SeleccionEntrenadores$1.class
+Controladores/JPanelimagen.class
 Views/SeleccionEntrenadores.class
 Entidades/Entrenador.class

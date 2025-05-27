@@ -4,12 +4,17 @@
  */
 package Views;
 
+import Controladores.EntrenadorController;
 import Views.AñadirEntrenador;
-import controladores.JPanelimagen;
+import Controladores.JPanelimagen;
+import Entidades.Entrenador;
 import java.awt.Color;
+import java.util.List;
 import javax.swing.BorderFactory;
+import javax.swing.DefaultListModel;
 import javax.swing.JDialog;
 import javax.swing.JOptionPane;
+import javax.swing.JTextField;
 
 /**
  *
@@ -20,16 +25,24 @@ public class MenuEntrenadores extends javax.swing.JFrame {
     /**
      * Creates new form PantallaInicio
      */
+     DefaultListModel<String> modeloEntrenadores = new DefaultListModel<>();
+    
     public MenuEntrenadores() {
         initComponents();
         imagenFondoEntrenador();
         setLocationRelativeTo(null);
         setTitle("Selector de Entrenadores");
         this.setResizable(false);
-        
+          
+       
+        modeloEntrenadores = new DefaultListModel<>();
+        ListaEntrenadores.setModel(modeloEntrenadores);
+
+        cargarEntrenadores();
+
         //Para que la lista sea transparente o bueno, tengo el color del fondo
         ListaEntrenadores.setOpaque(false);             // Quita el fondo opaco
-        ListaEntrenadores.setBackground(new Color(13,173,239,255)); // Fondo completamente transparente
+        ListaEntrenadores.setBackground(new Color(13, 173, 239, 255)); // Fondo completamente transparente
         ListaEntrenadores.setBorder(BorderFactory.createLineBorder(Color.red));
     }
 
@@ -44,7 +57,7 @@ public class MenuEntrenadores extends javax.swing.JFrame {
 
         jLabel1 = new javax.swing.JLabel();
         MenuEntre = new javax.swing.JPanel();
-        jButton1 = new javax.swing.JButton();
+        AñadirEntrenador = new javax.swing.JButton();
         jButton2 = new javax.swing.JButton();
         jButton3 = new javax.swing.JButton();
         jButton4 = new javax.swing.JButton();
@@ -55,10 +68,10 @@ public class MenuEntrenadores extends javax.swing.JFrame {
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
 
-        jButton1.setText("Añadir Entrenador");
-        jButton1.addActionListener(new java.awt.event.ActionListener() {
+        AñadirEntrenador.setText("Añadir Entrenador");
+        AñadirEntrenador.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                jButton1ActionPerformed(evt);
+                AñadirEntrenadorActionPerformed(evt);
             }
         });
 
@@ -100,7 +113,7 @@ public class MenuEntrenadores extends javax.swing.JFrame {
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 51, Short.MAX_VALUE)
                 .addGroup(MenuEntreLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addComponent(jButton4)
-                    .addComponent(jButton1)
+                    .addComponent(AñadirEntrenador)
                     .addComponent(jButton2)
                     .addComponent(jButton3))
                 .addGap(56, 56, 56))
@@ -109,7 +122,7 @@ public class MenuEntrenadores extends javax.swing.JFrame {
             MenuEntreLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(MenuEntreLayout.createSequentialGroup()
                 .addGap(130, 130, 130)
-                .addComponent(jButton1)
+                .addComponent(AñadirEntrenador)
                 .addGap(18, 18, 18)
                 .addComponent(jButton4)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
@@ -137,85 +150,99 @@ public class MenuEntrenadores extends javax.swing.JFrame {
         pack();
     }// </editor-fold>//GEN-END:initComponents
 
-    private void jButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton1ActionPerformed
-      //Obtener el entrenador seleccionado 
-   AñadirEntrenador dialog = new AñadirEntrenador(this, true); // 'this' es el JFrame padre
-dialog.setVisible(true);
-       // Luego de cerrar el diálogo, recarga tus datos para actualizar la vista
-     
-    }//GEN-LAST:event_jButton1ActionPerformed
+    private void AñadirEntrenadorActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_AñadirEntrenadorActionPerformed
+        //Obtener el entrenador seleccionado  
+        //(----------------añadir entrenador)--------------)
+
+        // Luego de cerrar el diálogo, recarga tus datos para actualizar la vista
+        AñadirEntrenador dialog = new AñadirEntrenador(this, true); // 'this' es el JFrame padre
+         dialog.setVisible(true);  // Aquí se abre el Jdialog de "AñadirEntrenador"
+        cargarEntrenadores();   // Al cerrarse el diálogo, recarga la lista para actualizar
+
+    }//GEN-LAST:event_AñadirEntrenadorActionPerformed
 
     private void jButton4ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton4ActionPerformed
- // Obtener el entrenador seleccionado en la lista
-    String entrenadorSeleccionado = ListaEntrenadores.getSelectedValue();
-    if (entrenadorSeleccionado == null) {
-        // Mostrar mensaje si no hay selección
-        javax.swing.JOptionPane.showMessageDialog(this, "Selecciona un entrenador para editar.");
-        return;
-    }
+        //(----------------------editar entrenador-------------)
+// Obtener el entrenador seleccionado en la lista
+        String entrenadorSeleccionado = ListaEntrenadores.getSelectedValue();
+        if (entrenadorSeleccionado == null) {
+            // Mostrar mensaje si no hay selección
+            javax.swing.JOptionPane.showMessageDialog(this, "Selecciona un entrenador para editar.");
+            return;
+        }
 
-      // Crear el diálogo pasando el nombre seleccionado
-    EditarEntrenador dialog = new EditarEntrenador(this, true, entrenadorSeleccionado);
-    dialog.setLocationRelativeTo(this);
-    dialog.setVisible(true);
+        // Crear el diálogo pasando el nombre seleccionado
+        EditarEntrenador dialog = new EditarEntrenador(this, true, entrenadorSeleccionado);
+        dialog.setLocationRelativeTo(this);
+        dialog.setVisible(true);
     }//GEN-LAST:event_jButton4ActionPerformed
 
     private void jButton2ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton2ActionPerformed
-      
+        //---------------------(eliminar entrenador------------------)
         // Primero obtenemos el entrenador seleccionado en la lista
-    String entrenadorSeleccionado = ListaEntrenadores.getSelectedValue();
-    
-    if (entrenadorSeleccionado == null) {
-        JOptionPane.showMessageDialog(this, "Por favor, selecciona un entrenador para eliminar.");
-        return;
-    }
-    
-    // Pedimos confirmación
-    int confirmacion = JOptionPane.showConfirmDialog(
-        this, 
-        "¿Estás seguro que quieres eliminar al entrenador " + entrenadorSeleccionado + "?",
-        "Confirmar eliminación",
-        JOptionPane.YES_NO_OPTION
-    );
-    
-    if (confirmacion == JOptionPane.YES_OPTION) {
-        // Aquí va la lógica para eliminar el entrenador de la base de datos o lista
-        // Por ahora, solo mostramos un mensaje:
-        JOptionPane.showMessageDialog(this, "Entrenador " + entrenadorSeleccionado + " eliminado.");
-        
-        // TODO: eliminar entrenador de la base de datos o estructura de datos
-        
-        // Además, actualizar la lista para reflejar el cambio
-        // Por ejemplo, si usas DefaultListModel:
-        // DefaultListModel<String> model = (DefaultListModel<String>) ListaEntrenadores.getModel();
-        // model.removeElement(entrenadorSeleccionado);
-    }  
+        String entrenadorSeleccionado = ListaEntrenadores.getSelectedValue();
+
+        if (entrenadorSeleccionado == null) {
+            JOptionPane.showMessageDialog(this, "Por favor, selecciona un entrenador para eliminar.");
+            return;
+        }
+
+        // Pedimos confirmación
+        int confirmacion = JOptionPane.showConfirmDialog(
+                this,
+                "¿Estás seguro que quieres eliminar al entrenador " + entrenadorSeleccionado + "?",
+                "Confirmar eliminación",
+                JOptionPane.YES_NO_OPTION
+        );
+
+        if (confirmacion == JOptionPane.YES_OPTION) {
+            // Aquí va la lógica para eliminar el entrenador de la base de datos o lista
+            // Por ahora, solo mostramos un mensaje:
+            JOptionPane.showMessageDialog(this, "Entrenador " + entrenadorSeleccionado + " eliminado.");
+
+            // TODO: eliminar entrenador de la base de datos o estructura de datos
+            // Además, actualizar la lista para reflejar el cambio
+            // Por ejemplo, si usas DefaultListModel:
+            // DefaultListModel<String> model = (DefaultListModel<String>) ListaEntrenadores.getModel();
+            // model.removeElement(entrenadorSeleccionado);
+        }
     }//GEN-LAST:event_jButton2ActionPerformed
 
     private void jButton3ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton3ActionPerformed
-     String entrenadorSeleccionado = ListaEntrenadores.getSelectedValue();
-    if (entrenadorSeleccionado == null) {
-        JOptionPane.showMessageDialog(this, "Por favor, selecciona un entrenador para acceder a la Pokedex.");
-        return;
-    }
-    
-    // Crear la ventana de Pokedex, pasando el entrenador seleccionado
-    Pokedex ventanaPokedex = new Pokedex(this, true, entrenadorSeleccionado);
-    ventanaPokedex.setLocationRelativeTo(this);
-    ventanaPokedex.setVisible(true);
+        //(-------------------boton de acceder a pokedex---------------------)
+        String entrenadorSeleccionado = ListaEntrenadores.getSelectedValue();
+        if (entrenadorSeleccionado == null) {
+            JOptionPane.showMessageDialog(this, "Por favor, selecciona un entrenador para acceder a la Pokedex.");
+            return;
+        }
+
+        // Crear la ventana de Pokedex, pasando el entrenador seleccionado
+        Pokedex ventanaPokedex = new Pokedex(this, true, entrenadorSeleccionado);
+        ventanaPokedex.setLocationRelativeTo(this);
+        ventanaPokedex.setVisible(true);
     }//GEN-LAST:event_jButton3ActionPerformed
 
-      private void imagenFondoEntrenador(){
-           JPanelimagen imagenFondo = new JPanelimagen(MenuEntre, "/Fotos/InterfazEntrenadores.png");
-    MenuEntre.add(imagenFondo).repaint();
-    
-    //estos 3, es para que se quite cualquier fondo o borde del label que use
-    //la ventaja del label, es que funciona como fondo, puedo poner botones encima
-    MenuEntre.setOpaque(false);
-    MenuEntre.setBorder(null);
-    MenuEntre.setBackground(new Color (0,0,0));
-        
+    private void imagenFondoEntrenador() {
+        JPanelimagen imagenFondo = new JPanelimagen(MenuEntre, "/Fotos/InterfazEntrenadores.png");
+        MenuEntre.add(imagenFondo).repaint();
+
+        //estos 3, es para que se quite cualquier fondo o borde del label que use
+        //la ventaja del label, es que funciona como fondo, puedo poner botones encima
+        MenuEntre.setOpaque(false);
+        MenuEntre.setBorder(null);
+        MenuEntre.setBackground(new Color(0, 0, 0));
+
+}
+    private EntrenadorController entrenadorController = new EntrenadorController();
+    private void cargarEntrenadores() {
+        modeloEntrenadores.clear();
+        List<Entrenador> entrenadores = entrenadorController.obtenerTodosLosEntrenadores();
+        for (Entrenador e : entrenadores) {
+            modeloEntrenadores.addElement(e.getNomEntrenador());
+        }
     }
+
+
     /**
      * @param args the command line arguments
      */
@@ -253,9 +280,9 @@ dialog.setVisible(true);
     }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
+    private javax.swing.JButton AñadirEntrenador;
     private javax.swing.JList<String> ListaEntrenadores;
     private javax.swing.JPanel MenuEntre;
-    private javax.swing.JButton jButton1;
     private javax.swing.JButton jButton2;
     private javax.swing.JButton jButton3;
     private javax.swing.JButton jButton4;

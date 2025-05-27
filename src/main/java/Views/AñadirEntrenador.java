@@ -4,6 +4,7 @@
  */
 package Views;
 
+import Entidades.Entrenador;
 import javax.swing.JButton;
 import javax.swing.JDialog;
 import javax.swing.JLabel;
@@ -61,10 +62,21 @@ public class AñadirEntrenador extends javax.swing.JDialog {
             return;
             
        }       
-        // Aquí iría la lógica para actualizar el entrenador en la base de datos usando JPA
-        // Por ejemplo: entrenadorController.actualizarNombre(nombreOriginal, nuevoNombre);
+         try {
+        // Crear objeto Entrenador y asignarle el nombre
+        Entrenador nuevoEntrenador = new Entrenador();
+        nuevoEntrenador.setNomEntrenador(nuevoNombre);
 
-        // Por ahora solo cerramos el diálogo
+        // Guardar en BD usando el controlador JPA
+        Controladores.EntrenadorController.crearEntrenador(nuevoEntrenador);
+
+        JOptionPane.showMessageDialog(this, "Entrenador guardado correctamente.");
+        this.dispose(); // Cierra el diálogo
+
+    } catch (Exception ex) {
+        JOptionPane.showMessageDialog(this, "Error al guardar el entrenador: " + ex.getMessage());
+    }
+
         this.dispose();
     
         }
