@@ -4,12 +4,14 @@
  */
 package Views;
 
+import Controladores.EntrenadorController;
 import javax.swing.JButton;
 import javax.swing.JDialog;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JTextField;
+import Entidades.Entrenador;
 
 /**
  *
@@ -20,24 +22,23 @@ public class EditarEntrenador extends javax.swing.JDialog {
     /**
      * Creates new form EditarEntrenador
      */
-    
-     private JTextField txtNombre;
+    private JTextField txtNombre;
     private JButton btnGuardar, btnCancelar;
     private String nombreOriginal;
-    
-     public EditarEntrenador(java.awt.Frame parent, boolean modal, String nombreEntrenador) {
+    private Entrenador entrenador; 
+
+    public EditarEntrenador(java.awt.Frame parent, boolean modal, Entrenador entrenador) {
         super(parent, modal);
-        this.nombreOriginal = nombreEntrenador;
+        this.entrenador = entrenador;
         setupUI();
+        cargarDatos();
         setTitle("Editar Entrenador");
-        txtNombre.setText(nombreEntrenador);
         pack();
         this.setResizable(false);
         setLocationRelativeTo(parent);
     }
 
-  
-  private void setupUI() {
+    private void setupUI() {
         JLabel lblNombre = new JLabel("Nombre del Entrenador:");
         txtNombre = new JTextField(20);
 
@@ -54,25 +55,34 @@ public class EditarEntrenador extends javax.swing.JDialog {
         editar.add(btnCancelar);
 
         this.setContentPane(editar);
-           this.setDefaultCloseOperation(JDialog.DISPOSE_ON_CLOSE);
+        this.setDefaultCloseOperation(JDialog.DISPOSE_ON_CLOSE);
     }
 
-  private void guardarCambios() {
-        String nuevoNombre = txtNombre.getText().trim();
+    private void guardarCambios() {
+     String nuevoNombre = txtNombre.getText().trim();
         if (nuevoNombre.isEmpty()) {
             JOptionPane.showMessageDialog(this, "El nombre no puede estar vacío.");
             return;
-            
-       }       
-        // Aquí iría la lógica para actualizar el entrenador en la base de datos usando JPA
-        // Por ejemplo: entrenadorController.actualizarNombre(nombreOriginal, nuevoNombre);
-
-        // Por ahora solo cerramos el diálogo
-        this.dispose();
-    
         }
-  
-   private void cancelar() {
+
+        try {
+            entrenador.setNomEntrenador(nuevoNombre);
+            EntrenadorController controlador = new EntrenadorController();
+            controlador.editarEntrenador(entrenador);
+
+            JOptionPane.showMessageDialog(this, "Entrenador actualizado correctamente.");
+            this.dispose();
+        } catch (Exception ex) {
+            JOptionPane.showMessageDialog(this, "Error al actualizar el entrenador: " + ex.getMessage());
+        }
+    
+}
+    private void cargarDatos() {
+        if (entrenador != null) {
+            txtNombre.setText(entrenador.getNomEntrenador());
+        }
+    }
+    private void cancelar() {
         this.dispose();
     }
 
@@ -104,45 +114,7 @@ public class EditarEntrenador extends javax.swing.JDialog {
     /**
      * @param args the command line arguments
      */
-    public static void main(String args[]) {
-        /* Set the Nimbus look and feel */
-        //<editor-fold defaultstate="collapsed" desc=" Look and feel setting code (optional) ">
-        /* If Nimbus (introduced in Java SE 6) is not available, stay with the default look and feel.
-         * For details see http://download.oracle.com/javase/tutorial/uiswing/lookandfeel/plaf.html 
-         */
-        try {
-            for (javax.swing.UIManager.LookAndFeelInfo info : javax.swing.UIManager.getInstalledLookAndFeels()) {
-                if ("Nimbus".equals(info.getName())) {
-                    javax.swing.UIManager.setLookAndFeel(info.getClassName());
-                    break;
-                }
-            }
-        } catch (ClassNotFoundException ex) {
-            java.util.logging.Logger.getLogger(EditarEntrenador.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
-        } catch (InstantiationException ex) {
-            java.util.logging.Logger.getLogger(EditarEntrenador.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
-        } catch (IllegalAccessException ex) {
-            java.util.logging.Logger.getLogger(EditarEntrenador.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
-        } catch (javax.swing.UnsupportedLookAndFeelException ex) {
-            java.util.logging.Logger.getLogger(EditarEntrenador.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
-        }
-        //</editor-fold>
-
-        /* Create and display the dialog */
-        java.awt.EventQueue.invokeLater(new Runnable() {
-            public void run() {
-               EditarEntrenador dialog = new EditarEntrenador(new javax.swing.JFrame(), true, "Ash");
-                dialog.addWindowListener(new java.awt.event.WindowAdapter() {
-                    @Override
-                    public void windowClosing(java.awt.event.WindowEvent e) {
-                        System.exit(0);
-                    }
-                });
-                dialog.setVisible(true);
-            }
-        });
-    }
-
+    
     // Variables declaration - do not modify//GEN-BEGIN:variables
     // End of variables declaration//GEN-END:variables
 }

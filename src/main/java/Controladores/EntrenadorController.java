@@ -31,11 +31,19 @@ public class EntrenadorController {
 
     public void editarEntrenador(Entrenador entrenador) {
         EntityManager em = emf.createEntityManager();
+    try {
         em.getTransaction().begin();
         em.merge(entrenador);
         em.getTransaction().commit();
+    } catch (Exception e) {
+        if (em.getTransaction().isActive()) {
+            em.getTransaction().rollback();
+        }
+        throw e;  // O puedes manejar el error como quieras
+    } finally {
         em.close();
     }
+}
 
     public void eliminarEntrenador(Integer id) {
         EntityManager em = emf.createEntityManager();

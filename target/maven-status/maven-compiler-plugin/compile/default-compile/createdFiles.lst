@@ -1,7 +1,6 @@
 Views/MenuEntrenadores$4.class
 Views/Vistas$2.class
 Views/MenuEntrenadores$6.class
-Views/EditarEntrenador$1$1.class
 Entidades/Ataque.class
 Views/AñadirEntrenador$1$1.class
 Controladores/PruebaConexio.class
@@ -12,7 +11,6 @@ Views/AñadirEntrenador.class
 Views/MenuEntrenadores$2.class
 Controladores/EntrenadorController.class
 Views/Vistas.class
-Views/EditarEntrenador$1.class
 Views/MenuEntrenadores$5.class
 Views/Pokedex.class
 Views/VerPokemon.class

@@ -9,11 +9,14 @@ import Views.AñadirEntrenador;
 import Controladores.JPanelimagen;
 import Entidades.Entrenador;
 import java.awt.Color;
+import java.util.ArrayList;
 import java.util.List;
 import javax.swing.BorderFactory;
 import javax.swing.DefaultListModel;
+import javax.swing.JButton;
 import javax.swing.JDialog;
 import javax.swing.JOptionPane;
+import javax.swing.JTable;
 import javax.swing.JTextField;
 
 /**
@@ -24,19 +27,25 @@ public class MenuEntrenadores extends javax.swing.JFrame {
 
     /**
      * Creates new form PantallaInicio
-     */ 
-     DefaultListModel<Entrenador> modeloEntrenadores = new DefaultListModel<>();
+     */
+    DefaultListModel<Entrenador> modeloEntrenadores = new DefaultListModel<>();
+    private EntrenadorController entrenadorController = new EntrenadorController();
+    private List<Entrenador> listaEntrenadores = new ArrayList<>();
     
+    
+
     public MenuEntrenadores() {
         initComponents();
+        
+        
+      
+        ListaEntrenadores.setModel(modeloEntrenadores);
+        
+        
         imagenFondoEntrenador();
         setLocationRelativeTo(null);
         setTitle("Selector de Entrenadores");
         this.setResizable(false);
-          
-       
-        modeloEntrenadores = new DefaultListModel<>();
-        ListaEntrenadores.setModel(modeloEntrenadores);
 
         cargarEntrenadores();
 
@@ -60,9 +69,9 @@ public class MenuEntrenadores extends javax.swing.JFrame {
         AñadirEntrenador = new javax.swing.JButton();
         BotonELiminar = new javax.swing.JButton();
         jButton3 = new javax.swing.JButton();
-        jButton4 = new javax.swing.JButton();
+        BotonEditar = new javax.swing.JButton();
         jScrollPane1 = new javax.swing.JScrollPane();
-        ListaEntrenadores = new javax.swing.JList<>();
+        ListaEntrenadores = new javax.swing.JList();
 
         jLabel1.setText("jLabel1");
 
@@ -89,18 +98,19 @@ public class MenuEntrenadores extends javax.swing.JFrame {
             }
         });
 
-        jButton4.setText("Editar Entrenador");
-        jButton4.addActionListener(new java.awt.event.ActionListener() {
+        BotonEditar.setText("Editar Entrenador");
+        BotonEditar.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                jButton4ActionPerformed(evt);
+                BotonEditarActionPerformed(evt);
             }
         });
 
-        ListaEntrenadores.setModel(new javax.swing.AbstractListModel<String>() {
+        ListaEntrenadores.setModel(new javax.swing.AbstractListModel() {
             String[] strings = { "Item 1", "Item 2", "Item 3", "Item 4", "Item 5" };
             public int getSize() { return strings.length; }
-            public String getElementAt(int i) { return strings[i]; }
+            public Object getElementAt(int i) { return strings[i]; }
         });
+        ListaEntrenadores.setToolTipText("");
         jScrollPane1.setViewportView(ListaEntrenadores);
 
         javax.swing.GroupLayout MenuEntreLayout = new javax.swing.GroupLayout(MenuEntre);
@@ -112,7 +122,7 @@ public class MenuEntrenadores extends javax.swing.JFrame {
                 .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 657, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 51, Short.MAX_VALUE)
                 .addGroup(MenuEntreLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(jButton4)
+                    .addComponent(BotonEditar)
                     .addComponent(AñadirEntrenador)
                     .addComponent(BotonELiminar)
                     .addComponent(jButton3))
@@ -124,7 +134,7 @@ public class MenuEntrenadores extends javax.swing.JFrame {
                 .addGap(130, 130, 130)
                 .addComponent(AñadirEntrenador)
                 .addGap(18, 18, 18)
-                .addComponent(jButton4)
+                .addComponent(BotonEditar)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addComponent(BotonELiminar)
                 .addGap(178, 178, 178)
@@ -156,68 +166,77 @@ public class MenuEntrenadores extends javax.swing.JFrame {
 
         // Luego de cerrar el diálogo, recarga tus datos para actualizar la vista
         AñadirEntrenador dialog = new AñadirEntrenador(this, true); // 'this' es el JFrame padre
-         dialog.setVisible(true);  // Aquí se abre el Jdialog de "AñadirEntrenador"
+        dialog.setVisible(true);  // Aquí se abre el Jdialog de "AñadirEntrenador"
         cargarEntrenadores();   // Al cerrarse el diálogo, recarga la lista para actualizar
-
+ //modeloEntrenadores = new DefaultListModel<>();
     }//GEN-LAST:event_AñadirEntrenadorActionPerformed
 
-    private void jButton4ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton4ActionPerformed
+    private void BotonEditarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_BotonEditarActionPerformed
         //(----------------------editar entrenador-------------)
 // Obtener el entrenador seleccionado en la lista
-        String entrenadorSeleccionado = ListaEntrenadores.getSelectedValue();
-        if (entrenadorSeleccionado == null) {
-            // Mostrar mensaje si no hay selección
-            javax.swing.JOptionPane.showMessageDialog(this, "Selecciona un entrenador para editar.");
+        int indiceSeleccionado = ListaEntrenadores.getSelectedIndex();
+        if (indiceSeleccionado < 0) {
+            JOptionPane.showMessageDialog(this, "Selecciona un entrenador para editar.");
             return;
         }
+     Entrenador entrenadorSeleccionado = modeloEntrenadores.getElementAt(indiceSeleccionado);
 
-        // Crear el diálogo pasando el nombre seleccionado
         EditarEntrenador dialog = new EditarEntrenador(this, true, entrenadorSeleccionado);
         dialog.setLocationRelativeTo(this);
         dialog.setVisible(true);
-    }//GEN-LAST:event_jButton4ActionPerformed
+
+        cargarEntrenadores();
+      
+    }//GEN-LAST:event_BotonEditarActionPerformed
 
     private void BotonELiminarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_BotonELiminarActionPerformed
         //---------------------(eliminar entrenador------------------)
         // Primero obtenemos el entrenador seleccionado en la lista
-        String entrenadorSeleccionado = ListaEntrenadores.getSelectedValue();
-
-        if (entrenadorSeleccionado == null) {
-            JOptionPane.showMessageDialog(this, "Por favor, selecciona un entrenador para eliminar.");
+         int indiceSeleccionado = ListaEntrenadores.getSelectedIndex();
+        if (indiceSeleccionado < 0) {
+            JOptionPane.showMessageDialog(this, "Selecciona un entrenador para eliminar.");
             return;
         }
 
-        // Pedimos confirmación
+        Entrenador entrenadorSeleccionado = modeloEntrenadores.getElementAt(indiceSeleccionado);
+
         int confirmacion = JOptionPane.showConfirmDialog(
                 this,
-                "¿Estás seguro que quieres eliminar al entrenador " + entrenadorSeleccionado + "?",
+                "¿Estás seguro que quieres eliminar al entrenador " + entrenadorSeleccionado.getNomEntrenador() + "?",
                 "Confirmar eliminación",
                 JOptionPane.YES_NO_OPTION
         );
 
         if (confirmacion == JOptionPane.YES_OPTION) {
-            // Aquí va la lógica para eliminar el entrenador de la base de datos o lista
-            // Por ahora, solo mostramos un mensaje:
-            JOptionPane.showMessageDialog(this, "Entrenador " + entrenadorSeleccionado + " eliminado.");
-
-            // TODO: eliminar entrenador de la base de datos o estructura de datos
-            // Además, actualizar la lista para reflejar el cambio
-            // Por ejemplo, si usas DefaultListModel:
-            // DefaultListModel<String> model = (DefaultListModel<String>) ListaEntrenadores.getModel();
-            // model.removeElement(entrenadorSeleccionado);
+            try {
+                entrenadorController.eliminarEntrenador(entrenadorSeleccionado.getIdEntrenador());
+                JOptionPane.showMessageDialog(this, "Entrenador eliminado correctamente.");
+                cargarEntrenadores();
+            } catch (Exception e) {
+                JOptionPane.showMessageDialog(this,
+                        "Error al eliminar el entrenador: " + e.getMessage(),
+                        "Error",
+                        JOptionPane.ERROR_MESSAGE);
+            }
         }
+               
     }//GEN-LAST:event_BotonELiminarActionPerformed
 
     private void jButton3ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton3ActionPerformed
         //(-------------------boton de acceder a pokedex---------------------)
-        String entrenadorSeleccionado = ListaEntrenadores.getSelectedValue();
+        int indiceSeleccionado = ListaEntrenadores.getSelectedIndex();
+        if (indiceSeleccionado < 0) {
+            JOptionPane.showMessageDialog(this, "Selecciona un entrenador.");
+            return;
+        }
+        Entrenador entrenadorSeleccionado = listaEntrenadores.get(indiceSeleccionado);
         if (entrenadorSeleccionado == null) {
             JOptionPane.showMessageDialog(this, "Por favor, selecciona un entrenador para acceder a la Pokedex.");
             return;
         }
 
         // Crear la ventana de Pokedex, pasando el entrenador seleccionado
-        Pokedex ventanaPokedex = new Pokedex(this, true, entrenadorSeleccionado);
+        Pokedex ventanaPokedex = new Pokedex(this, true, entrenadorSeleccionado.getNomEntrenador());
         ventanaPokedex.setLocationRelativeTo(this);
         ventanaPokedex.setVisible(true);
     }//GEN-LAST:event_jButton3ActionPerformed
@@ -232,16 +251,24 @@ public class MenuEntrenadores extends javax.swing.JFrame {
         MenuEntre.setBorder(null);
         MenuEntre.setBackground(new Color(0, 0, 0));
 
-}
-    private EntrenadorController entrenadorController = new EntrenadorController();
-    private void cargarEntrenadores() {
-        modeloEntrenadores.clear();
-        List<Entrenador> entrenadores = entrenadorController.obtenerTodosLosEntrenadores();
-        for (Entrenador e : entrenadores) {
-            modeloEntrenadores.addElement(e.getNomEntrenador());
-        }
     }
 
+    private void cargarEntrenadores() {
+       try {
+            listaEntrenadores = entrenadorController.obtenerTodosLosEntrenadores();
+
+            modeloEntrenadores.clear();
+            for (Entrenador e : listaEntrenadores) {
+                modeloEntrenadores.addElement(e);
+            }
+
+        } catch (Exception e) {
+            JOptionPane.showMessageDialog(this,
+                    "Error al cargar los entrenadores: " + e.getMessage(),
+                    "Error",
+                    JOptionPane.ERROR_MESSAGE);
+        }
+    }
 
     /**
      * @param args the command line arguments
@@ -279,13 +306,14 @@ public class MenuEntrenadores extends javax.swing.JFrame {
         });
     }
 
+
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton AñadirEntrenador;
     private javax.swing.JButton BotonELiminar;
-    private javax.swing.JList<String> ListaEntrenadores;
+    private javax.swing.JButton BotonEditar;
+    private javax.swing.JList ListaEntrenadores;
     private javax.swing.JPanel MenuEntre;
     private javax.swing.JButton jButton3;
-    private javax.swing.JButton jButton4;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JScrollPane jScrollPane1;
     // End of variables declaration//GEN-END:variables
