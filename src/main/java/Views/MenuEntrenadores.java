@@ -31,26 +31,20 @@ public class MenuEntrenadores extends javax.swing.JFrame {
     DefaultListModel<Entrenador> modeloEntrenadores = new DefaultListModel<>();
     private EntrenadorController entrenadorController = new EntrenadorController();
     private List<Entrenador> listaEntrenadores = new ArrayList<>();
-    
-    
 
     public MenuEntrenadores() {
         initComponents();
-        
-        
-      
+        setTitle("Selector de Entrenadores");
         ListaEntrenadores.setModel(modeloEntrenadores);
-        
-        
+
         imagenFondoEntrenador();
         setLocationRelativeTo(null);
-        setTitle("Selector de Entrenadores");
         this.setResizable(false);
 
         cargarEntrenadores();
 
         //Para que la lista sea transparente o bueno, tengo el color del fondo
-        ListaEntrenadores.setOpaque(false);             // Quita el fondo opaco
+       // ListaEntrenadores.setOpaque(false);             // Quita el fondo opaco
         ListaEntrenadores.setBackground(new Color(13, 173, 239, 255)); // Fondo completamente transparente
         ListaEntrenadores.setBorder(BorderFactory.createLineBorder(Color.red));
     }
@@ -68,7 +62,7 @@ public class MenuEntrenadores extends javax.swing.JFrame {
         MenuEntre = new javax.swing.JPanel();
         AñadirEntrenador = new javax.swing.JButton();
         BotonELiminar = new javax.swing.JButton();
-        jButton3 = new javax.swing.JButton();
+        AccederPokedex = new javax.swing.JButton();
         BotonEditar = new javax.swing.JButton();
         jScrollPane1 = new javax.swing.JScrollPane();
         ListaEntrenadores = new javax.swing.JList();
@@ -91,10 +85,10 @@ public class MenuEntrenadores extends javax.swing.JFrame {
             }
         });
 
-        jButton3.setText("Acceder Pokedex");
-        jButton3.addActionListener(new java.awt.event.ActionListener() {
+        AccederPokedex.setText("Acceder Pokedex");
+        AccederPokedex.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                jButton3ActionPerformed(evt);
+                AccederPokedexActionPerformed(evt);
             }
         });
 
@@ -125,7 +119,7 @@ public class MenuEntrenadores extends javax.swing.JFrame {
                     .addComponent(BotonEditar)
                     .addComponent(AñadirEntrenador)
                     .addComponent(BotonELiminar)
-                    .addComponent(jButton3))
+                    .addComponent(AccederPokedex))
                 .addGap(56, 56, 56))
         );
         MenuEntreLayout.setVerticalGroup(
@@ -138,7 +132,7 @@ public class MenuEntrenadores extends javax.swing.JFrame {
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addComponent(BotonELiminar)
                 .addGap(178, 178, 178)
-                .addComponent(jButton3)
+                .addComponent(AccederPokedex)
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, MenuEntreLayout.createSequentialGroup()
                 .addContainerGap(121, Short.MAX_VALUE)
@@ -168,7 +162,7 @@ public class MenuEntrenadores extends javax.swing.JFrame {
         AñadirEntrenador dialog = new AñadirEntrenador(this, true); // 'this' es el JFrame padre
         dialog.setVisible(true);  // Aquí se abre el Jdialog de "AñadirEntrenador"
         cargarEntrenadores();   // Al cerrarse el diálogo, recarga la lista para actualizar
- //modeloEntrenadores = new DefaultListModel<>();
+        //modeloEntrenadores = new DefaultListModel<>();
     }//GEN-LAST:event_AñadirEntrenadorActionPerformed
 
     private void BotonEditarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_BotonEditarActionPerformed
@@ -179,20 +173,20 @@ public class MenuEntrenadores extends javax.swing.JFrame {
             JOptionPane.showMessageDialog(this, "Selecciona un entrenador para editar.");
             return;
         }
-     Entrenador entrenadorSeleccionado = modeloEntrenadores.getElementAt(indiceSeleccionado);
+        Entrenador entrenadorSeleccionado = modeloEntrenadores.getElementAt(indiceSeleccionado);
 
         EditarEntrenador dialog = new EditarEntrenador(this, true, entrenadorSeleccionado);
         dialog.setLocationRelativeTo(this);
         dialog.setVisible(true);
 
         cargarEntrenadores();
-      
+
     }//GEN-LAST:event_BotonEditarActionPerformed
 
     private void BotonELiminarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_BotonELiminarActionPerformed
         //---------------------(eliminar entrenador------------------)
         // Primero obtenemos el entrenador seleccionado en la lista
-         int indiceSeleccionado = ListaEntrenadores.getSelectedIndex();
+        int indiceSeleccionado = ListaEntrenadores.getSelectedIndex();
         if (indiceSeleccionado < 0) {
             JOptionPane.showMessageDialog(this, "Selecciona un entrenador para eliminar.");
             return;
@@ -219,10 +213,10 @@ public class MenuEntrenadores extends javax.swing.JFrame {
                         JOptionPane.ERROR_MESSAGE);
             }
         }
-               
+
     }//GEN-LAST:event_BotonELiminarActionPerformed
 
-    private void jButton3ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton3ActionPerformed
+    private void AccederPokedexActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_AccederPokedexActionPerformed
         //(-------------------boton de acceder a pokedex---------------------)
         int indiceSeleccionado = ListaEntrenadores.getSelectedIndex();
         if (indiceSeleccionado < 0) {
@@ -239,7 +233,7 @@ public class MenuEntrenadores extends javax.swing.JFrame {
         Pokedex ventanaPokedex = new Pokedex(this, true, entrenadorSeleccionado.getNomEntrenador());
         ventanaPokedex.setLocationRelativeTo(this);
         ventanaPokedex.setVisible(true);
-    }//GEN-LAST:event_jButton3ActionPerformed
+    }//GEN-LAST:event_AccederPokedexActionPerformed
 
     private void imagenFondoEntrenador() {
         JPanelimagen imagenFondo = new JPanelimagen(MenuEntre, "/Fotos/InterfazEntrenadores.png");
@@ -254,7 +248,7 @@ public class MenuEntrenadores extends javax.swing.JFrame {
     }
 
     private void cargarEntrenadores() {
-       try {
+        try {
             listaEntrenadores = entrenadorController.obtenerTodosLosEntrenadores();
 
             modeloEntrenadores.clear();
@@ -308,12 +302,12 @@ public class MenuEntrenadores extends javax.swing.JFrame {
 
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
+    private javax.swing.JButton AccederPokedex;
     private javax.swing.JButton AñadirEntrenador;
     private javax.swing.JButton BotonELiminar;
     private javax.swing.JButton BotonEditar;
     private javax.swing.JList ListaEntrenadores;
     private javax.swing.JPanel MenuEntre;
-    private javax.swing.JButton jButton3;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JScrollPane jScrollPane1;
     // End of variables declaration//GEN-END:variables

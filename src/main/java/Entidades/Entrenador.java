@@ -7,6 +7,7 @@ import javax.persistence.Basic;
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.EntityManager;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
@@ -14,6 +15,7 @@ import javax.persistence.NamedQueries;
 import javax.persistence.NamedQuery;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
+import javax.persistence.TypedQuery;
 
 @Entity
 @Table(name = "entrenador")
@@ -25,7 +27,7 @@ import javax.persistence.Table;
 public class Entrenador implements Serializable {
 
     private static final long serialVersionUID = 1L;
-
+    
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Basic(optional = false)
@@ -97,6 +99,8 @@ public class Entrenador implements Serializable {
         hash += (idEntrenador != null ? idEntrenador.hashCode() : 0);
         return hash;
     }
+    
+   
 
     @Override
     public boolean equals(Object obj) {
@@ -110,10 +114,6 @@ public class Entrenador implements Serializable {
 
     @Override
     public String toString() {
-        String pokemons = "";
-        for (Pokemon p : listaPokemons) {
-            pokemons += p.getNombrePokemon() + ", ";
-        }
-        return "Entrenador{" + "idEntrenador=" + idEntrenador + ", nomEntrenador=" + nomEntrenador + ", Pokemons=[" + pokemons + "]}";
+        return nomEntrenador;
     }
 }

@@ -3,23 +3,7 @@ package Entidades;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.HashSet;
-import java.util.Set;
-import javax.persistence.Basic;
-import javax.persistence.CascadeType;
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
-import javax.persistence.JoinColumn;
-import javax.persistence.JoinTable;
-import javax.persistence.ManyToMany;
-import javax.persistence.ManyToOne;
-import javax.persistence.NamedQueries;
-import javax.persistence.NamedQuery;
-import javax.persistence.OneToMany;
-import javax.persistence.Table;
+import javax.persistence.*;
 
 @Entity
 @Table(name = "pokemon")
@@ -38,57 +22,78 @@ public class Pokemon implements Serializable {
     @Column(name = "idPokemon")
     private Integer idPokemon;
 
-    @Column(name = "nombrePokemon", nullable = false, length = 50)
+    @Basic(optional = false)
+    @Column(name = "numero_pokedex", nullable = false)
+    private int numeroPokedex;
+
+    @Basic(optional = false)
+    @Column(name = "nombre_pokemon", nullable = false, length = 30)
     private String nombrePokemon;
 
-    @ManyToOne(optional = false)
+    @Column(name = "alias", length = 30)
+    private String alias = "Sin alias";
+
+    @Enumerated(EnumType.STRING)
+    @Column(name = "tipoPokemon")
+    private TiposPokemon tipoPokemon;
+
+    @Enumerated(EnumType.STRING)
+    @Column(name = "segundo_tipo")
+    private TiposPokemon segundoTipo;
+
+    @Basic(optional = false)
+    @Column(name = "nivel", nullable = false)
+    private int nivel;
+
+    @ManyToOne
     @JoinColumn(name = "idEntrenador", referencedColumnName = "idEntrenador")
     private Entrenador entrenador;
 
-    // Relación ManyToMany con Ataque a través de tabla intermedia PokemonAtaque
-    @ManyToMany
-    @JoinTable(
-        name = "pokemonataque",
-        joinColumns = @JoinColumn(name = "idPokemon"),
-        inverseJoinColumns = @JoinColumn(name = "idAtaque")
-    )
-    private Collection<Ataque> listaAtaques;
-
-    // Relación ManyToMany con Habilidad
+    // Asumiendo que la relación ManyToMany con Habilidad es correcta
     @ManyToMany
     @JoinTable(
         name = "pokemonhabilidad",
         joinColumns = @JoinColumn(name = "idPokemon"),
         inverseJoinColumns = @JoinColumn(name = "idHabilidad")
     )
-    private Collection<Habilidad> listaHabilidades;
+    private Collection<Habilidad> listaHabilidades = new ArrayList<>();
 
-    public Pokemon() {
-        this.listaAtaques = new ArrayList<>();
-        this.listaHabilidades = new ArrayList<>();
-    }
+    @ManyToMany
+    @JoinTable(
+        name = "pokemonataque",
+        joinColumns = @JoinColumn(name = "idPokemon"),
+        inverseJoinColumns = @JoinColumn(name = "idAtaque")
+    )
+    private Collection<Ataque> listaAtaques = new ArrayList<>();
 
-    public Pokemon(Integer idPokemon) {
-        this.idPokemon = idPokemon;
-        this.listaAtaques = new ArrayList<>();
-        this.listaHabilidades = new ArrayList<>();
-    }
+    // Constructores
+    public Pokemon() {}
 
-    public Pokemon(String nombrePokemon, Entrenador entrenador) {
+    public Pokemon(int numeroPokedex, String nombrePokemon, TiposPokemon tipoPokemon, TiposPokemon segundoTipo, int nivel, Entrenador entrenador) {
+        this.numeroPokedex = numeroPokedex;
         this.nombrePokemon = nombrePokemon;
+        this.alias = alias != null ? alias : "Sin alias";
+        this.tipoPokemon = tipoPokemon;
+        this.segundoTipo = segundoTipo;
+        this.nivel = nivel;
         this.entrenador = entrenador;
-        this.listaAtaques = new ArrayList<>();
-        this.listaHabilidades = new ArrayList<>();
     }
 
-    // getters y setters
-
+    // Getters y Setters
     public Integer getIdPokemon() {
         return idPokemon;
     }
 
     public void setIdPokemon(Integer idPokemon) {
         this.idPokemon = idPokemon;
+    }
+
+    public int getNumeroPokedex() {
+        return numeroPokedex;
+    }
+
+    public void setNumeroPokedex(int numeroPokedex) {
+        this.numeroPokedex = numeroPokedex;
     }
 
     public String getNombrePokemon() {
@@ -99,20 +104,44 @@ public class Pokemon implements Serializable {
         this.nombrePokemon = nombrePokemon;
     }
 
+    public String getAlias() {
+        return (alias != null && !alias.trim().isEmpty()) ? alias : "Sin alias";
+    }
+
+    public void setAlias(String alias) {
+        this.alias = alias != null ? alias : "Sin alias";
+    }
+
+    public TiposPokemon getTipoPokemon() {
+        return tipoPokemon;
+    }
+
+    public void setTipoPokemon(TiposPokemon tipoPokemon) {
+        this.tipoPokemon = tipoPokemon;
+    }
+
+    public TiposPokemon getSegundoTipo() {
+        return segundoTipo;
+    }
+
+    public void setSegundoTipo(TiposPokemon segundoTipo) {
+        this.segundoTipo = segundoTipo;
+    }
+
+    public int getNivel() {
+        return nivel;
+    }
+
+    public void setNivel(int nivel) {
+        this.nivel = nivel;
+    }
+
     public Entrenador getEntrenador() {
         return entrenador;
     }
 
     public void setEntrenador(Entrenador entrenador) {
         this.entrenador = entrenador;
-    }
-
-    public Collection<Ataque> getListaAtaques() {
-        return listaAtaques;
-    }
-
-    public void setListaAtaques(Collection<Ataque> listaAtaques) {
-        this.listaAtaques = listaAtaques;
     }
 
     public Collection<Habilidad> getListaHabilidades() {
@@ -123,8 +152,15 @@ public class Pokemon implements Serializable {
         this.listaHabilidades = listaHabilidades;
     }
 
-    // Métodos para añadir/quitar Ataques y Habilidades
+    public Collection<Ataque> getListaAtaques() {
+        return listaAtaques;
+    }
 
+    public void setListaAtaques(Collection<Ataque> listaAtaques) {
+        this.listaAtaques = listaAtaques;
+    }
+
+    // Métodos para añadir/quitar Ataques y Habilidades
     public void addAtaque(Ataque ataque) {
         this.listaAtaques.add(ataque);
     }
@@ -140,11 +176,8 @@ public class Pokemon implements Serializable {
     public void removeHabilidad(Habilidad habilidad) {
         this.listaHabilidades.remove(habilidad);
     }
-    @OneToMany(mappedBy = "pokemon", cascade = CascadeType.ALL)
-private Set<PokemonAtaque> pokemonAtaques = new HashSet<>();
 
-    // hashCode, equals, toString
-
+    // hashCode, equals y toString
     @Override
     public int hashCode() {
         int hash = 0;
@@ -153,17 +186,25 @@ private Set<PokemonAtaque> pokemonAtaques = new HashSet<>();
     }
 
     @Override
-    public boolean equals(Object obj) {
-        if (!(obj instanceof Pokemon)) {
+    public boolean equals(Object object) {
+        if (!(object instanceof Pokemon)) {
             return false;
         }
-        Pokemon other = (Pokemon) obj;
-        return (this.idPokemon != null || other.idPokemon == null)
-                && (this.idPokemon == null || this.idPokemon.equals(other.idPokemon));
+        Pokemon other = (Pokemon) object;
+        return (this.idPokemon != null || other.idPokemon == null) && (this.idPokemon == null || this.idPokemon.equals(other.idPokemon));
     }
 
     @Override
     public String toString() {
-        return "Pokemon{" + "idPokemon=" + idPokemon + ", nombrePokemon=" + nombrePokemon + '}';
+        return "Pokemon{" +
+                "idPokemon=" + idPokemon +
+                ", numeroPokedex=" + numeroPokedex +
+                ", nombrePokemon='" + nombrePokemon + '\'' +
+                ", alias='" + alias + '\'' +
+                ", tipoPokemon='" + tipoPokemon + '\'' +
+                ", segundoTipo='" + segundoTipo + '\'' +
+                ", nivel=" + nivel +
+                ", entrenador=" + (entrenador != null ? entrenador.getNomEntrenador() : "Ninguno") +
+                '}';
     }
 }

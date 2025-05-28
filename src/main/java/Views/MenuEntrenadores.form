@@ -53,7 +53,7 @@
                       <Component id="BotonEditar" min="-2" max="-2" attributes="0"/>
                       <Component id="AñadirEntrenador" min="-2" max="-2" attributes="0"/>
                       <Component id="BotonELiminar" alignment="0" min="-2" max="-2" attributes="0"/>
-                      <Component id="jButton3" alignment="0" min="-2" max="-2" attributes="0"/>
+                      <Component id="AccederPokedex" alignment="0" min="-2" max="-2" attributes="0"/>
                   </Group>
                   <EmptySpace min="-2" pref="56" max="-2" attributes="0"/>
               </Group>
@@ -69,7 +69,7 @@
                   <EmptySpace type="unrelated" max="-2" attributes="0"/>
                   <Component id="BotonELiminar" min="-2" max="-2" attributes="0"/>
                   <EmptySpace min="-2" pref="178" max="-2" attributes="0"/>
-                  <Component id="jButton3" min="-2" max="-2" attributes="0"/>
+                  <Component id="AccederPokedex" min="-2" max="-2" attributes="0"/>
                   <EmptySpace max="32767" attributes="0"/>
               </Group>
               <Group type="102" alignment="1" attributes="0">
@@ -97,12 +97,12 @@
             <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="BotonELiminarActionPerformed"/>
           </Events>
         </Component>
-        <Component class="javax.swing.JButton" name="jButton3">
+        <Component class="javax.swing.JButton" name="AccederPokedex">
           <Properties>
             <Property name="text" type="java.lang.String" value="Acceder Pokedex"/>
           </Properties>
           <Events>
-            <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="jButton3ActionPerformed"/>
+            <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="AccederPokedexActionPerformed"/>
           </Events>
         </Component>
         <Component class="javax.swing.JButton" name="BotonEditar">

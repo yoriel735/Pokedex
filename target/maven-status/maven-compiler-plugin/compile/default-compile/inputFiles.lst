@@ -4,6 +4,7 @@
 /home/yoriel/NetBeansProjects/Pokedex/src/main/java/Entidades/PokemonAtaqueId.java
 /home/yoriel/NetBeansProjects/Pokedex/src/main/java/Entidades/PokemonAtaque.java
 /home/yoriel/NetBeansProjects/Pokedex/src/main/java/Views/EditarEntrenador.java
+/home/yoriel/NetBeansProjects/Pokedex/src/main/java/Entidades/TiposPokemon.java
 /home/yoriel/NetBeansProjects/Pokedex/src/main/java/Views/VerPokemon.java
 /home/yoriel/NetBeansProjects/Pokedex/src/main/java/Views/Pokedex.java
 /home/yoriel/NetBeansProjects/Pokedex/src/main/java/Controladores/EntrenadorController.java
@@ -14,3 +15,4 @@
 /home/yoriel/NetBeansProjects/Pokedex/src/main/java/Views/AñadirEntrenador.java
 /home/yoriel/NetBeansProjects/Pokedex/src/main/java/Controladores/JPanelimagen.java
 /home/yoriel/NetBeansProjects/Pokedex/src/main/java/Entidades/Habilidad.java
+/home/yoriel/NetBeansProjects/Pokedex/src/main/java/Controladores/PokemonController.java

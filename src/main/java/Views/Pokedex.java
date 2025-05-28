@@ -4,8 +4,14 @@
  */
 package Views;
 
+import Controladores.EntrenadorController;
 import Controladores.JPanelimagen;
+import Controladores.PokemonController;
+import Entidades.Pokemon;
 import java.awt.Color;
+import java.util.List;
+import javax.swing.BorderFactory;
+import javax.swing.DefaultListModel;
 import javax.swing.JLabel;
 
 /**
@@ -13,20 +19,30 @@ import javax.swing.JLabel;
  * @author yoriel
  */
 public class Pokedex extends javax.swing.JDialog {
-    private String entrenador;
+
+    private Integer idEntrenador;
 
     /**
      * Creates new form poki
      */
-   public Pokedex(java.awt.Frame parent, boolean modal, String entrenador) {
+    public Pokedex(java.awt.Frame parent, boolean modal, String entrenador) {
         super(parent, modal);
-        this.entrenador = entrenador;
+        EntrenadorController ec = new EntrenadorController();
+        this.idEntrenador = ec.obtenerIdPorNombre(entrenador);
         initComponents();              // Inicializa los componentes del diseño
         imagenBasePokedex();           // Añade imagen de fondo
         setTitle("Pokedex de " + entrenador); // Título de la ventana
-        setLocationRelativeTo(parent); // Centrar respecto al padre
+        setLocationRelativeTo(null);
         this.setResizable(false);
-        InterfazPokedex.add(new JLabel("Mostrando pokedex de: " + entrenador)); // Ejemplo de contenido
+        cargarListaPokemon(idEntrenador);
+        MostrarNombreEntrenador.setText("Pokedex de: " + entrenador);
+
+        //ListaPokemonEntrenador.setOpaque(false);             // Quita el fondo opaco
+        ListaPokemonEntrenador.setBackground(new Color(224, 159, 159, 255)); // fonde del color de la imagen
+        ListaPokemonEntrenador.setBorder(BorderFactory.createLineBorder(Color.red));
+        
+        
+       
     }
 
     private void imagenBasePokedex() {
@@ -36,6 +52,7 @@ public class Pokedex extends javax.swing.JDialog {
         InterfazPokedex.setBorder(null);
         InterfazPokedex.setBackground(new Color(0, 0, 0));
     }
+
     /**
      * This method is called from within the constructor to initialize the form.
      * WARNING: Do NOT modify this code. The content of this method is always
@@ -46,27 +63,101 @@ public class Pokedex extends javax.swing.JDialog {
     private void initComponents() {
 
         InterfazPokedex = new javax.swing.JPanel();
+        jScrollPane1 = new javax.swing.JScrollPane();
+        ListaPokemonEntrenador = new javax.swing.JList<>();
+        MostrarNombreEntrenador = new javax.swing.JLabel();
+        MostrarIdEntrenador = new javax.swing.JLabel();
+        NivelPokemon = new javax.swing.JLabel();
+        Tipo1Pokemon = new javax.swing.JLabel();
+        Tipo2Pokemon = new javax.swing.JLabel();
+        AliasPokemon = new javax.swing.JLabel();
+        AtaquesPokemon = new javax.swing.JLabel();
+        HabilidadPokemon = new javax.swing.JLabel();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
+
+        ListaPokemonEntrenador.setModel(new javax.swing.AbstractListModel<String>() {
+            String[] strings = { "Item 1", "Item 2", "Item 3", "Item 4", "Item 5" };
+            public int getSize() { return strings.length; }
+            public String getElementAt(int i) { return strings[i]; }
+        });
+        jScrollPane1.setViewportView(ListaPokemonEntrenador);
+
+        MostrarNombreEntrenador.setFont(new java.awt.Font("Nimbus Mono PS", 1, 24)); // NOI18N
+        MostrarNombreEntrenador.setText("Nombre ENtrenador");
+
+        MostrarIdEntrenador.setText("IDEntre");
+
+        NivelPokemon.setText("Nivel");
+
+        Tipo1Pokemon.setText("Ataque");
+
+        Tipo2Pokemon.setText("Habilidad");
+
+        AliasPokemon.setText("jLabel6");
+
+        AtaquesPokemon.setText("jLabel7");
+
+        HabilidadPokemon.setText("jLabel1");
 
         javax.swing.GroupLayout InterfazPokedexLayout = new javax.swing.GroupLayout(InterfazPokedex);
         InterfazPokedex.setLayout(InterfazPokedexLayout);
         InterfazPokedexLayout.setHorizontalGroup(
             InterfazPokedexLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 1103, Short.MAX_VALUE)
+            .addGroup(InterfazPokedexLayout.createSequentialGroup()
+                .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 222, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 629, Short.MAX_VALUE)
+                .addGroup(InterfazPokedexLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, InterfazPokedexLayout.createSequentialGroup()
+                        .addComponent(NivelPokemon)
+                        .addGap(253, 253, 253))
+                    .addGroup(InterfazPokedexLayout.createSequentialGroup()
+                        .addGroup(InterfazPokedexLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addComponent(Tipo2Pokemon)
+                            .addComponent(AliasPokemon)
+                            .addComponent(AtaquesPokemon)
+                            .addComponent(HabilidadPokemon)
+                            .addComponent(Tipo1Pokemon))
+                        .addContainerGap())))
+            .addGroup(InterfazPokedexLayout.createSequentialGroup()
+                .addGap(30, 30, 30)
+                .addGroup(InterfazPokedexLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(MostrarNombreEntrenador, javax.swing.GroupLayout.PREFERRED_SIZE, 240, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(MostrarIdEntrenador))
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
         InterfazPokedexLayout.setVerticalGroup(
             InterfazPokedexLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 671, Short.MAX_VALUE)
+            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, InterfazPokedexLayout.createSequentialGroup()
+                .addGap(42, 42, 42)
+                .addComponent(MostrarNombreEntrenador)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(MostrarIdEntrenador)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 25, Short.MAX_VALUE)
+                .addGroup(InterfazPokedexLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, InterfazPokedexLayout.createSequentialGroup()
+                        .addComponent(NivelPokemon)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(Tipo1Pokemon)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(Tipo2Pokemon)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(AliasPokemon)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(AtaquesPokemon)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(HabilidadPokemon)
+                        .addGap(29, 29, 29))
+                    .addComponent(jScrollPane1, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.PREFERRED_SIZE, 562, javax.swing.GroupLayout.PREFERRED_SIZE)))
         );
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(layout.createSequentialGroup()
-                .addContainerGap()
-                .addComponent(InterfazPokedex, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
+                .addGap(0, 0, Short.MAX_VALUE)
+                .addComponent(InterfazPokedex, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -78,26 +169,90 @@ public class Pokedex extends javax.swing.JDialog {
         pack();
     }// </editor-fold>//GEN-END:initComponents
 
+    private void cargarListaPokemon(Integer idEntrenador) {
+        PokemonController pc = new PokemonController();
+        List<Pokemon> pokemons = pc.obtenerPokemonPorEntrenadorId(idEntrenador);
+
+        DefaultListModel<String> modelo = new DefaultListModel<>();
+        for (Pokemon p : pokemons) {
+            modelo.addElement(p.getNombrePokemon());  // O cualquier atributo que quieras mostrar en la lista
+        }
+
+        ListaPokemonEntrenador.setModel(modelo);
+
+        // Opcional: Listener para mostrar detalles al seleccionar un Pokémon
+        ListaPokemonEntrenador.addListSelectionListener(e -> {
+            if (!e.getValueIsAdjusting()) {
+                int index = ListaPokemonEntrenador.getSelectedIndex();
+                if (index >= 0 && index < pokemons.size()) {
+                    mostrarDetallesPokemon(pokemons.get(index));
+                }
+            }
+        });
+    }
+   
+
+    private void mostrarDetallesPokemon(Pokemon p) {
+//    NivelPokemon.setText("Nivel: " + p.getNivel());
+//    Tipo1Pokemon.setText("Tipo 1: " + (p.getTipo1() != null ? p.getTipo1() : "N/A"));
+//    Tipo2Pokemon.setText("Tipo 2: " + (p.getTipo2() != null ? p.getTipo2() : "N/A"));
+       AliasPokemon.setText("Alias: " + (p.getAlias() != null ? p.getAlias() : "N/A"));
+        AtaquesPokemon.setText("Ataques: " + (p.getListaAtaques() != null ? p.getListaAtaques() : "N/A"));
+        HabilidadPokemon.setText("Habilidad: " + (p.getListaHabilidades() != null ? p.getListaHabilidades() : "N/A"));
+        
+        /*
+           NivelPokemon.setText("Nivel: " + p.getNivel());
+
+    // Si tu entidad tiene getTipoPokemon() y getSegundoTipo()
+    Tipo1Pokemon.setText("Tipo 1: " + (p.getTipoPokemon() != null ? p.getTipoPokemon() : "N/A"));
+    Tipo2Pokemon.setText("Tipo 2: " + (p.getSegundoTipo() != null ? p.getSegundoTipo() : "N/A"));
+
+    AliasPokemon.setText("Alias: " + p.getAliasSeguro());
+
+    // Para ataques y habilidades, muestra solo nombres o cantidad
+    String ataques = p.getListaAtaques().isEmpty() ? "Ninguno" : p.getListaAtaques().stream()
+                        .map(a -> a.getNombreAtaque()) // asumiendo getNombreAtaque()
+                        .reduce((a1, a2) -> a1 + ", " + a2).orElse("Ninguno");
+    AtaquesPokemon.setText("Ataques: " + ataques);
+
+    String habilidades = p.getListaHabilidades().isEmpty() ? "Ninguna" : p.getListaHabilidades().stream()
+                        .map(h -> h.getNombreHabilidad()) // asumiendo getNombreHabilidad()
+                        .reduce((h1, h2) -> h1 + ", " + h2).orElse("Ninguna");
+    HabilidadPokemon.setText("Habilidades: " + habilidades);
+}
+*/
+    }
+
     /**
      * @param args the command line arguments
      */
-  public static void main(String[] args) {
-    // Aseguramos que todo se ejecute en el hilo de eventos de Swing
-    javax.swing.SwingUtilities.invokeLater(new Runnable() {
-        public void run() {
-            // Crear un JFrame falso como "padre" para el JDialog
-            javax.swing.JFrame dummyParent = new javax.swing.JFrame();
-            dummyParent.setDefaultCloseOperation(javax.swing.JFrame.EXIT_ON_CLOSE);
-            dummyParent.setVisible(false); // no mostrarlo
+    public static void main(String[] args) {
+        // Aseguramos que todo se ejecute en el hilo de eventos de Swing
+        javax.swing.SwingUtilities.invokeLater(new Runnable() {
+            public void run() {
+                // Crear un JFrame falso como "padre" para el JDialog
+                javax.swing.JFrame dummyParent = new javax.swing.JFrame();
+                dummyParent.setDefaultCloseOperation(javax.swing.JFrame.EXIT_ON_CLOSE);
+                dummyParent.setVisible(false); // no mostrarlo
 
-            // Crear y mostrar la Pokedex para pruebas
-           Pokedex dialog = new Pokedex(dummyParent, true, "Ash Ketchum");
-            dialog.setVisible(true);
-        }
-    });
-}
+                // Crear y mostrar la Pokedex para pruebas
+                Pokedex dialog = new Pokedex(dummyParent, true, "Ash Ketchum");
+                dialog.setVisible(true);
+            }
+        });
+    }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
+    private javax.swing.JLabel AliasPokemon;
+    private javax.swing.JLabel AtaquesPokemon;
+    private javax.swing.JLabel HabilidadPokemon;
     private javax.swing.JPanel InterfazPokedex;
+    private javax.swing.JList<String> ListaPokemonEntrenador;
+    private javax.swing.JLabel MostrarIdEntrenador;
+    private javax.swing.JLabel MostrarNombreEntrenador;
+    private javax.swing.JLabel NivelPokemon;
+    private javax.swing.JLabel Tipo1Pokemon;
+    private javax.swing.JLabel Tipo2Pokemon;
+    private javax.swing.JScrollPane jScrollPane1;
     // End of variables declaration//GEN-END:variables
 }

@@ -1,6 +1,7 @@
 Views/MenuEntrenadores$4.class
 Views/Vistas$2.class
 Views/MenuEntrenadores$6.class
+Controladores/PokemonController.class
 Entidades/Ataque.class
 Views/AñadirEntrenador$1$1.class
 Controladores/PruebaConexio.class
@@ -24,6 +25,8 @@ Views/MenuEntrenadores.class
 Views/MenuEntrenadores$1.class
 Entidades/Habilidad.class
 Views/SeleccionEntrenadores$1.class
+Views/Pokedex$2.class
 Controladores/JPanelimagen.class
+Entidades/TiposPokemon.class
 Views/SeleccionEntrenadores.class
 Entidades/Entrenador.class
