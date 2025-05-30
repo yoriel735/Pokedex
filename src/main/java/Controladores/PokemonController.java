@@ -100,6 +100,19 @@ public class PokemonController {
             em.close();
         }
     }
+    public Integer buscarIdPokemonPorNombre(String nombrePokemon) {
+    EntityManager em = emf.createEntityManager();
+    try {
+        TypedQuery<Integer> query = em.createQuery("SELECT p.idPokemon FROM Pokemon p WHERE p.nombrePokemon = :nombre", Integer.class);
+        query.setParameter("nombre", nombrePokemon);
+
+        return query.getSingleResult();
+    } catch (NoResultException e) {
+        return -1; // Si no encuentra el Pokémon, retorna -1
+    } finally {
+        em.close();
+    }
+}
 
     public Pokemon buscarPokemonPorIdConHabilidad(Integer id) {
         EntityManager em = emf.createEntityManager();
