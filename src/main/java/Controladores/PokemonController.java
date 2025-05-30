@@ -1,6 +1,10 @@
 package Controladores;
 
+import Entidades.Ataque;
 import Entidades.Pokemon;
+import Entidades.PokemonAtaque;
+import java.util.ArrayList;
+import java.util.Arrays;
 
 import javax.persistence.*;
 import java.util.List;
@@ -60,6 +64,34 @@ public class PokemonController {
         }
     }
 
+    public List<PokemonAtaque> obtenerAtaquesPorPokemon(Integer idPokemon) {
+      EntityManager em = emf.createEntityManager();
+    try {
+            // Usamos JPQL con fetch para evitar lazy loading
+            String jpql = "SELECT pa FROM PokemonAtaque pa JOIN FETCH pa.ataque WHERE pa.pokemon.idPokemon = :idPokemon";
+            TypedQuery<PokemonAtaque> query = em.createQuery(jpql, PokemonAtaque.class);
+            query.setParameter("idPokemon", idPokemon);
+
+            List<PokemonAtaque> lista = query.getResultList();
+
+            // Opción: Forzar acceso a los atributos para inicializar proxies
+            for (PokemonAtaque pa : lista) {
+                Ataque atk = pa.getAtaque();
+                if (atk != null) {
+                    atk.getNombreAtaque(); // acceso para inicializar
+                }
+            }
+
+            return lista;
+        } catch (Exception e) {
+            e.printStackTrace();
+            return null;
+        } finally {
+            em.close();
+        }
+    }
+
+
     public Pokemon buscarPokemonPorId(Integer id) {
         EntityManager em = emf.createEntityManager();
         try {
@@ -69,17 +101,30 @@ public class PokemonController {
         }
     }
 
-    public List<Pokemon> obtenerPokemonPorEntrenadorId(Integer idEntrenador) {
-    EntityManager em = emf.createEntityManager();
-    try {
-        TypedQuery<Pokemon> query = em.createQuery(
-            "SELECT p FROM Pokemon p WHERE p.entrenador.idEntrenador = :id", Pokemon.class);
-        query.setParameter("id", idEntrenador);
-        return query.getResultList();
-    } finally {
-        em.close();
+    public Pokemon buscarPokemonPorIdConHabilidad(Integer id) {
+        EntityManager em = emf.createEntityManager();
+        try {
+            TypedQuery<Pokemon> query = em.createQuery(
+                    "SELECT p FROM Pokemon p LEFT JOIN FETCH p.habilidad WHERE p.idPokemon = :id", Pokemon.class);
+            query.setParameter("id", id);
+            return query.getSingleResult();
+        } finally {
+            em.close();
+        }
     }
-}
+
+    public List<Pokemon> obtenerPokemonPorEntrenadorId(Integer idEntrenador) {
+        EntityManager em = emf.createEntityManager();
+        try {
+            TypedQuery<Pokemon> query = em.createQuery(
+                    "SELECT p FROM Pokemon p WHERE p.entrenador.idEntrenador = :id", Pokemon.class);
+            query.setParameter("id", idEntrenador);
+            return query.getResultList();
+        } finally {
+            em.close();
+        }
+    }
+
     public List<Pokemon> obtenerTodosLosPokemon() {
         EntityManager em = emf.createEntityManager();
         try {

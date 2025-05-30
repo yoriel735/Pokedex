@@ -7,6 +7,7 @@ import javax.persistence.Basic;
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
@@ -16,7 +17,7 @@ import javax.persistence.OneToMany;
 import javax.persistence.Table;
 
 @Entity
-@Table(name = "ataque")
+@Table(name = "ataques")
 @NamedQueries({
     @NamedQuery(name = "Ataque.findAll", query = "SELECT a FROM Ataque a"),
     @NamedQuery(name = "Ataque.findByIdAtaque", query = "SELECT a FROM Ataque a WHERE a.idAtaque = :idAtaque"),
@@ -35,6 +36,24 @@ public class Ataque implements Serializable {
     @Basic(optional = false)
     @Column(name = "nombreAtaque", length = 50)
     private String nombreAtaque;
+
+    @Column(name = "tipoDeAtaque", length = 20)
+    private String tipo;
+
+    @Column(name = "categoriaAtaque", length = 20)
+    private String categoria;
+
+    @Column(name = "efecto", length = 255)
+    private String efecto;
+
+    @Column(name = "potencia")
+    private Integer potencia;
+
+    @Column(name = "PP")
+    private Integer pp;
+
+@OneToMany(mappedBy = "ataque", cascade = CascadeType.ALL, fetch = FetchType.EAGER)
+private Set<PokemonAtaque> pokemonAtaques = new HashSet<>();
 
     public Ataque() {
     }
@@ -70,9 +89,55 @@ public class Ataque implements Serializable {
         hash += (idAtaque != null ? idAtaque.hashCode() : 0);
         return hash;
     }
-    
-    @OneToMany(mappedBy = "ataque", cascade = CascadeType.ALL)
-    private Set<PokemonAtaque> pokemonAtaques = new HashSet<>();
+
+    public String getTipo() {
+        return tipo;
+    }
+
+    public void setTipo(String tipo) {
+        this.tipo = tipo;
+    }
+
+    public String getCategoria() {
+        return categoria;
+    }
+
+    public void setCategoria(String categoria) {
+        this.categoria = categoria;
+    }
+
+    public String getEfecto() {
+        return efecto;
+    }
+
+    public void setEfecto(String efecto) {
+        this.efecto = efecto;
+    }
+
+    public Integer getPotencia() {
+        return potencia;
+    }
+
+    public void setPotencia(Integer potencia) {
+        this.potencia = potencia;
+    }
+
+    public Integer getPp() {
+        return pp;
+    }
+
+    public void setPp(Integer pp) {
+        this.pp = pp;
+    }
+
+
+    public Set<PokemonAtaque> getPokemonAtaques() {
+        return pokemonAtaques;
+    }
+
+    public void setPokemonAtaques(Set<PokemonAtaque> pokemonAtaques) {
+        this.pokemonAtaques = pokemonAtaques;
+    }
 
     @Override
     public boolean equals(Object object) {
@@ -84,10 +149,5 @@ public class Ataque implements Serializable {
             return false;
         }
         return true;
-    }
-
-    @Override
-    public String toString() {
-        return "entidades.Ataque[ idAtaque=" + idAtaque + ", nombreAtaque=" + nombreAtaque + " ]";
     }
 }

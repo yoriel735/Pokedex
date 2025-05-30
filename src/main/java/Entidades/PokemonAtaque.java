@@ -10,12 +10,12 @@ public class PokemonAtaque implements Serializable {
     @EmbeddedId
     private PokemonAtaqueId id;
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.EAGER) // 🔥 Cambiado a EAGER para forzar la carga
     @MapsId("idPokemon")
     @JoinColumn(name = "id_pokemon")
     private Pokemon pokemon;
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.EAGER) // 🔥 Cambiado a EAGER para forzar la carga
     @MapsId("idAtaque")
     @JoinColumn(name = "id_ataque")
     private Ataque ataque;
@@ -23,7 +23,8 @@ public class PokemonAtaque implements Serializable {
     @Column(name = "metodoAprendizaje", length = 50)
     private String metodoAprendizaje;
 
-    public PokemonAtaque() {}
+    public PokemonAtaque() {
+    }
 
     public PokemonAtaque(Pokemon pokemon, Ataque ataque, String metodoAprendizaje) {
         this.pokemon = pokemon;

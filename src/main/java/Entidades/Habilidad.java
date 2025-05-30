@@ -1,15 +1,7 @@
 package Entidades;
 
 import java.io.Serializable;
-import javax.persistence.Basic;
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
-import javax.persistence.NamedQueries;
-import javax.persistence.NamedQuery;
-import javax.persistence.Table;
+import javax.persistence.*;
 
 @Entity
 @Table(name = "habilidad")
@@ -28,21 +20,26 @@ public class Habilidad implements Serializable {
     @Column(name = "idHabilidad")
     private Integer idHabilidad;
 
+    @Basic(optional = false)
     @Column(name = "nombreHabilidad", nullable = false, length = 50)
     private String nombreHabilidad;
 
+    @Column(name = "descripcionHabilidad", length = 200)
+    private String descripcionHabilidad;
+
+    // Constructores
     public Habilidad() {}
+
+    public Habilidad(String nombreHabilidad, String descripcionHabilidad) {
+        this.nombreHabilidad = nombreHabilidad;
+        this.descripcionHabilidad = descripcionHabilidad;
+    }
 
     public Habilidad(Integer idHabilidad) {
         this.idHabilidad = idHabilidad;
     }
 
-    public Habilidad(String nombreHabilidad) {
-        this.nombreHabilidad = nombreHabilidad;
-    }
-
-    // getters y setters
-
+    // Getters y Setters
     public Integer getIdHabilidad() {
         return idHabilidad;
     }
@@ -59,13 +56,18 @@ public class Habilidad implements Serializable {
         this.nombreHabilidad = nombreHabilidad;
     }
 
-    // hashCode, equals, toString
+    public String getDescripcionHabilidad() {
+        return descripcionHabilidad;
+    }
 
+    public void setDescripcionHabilidad(String descripcionHabilidad) {
+        this.descripcionHabilidad = descripcionHabilidad;
+    }
+
+    // hashCode, equals, toString
     @Override
     public int hashCode() {
-        int hash = 0;
-        hash += (idHabilidad != null ? idHabilidad.hashCode() : 0);
-        return hash;
+        return (idHabilidad != null ? idHabilidad.hashCode() : 0);
     }
 
     @Override
@@ -80,6 +82,10 @@ public class Habilidad implements Serializable {
 
     @Override
     public String toString() {
-        return "Habilidad{" + "idHabilidad=" + idHabilidad + ", nombreHabilidad=" + nombreHabilidad + '}';
+        return "Habilidad{" +
+                "idHabilidad=" + idHabilidad +
+                ", nombreHabilidad='" + nombreHabilidad + '\'' +
+                ", descripcionHabilidad='" + descripcionHabilidad + '\'' +
+                '}';
     }
 }
