@@ -14,7 +14,6 @@ import javax.swing.BorderFactory;
 import javax.swing.DefaultListModel;
 import javax.swing.JOptionPane;
 
-
 /**
  *
  * @author yoriel
@@ -40,7 +39,7 @@ public class MenuEntrenadores extends javax.swing.JFrame {
         cargarEntrenadores();
 
         //Para que la lista sea transparente o bueno, tengo el color del fondo
-       // ListaEntrenadores.setOpaque(false);             // Quita el fondo opaco
+        // ListaEntrenadores.setOpaque(false);             // Quita el fondo opaco
         ListaEntrenadores.setBackground(new Color(13, 173, 239, 255)); // Fondo completamente transparente
         ListaEntrenadores.setBorder(BorderFactory.createLineBorder(Color.red));
     }
@@ -230,11 +229,15 @@ public class MenuEntrenadores extends javax.swing.JFrame {
             JOptionPane.showMessageDialog(this, "Por favor, selecciona un entrenador para acceder a la Pokedex.");
             return;
         }
+        //Cerrar ventana entrenadores cuando se accede a la pokedex
+        this.setVisible(false);
 
         // Crear la ventana de Pokedex, pasando el entrenador seleccionado
         Pokedex ventanaPokedex = new Pokedex(this, true, entrenadorSeleccionado.getNomEntrenador());
         ventanaPokedex.setLocationRelativeTo(this);
         ventanaPokedex.setVisible(true);
+
+      
     }//GEN-LAST:event_AccederPokedexActionPerformed
 
     private void imagenFondoEntrenador() {
@@ -297,7 +300,9 @@ public class MenuEntrenadores extends javax.swing.JFrame {
         /* Create and display the form */
         java.awt.EventQueue.invokeLater(new Runnable() {
             public void run() {
-                new MenuEntrenadores().setVisible(true);
+              MenuEntrenadores menuEntre = new MenuEntrenadores(); // se transformaen una variable
+              //para poder ocultarlo desde otras clases
+            menuEntre.setVisible(true);
             }
         });
     }

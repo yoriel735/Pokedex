@@ -29,14 +29,21 @@ public class Pokedex extends javax.swing.JDialog {
 
     private Integer idEntrenador;
     private Pokemon pokemonSeleccionado;
+    private MenuEntrenadores menuEntrenadores;
 
     /**
      * Creates new form poki
+     *
+     *
+     * @param modal
+     * @param entrenador
      */
-    public Pokedex(java.awt.Frame parent, boolean modal, String entrenador) {
-        super(parent, modal);
+    public Pokedex(MenuEntrenadores menuEntrenadores, boolean modal, String entrenador) {
+         super(menuEntrenadores, modal); // Pasamos la ventana de entrenadores como padre
         EntrenadorController ec = new EntrenadorController();
         this.idEntrenador = ec.obtenerIdPorNombre(entrenador);
+        this.menuEntrenadores = menuEntrenadores;
+        
         initComponents();              // Inicializa los componentes del diseño
         imagenBasePokedex();           // Añade imagen de fondo
         setTitle("Pokedex de " + entrenador); // Título de la ventana
@@ -50,6 +57,16 @@ public class Pokedex extends javax.swing.JDialog {
         //ListaPokemonEntrenador.setOpaque(false);             // Quita el fondo opaco
         ListaPokemonEntrenador.setBackground(new Color(224, 159, 159, 255)); // fonde del color de la imagen
         ListaPokemonEntrenador.setBorder(BorderFactory.createLineBorder(Color.red));
+
+          // Agregar un WindowListener para volver a mostrar el menú de entrenadores al cerrar la Pokédex
+    this.addWindowListener(new java.awt.event.WindowAdapter() {
+        @Override
+        public void windowClosing(java.awt.event.WindowEvent e) {
+            if (menuEntrenadores != null) {
+                menuEntrenadores.setVisible(true); // Volver a mostrar el menú de entrenadores al cerrar Pokédex
+            }
+        }
+    });
 
     }
 
@@ -319,17 +336,6 @@ public class Pokedex extends javax.swing.JDialog {
                         }
                     }
 
-                    if (ataques == null || ataques.isEmpty()) {
-                        JOptionPane.showMessageDialog(Pokedex.this, "Este Pokémon no tiene ataques registrados.", "Información", JOptionPane.INFORMATION_MESSAGE);
-                        return;
-                    }
-
-                    boolean tieneAtaquesValidos = ataques.stream().anyMatch(pa -> pa.getAtaque() != null);
-                    if (!tieneAtaquesValidos) {
-                        JOptionPane.showMessageDialog(Pokedex.this, "Este Pokémon tiene ataques pero no se pueden cargar correctamente.", "Información", JOptionPane.WARNING_MESSAGE);
-                        return;
-                    }
-
                     // Mostrar diálogo, con el padre para evitar problemas de foco/modalidad
                     MostrarAtaques dialog = new MostrarAtaques(Pokedex.this, java.awt.Dialog.ModalityType.APPLICATION_MODAL, pokemonSeleccionado);
 
@@ -348,52 +354,72 @@ public class Pokedex extends javax.swing.JDialog {
     }//GEN-LAST:event_BotonAtaquesActionPerformed
 
     private void BotonEditarAliasActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_BotonEditarAliasActionPerformed
-   
-     if (pokemonSeleccionado == null) {
-        JOptionPane.showMessageDialog(this, "No hay Pokémon seleccionado.");
-        return;
-    }
 
-    JTextField aliasField = new JTextField(pokemonSeleccionado.getAlias());
-    int resultado = JOptionPane.showConfirmDialog(this, aliasField, "Editar Alias", JOptionPane.OK_CANCEL_OPTION);
-
-    if (resultado == JOptionPane.OK_OPTION) {
-        String nuevoAlias = aliasField.getText().trim();
-        if (!nuevoAlias.isEmpty()) {
-            pokemonSeleccionado.setAlias(nuevoAlias);
-            AliasPokemon.setText("Alias: " + nuevoAlias);
-
-            // Guardar en base de datos
-            PokemonController pc = new PokemonController();
-            pc.actualizarAliasPokemon(pokemonSeleccionado.getIdPokemon(), nuevoAlias);
-
-            JOptionPane.showMessageDialog(this, "Alias actualizado con éxito.");
+        if (pokemonSeleccionado == null) {
+            JOptionPane.showMessageDialog(this, "No hay Pokémon seleccionado.");
+            return;
         }
-    }
+
+        JTextField aliasField = new JTextField(pokemonSeleccionado.getAlias());
+        int resultado = JOptionPane.showConfirmDialog(this, aliasField, "Editar Alias", JOptionPane.OK_CANCEL_OPTION);
+
+        if (resultado == JOptionPane.OK_OPTION) {
+            String nuevoAlias = aliasField.getText().trim();
+            if (!nuevoAlias.isEmpty()) {
+                pokemonSeleccionado.setAlias(nuevoAlias);
+                AliasPokemon.setText("Alias: " + nuevoAlias);
+
+                // Guardar en base de datos
+                PokemonController pc = new PokemonController();
+                pc.actualizarAliasPokemon(pokemonSeleccionado.getIdPokemon(), nuevoAlias);
+
+                JOptionPane.showMessageDialog(this, "Alias actualizado con éxito.");
+            }
+        }
 
 
-        
     }//GEN-LAST:event_BotonEditarAliasActionPerformed
 
     private void ZonaCapturaActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_ZonaCapturaActionPerformed
+
+        // Ocultar la Pokédex
+        this.setVisible(false);
+
+        if (menuEntrenadores != null) {
+             menuEntrenadores.dispose();
+        }
         CapturarPokemon zona = new CapturarPokemon();
-        zona.setVisible(true);
-    
+        zona.setLocationRelativeTo(this);
+        
+        // Esperar a que el usuario cierre manualmente `CapturarPokemon` antes de mostrar la Pokédex
+    zona.addWindowListener(new java.awt.event.WindowAdapter() {
+        @Override
+        public void windowClosed(java.awt.event.WindowEvent e) {
+            Pokedex.this.setVisible(true);
+        }
+    });
+
+    zona.setVisible(true);
+
+
+        
+
+
     }//GEN-LAST:event_ZonaCapturaActionPerformed
-private void configurarIconoBotonEditar() {
-    try {
-        ImageIcon iconoLapiz = new ImageIcon(getClass().getResource("/Fotos/lapiz.png"));
-         Image imagenEscalada = iconoLapiz.getImage().getScaledInstance(24, 24, Image.SCALE_SMOOTH);
-        ImageIcon iconoEscalado = new ImageIcon(imagenEscalada);
-        BotonEditarAlias.setIcon(iconoEscalado);
-        BotonEditarAlias.setBorder(null);
-        BotonEditarAlias.setContentAreaFilled(false);
-        BotonEditarAlias.setFocusPainted(false);
-        BotonEditarAlias.setCursor(new Cursor(Cursor.HAND_CURSOR));
-    } catch (Exception e) {
-        System.out.println("No se pudo cargar el icono: " + e.getMessage());
+    private void configurarIconoBotonEditar() {
+        try {
+            ImageIcon iconoLapiz = new ImageIcon(getClass().getResource("/Fotos/lapiz.png"));
+            Image imagenEscalada = iconoLapiz.getImage().getScaledInstance(24, 24, Image.SCALE_SMOOTH);
+            ImageIcon iconoEscalado = new ImageIcon(imagenEscalada);
+            BotonEditarAlias.setIcon(iconoEscalado);
+            BotonEditarAlias.setBorder(null);
+            BotonEditarAlias.setContentAreaFilled(false);
+            BotonEditarAlias.setFocusPainted(false);
+            BotonEditarAlias.setCursor(new Cursor(Cursor.HAND_CURSOR));
+        } catch (Exception e) {
+            System.out.println("No se pudo cargar el icono: " + e.getMessage());
+        }
     }
-}   
 
     private void cargarListaPokemon(Integer idEntrenador) {
         PokemonController pc = new PokemonController();
@@ -455,16 +481,16 @@ private void configurarIconoBotonEditar() {
     private void mostrarImagenPokemon(Pokemon p) {
 
         try {
-            // ✅ URL basada en el nombre del Pokémon, no en su ID
+            //URL basada en el nombre del Pokémon, no en su ID
 
             String urlImagen = "https://img.pokemondb.net/sprites/home/normal/" + p.getNombrePokemon().toLowerCase() + ".png";
             String urlImagenShiny = "https://img.pokemondb.net/sprites/home/shiny/" + p.getNombrePokemon().toLowerCase() + ".png";
 
             // Descargar la imagen desde la URL
-            ImageIcon icon = new ImageIcon(new URL(urlImagen));
+            ImageIcon Pokemon = new ImageIcon(new URL(urlImagen));
             ImageIcon shiny = new ImageIcon(new URL(urlImagenShiny));
             // Ajustar el tamaño de la imagen (Opcional)
-            Image image = icon.getImage().getScaledInstance(250, 250, Image.SCALE_SMOOTH);
+            Image image = Pokemon.getImage().getScaledInstance(250, 250, Image.SCALE_SMOOTH);
             ImagenPokemon.setIcon(new ImageIcon(image));
 
             Image imageShiny = shiny.getImage().getScaledInstance(100, 100, Image.SCALE_SMOOTH);
@@ -481,11 +507,10 @@ private void configurarIconoBotonEditar() {
     public static void main(String[] args) {
         // Aseguramos que todo se ejecute en el hilo de eventos de Swing
         SwingUtilities.invokeLater(() -> {
-            javax.swing.JFrame dummyParent = new javax.swing.JFrame();
-            dummyParent.setDefaultCloseOperation(javax.swing.JFrame.EXIT_ON_CLOSE);
-            dummyParent.setVisible(false);
+              MenuEntrenadores menuEntrenadores = new MenuEntrenadores();
+        menuEntrenadores.setVisible(true);
 
-            Pokedex dialog = new Pokedex(dummyParent, true, "Ash Ketchum");
+            Pokedex dialog = new Pokedex(menuEntrenadores, true, "Ash Ketchum");
             dialog.setVisible(true);
         });
     }

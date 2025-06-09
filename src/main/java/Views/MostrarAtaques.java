@@ -12,7 +12,10 @@ import Entidades.PokemonAtaque;
 import java.awt.Color;
 import java.util.List;
 import javax.persistence.EntityManagerFactory;
+import javax.swing.JButton;
+import javax.swing.JLabel;
 import javax.swing.JOptionPane;
+import javax.swing.JPanel;
 import javax.swing.table.DefaultTableModel;
 
 /**
@@ -239,6 +242,14 @@ public class MostrarAtaques extends javax.swing.JDialog {
 
         modelo.addRow(fila);
     }
+    if (ataques == null || ataques.isEmpty()) {
+    JLabel mensaje = new JLabel("Este Pokemon aun no tiene ataques asignados.");
+    JPanel panel = new JPanel();
+    panel.add(mensaje);
+    
+    
+    JOptionPane.showMessageDialog(this, panel, "Ataques del Pokémon", JOptionPane.INFORMATION_MESSAGE);
+}
 
     // Ocultar la columna del ID (columna 0)
     tablaAtaques.getColumnModel().getColumn(0).setMinWidth(0);

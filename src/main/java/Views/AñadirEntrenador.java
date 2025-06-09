@@ -32,6 +32,7 @@ public class AñadirEntrenador extends javax.swing.JDialog {
         pack();
         this.setResizable(false);
         setLocationRelativeTo(parent);
+        
     }
 
   

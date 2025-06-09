@@ -6,6 +6,7 @@ package Views;
 
 import Controladores.AtaquesController;
 import Entidades.Ataque;
+import Entidades.Pokemon;
 import java.awt.BorderLayout;
 import java.awt.FlowLayout;
 import java.awt.Frame;
@@ -29,12 +30,13 @@ public class AñadirAtaque extends javax.swing.JDialog {
     private boolean confirmado = false;
     private Ataque nuevoAtaque;
     private final AtaquesController ataquesController;
+    
 
     public AñadirAtaque(Frame parent) {
         super(parent, "Añadir Ataque", true);
-        this.ataquesController = new AtaquesController();
-        initComponents(); // ✅ Llamamos a los componentes primero
-        AñadirAtaques();  // ✅ Después de inicializar, agregamos los campos
+        this.ataquesController = new AtaquesController();      
+        initComponents(); // Llamamos a los componentes primero
+        AñadirAtaques();  // Después de inicializar, agregamos los campos
         setLocationRelativeTo(parent);
         setResizable(false);
     }
@@ -86,6 +88,7 @@ public class AñadirAtaque extends javax.swing.JDialog {
 
         pack();
     }
+    
 
     private void guardarAtaque() {
         try {
@@ -96,7 +99,7 @@ public class AñadirAtaque extends javax.swing.JDialog {
                 return;
             }
 
-            // Validar que potencia y PP sean números
+            //Validar que potencia y PP sean números
             int potencia, pp;
             try {
                 potencia = Integer.parseInt(potenciaField.getText());
@@ -109,7 +112,7 @@ public class AñadirAtaque extends javax.swing.JDialog {
                 return;
             }
 
-            // Crear el ataque
+            //Crear el ataque
             nuevoAtaque = new Ataque();
             nuevoAtaque.setNombreAtaque(nombreField.getText());
             nuevoAtaque.setTipo(tipoField.getText());
@@ -118,13 +121,13 @@ public class AñadirAtaque extends javax.swing.JDialog {
             nuevoAtaque.setPotencia(potencia);
             nuevoAtaque.setPp(pp);
 
-            // Verificar si el ataque ya existe antes de guardarlo
+            //Verificar si el ataque ya existe antes de guardarlo
             if (ataquesController.ataqueExiste(nuevoAtaque)) {
                 JOptionPane.showMessageDialog(this, "Este ataque ya existe en la base de datos.", "Aviso", JOptionPane.INFORMATION_MESSAGE);
                 return;
             }
 
-            // Guardar el ataque
+            //Guardar el ataque
             ataquesController.guardarNuevoAtaque(nuevoAtaque);
             confirmado = true;
             JOptionPane.showMessageDialog(this, "Ataque guardado correctamente.", "Éxito", JOptionPane.INFORMATION_MESSAGE);
@@ -133,11 +136,12 @@ public class AñadirAtaque extends javax.swing.JDialog {
             JOptionPane.showMessageDialog(this, "Error al guardar el ataque: " + ex.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
         }
     }
+    
 
     public boolean isConfirmado() {
         return confirmado;
     }
-
+    
     public Ataque getAtaque() {
         return nuevoAtaque;
     }
