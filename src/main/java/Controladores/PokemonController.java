@@ -159,4 +159,29 @@ public class PokemonController {
             em.close();
         }
     }
+    
+    public void actualizarAliasPokemon(Integer idPokemon, String nuevoAlias) {
+    EntityManager em = emf.createEntityManager();
+    try {
+        em.getTransaction().begin();
+        
+        // Buscar el Pokémon en la base de datos
+        Pokemon pokemon = em.find(Pokemon.class, idPokemon);
+        if (pokemon != null) {
+            pokemon.setAlias(nuevoAlias);  // Actualizar alias
+            em.merge(pokemon);  // Guardar cambios
+        } else {
+            System.out.println("No se encontró el Pokémon con ID: " + idPokemon);
+        }
+        
+        em.getTransaction().commit();
+    } catch (Exception e) {
+        if (em.getTransaction().isActive()) {
+            em.getTransaction().rollback();
+        }
+        e.printStackTrace();
+    } finally {
+        em.close();
+    }
+}
 }

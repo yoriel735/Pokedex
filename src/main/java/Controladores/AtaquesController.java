@@ -13,7 +13,6 @@ import javax.persistence.EntityManagerFactory;
 import javax.persistence.Persistence;
 import javax.persistence.Query;
 import javax.swing.JOptionPane;
-import javax.swing.table.DefaultTableModel;
 
 /**
  *
@@ -98,13 +97,13 @@ public class AtaquesController {
     try {
         em.getTransaction().begin();
 
-        // 🔎 Buscar la relación específica entre el Pokémon y el ataque
+        //  Buscar la relación específica entre el Pokémon y el ataque
         Query queryRelacion = em.createQuery("SELECT pa FROM PokemonAtaque pa WHERE pa.pokemon.idPokemon = :idPokemon AND pa.ataque.idAtaque = :idAtaque");
         queryRelacion.setParameter("idPokemon", idPokemon);
         queryRelacion.setParameter("idAtaque", idAtaque);
         List<PokemonAtaque> relaciones = queryRelacion.getResultList();
 
-        // 📌 Si existe la relación, eliminarla
+        //  Si existe la relación, eliminarla
         if (!relaciones.isEmpty()) {
             for (PokemonAtaque pa : relaciones) {
                 em.remove(pa);

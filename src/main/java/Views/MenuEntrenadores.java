@@ -5,7 +5,6 @@
 package Views;
 
 import Controladores.EntrenadorController;
-import Views.AñadirEntrenador;
 import Controladores.JPanelimagen;
 import Entidades.Entrenador;
 import java.awt.Color;
@@ -13,11 +12,8 @@ import java.util.ArrayList;
 import java.util.List;
 import javax.swing.BorderFactory;
 import javax.swing.DefaultListModel;
-import javax.swing.JButton;
-import javax.swing.JDialog;
 import javax.swing.JOptionPane;
-import javax.swing.JTable;
-import javax.swing.JTextField;
+
 
 /**
  *

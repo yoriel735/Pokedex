@@ -15,22 +15,26 @@ import javax.swing.JPanel;
  */
 public class JPanelimagen extends JLabel {
     
-    private int x, y;
-    private final String path;
+   private ImageIcon img;
 
     public JPanelimagen(JPanel panel, String path) {
-        this.path = path;
-        this.x = panel.getWidth();
-        this.y = panel.getHeight();
-        this.setSize(x, y);
+        this.img = null;
+        if (getClass().getResource(path) != null) {
+            this.img = new ImageIcon(getClass().getResource(path));
+        } else {
+            System.out.println("No se encontró la imagen en la ruta: " + path);
+        }
+        this.setSize(panel.getWidth(), panel.getHeight());
     }
 
     @Override
     public void paint(Graphics g) {
-     ImageIcon img = new ImageIcon(getClass().getResource(path));
-     g.drawImage(img.getImage(), 0,0, x, y, null);
+        if (img != null) {
+            g.drawImage(img.getImage(), 0, 0, getWidth(), getHeight(), null);
+        }
+        super.paint(g);
     }
-    
-    
-    
 }
+    
+    
+
