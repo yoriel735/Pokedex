@@ -1,13 +1,16 @@
 package Controladores;
 
 import Entidades.Ataque;
+import Entidades.Habilidad;
 import Entidades.Pokemon;
 import Entidades.PokemonAtaque;
+import Entidades.TiposPokemon;
 import java.util.ArrayList;
 import java.util.Arrays;
 
 import javax.persistence.*;
 import java.util.List;
+import java.util.Random;
 
 public class PokemonController {
 
@@ -174,6 +177,8 @@ public class PokemonController {
             System.out.println("No se encontró el Pokémon con ID: " + idPokemon);
         }
         
+        
+        
         em.getTransaction().commit();
     } catch (Exception e) {
         if (em.getTransaction().isActive()) {
@@ -184,4 +189,73 @@ public class PokemonController {
         em.close();
     }
 }
+    
+   // -------------------------------------------------------------------------------
+    public Pokemon generarPokemonAleatorio() {
+    EntityManager em = emf.createEntityManager();
+
+    try {
+        // 🔹 Obtener nombre aleatorio desde la API
+        String nombrePokemonAleatorio = LectorJSONPokeApi.obtenerPokemonAleatorio();
+
+        // 🔹 Generar nivel aleatorio (1-100)
+        int nivelAleatorio = new Random().nextInt(100) + 1;
+
+        // 🔹 Generar un número de Pokédex aleatorio (pero asegurando que sea único en la BD)
+        Integer numeroPokedex;
+        do {
+            numeroPokedex = new Random().nextInt(10000) + 1; // 🔥 Genera entre 1 y 10000
+        } while (existeNumeroPokedex(numeroPokedex, em)); // ❌ Evitar números repetidos
+
+        // 🔹 Asignar una habilidad aleatoria
+        Query habilidadQuery = em.createQuery("SELECT h FROM Habilidad h ORDER BY FUNCTION('RAND')");
+        habilidadQuery.setMaxResults(1);
+        Habilidad habilidadAleatoria = (Habilidad) habilidadQuery.getSingleResult();
+
+        // 🔹 Asignar tres ataques aleatorios
+        Query ataquesQuery = em.createQuery("SELECT a FROM Ataque a ORDER BY FUNCTION('RAND')");
+        ataquesQuery.setMaxResults(3);
+        List<Ataque> ataquesAleatorios = ataquesQuery.getResultList();
+
+        // 🔹 Generar tipos aleatorios
+        TiposPokemon tipoAleatorio = TiposPokemon.values()[new Random().nextInt(TiposPokemon.values().length)];
+        TiposPokemon segundoTipoAleatorio = TiposPokemon.values()[new Random().nextInt(TiposPokemon.values().length)];
+
+        // 🔹 Crear el objeto `Pokemon`
+        Pokemon pokemonGenerado = new Pokemon();
+        pokemonGenerado.setNombrePokemon(nombrePokemonAleatorio);
+        pokemonGenerado.setNumeroPokedex(numeroPokedex); // ✅ Asignar número único de Pokédex
+        pokemonGenerado.setNivel(nivelAleatorio);
+        pokemonGenerado.setTipoPokemon(tipoAleatorio);
+        pokemonGenerado.setSegundoTipo(segundoTipoAleatorio);
+        pokemonGenerado.setHabilidad(habilidadAleatoria);
+        pokemonGenerado.setAlias("");
+
+        // 🔹 Guardar en la base de datos
+        em.getTransaction().begin();
+        em.persist(pokemonGenerado);
+        em.flush();
+
+        // 🔹 Asignar ataques
+        for (Ataque ataque : ataquesAleatorios) {
+            PokemonAtaque pa = new PokemonAtaque(pokemonGenerado, ataque, "Mov. TM");
+            em.persist(pa);
+        }
+
+        em.getTransaction().commit();
+        em.close();
+
+        return pokemonGenerado; // ✅ Retornar Pokémon aleatorio generado
+
+    } catch (Exception e) {
+        e.printStackTrace();
+        return null;
+    }
+}
+    private boolean existeNumeroPokedex(Integer numeroPokedex, EntityManager em) {
+    Query query = em.createQuery("SELECT COUNT(p) FROM Pokemon p WHERE p.numeroPokedex = :numero");
+    query.setParameter("numero", numeroPokedex);
+    return ((Long) query.getSingleResult()) > 0;
+}
+    
 }

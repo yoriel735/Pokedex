@@ -3,6 +3,7 @@ package Views;
 import Controladores.EntrenadorController;
 import Controladores.JPanelimagen;
 import Controladores.PokemonController;
+import Entidades.Entrenador;
 import Entidades.Habilidad;
 import Entidades.Pokemon;
 import Entidades.PokemonAtaque;
@@ -15,7 +16,6 @@ import java.util.List;
 import javax.swing.BorderFactory;
 import javax.swing.DefaultListModel;
 import javax.swing.ImageIcon;
-import javax.swing.JButton;
 import javax.swing.JOptionPane;
 import javax.swing.JTextField;
 import javax.swing.SwingUtilities;
@@ -30,20 +30,23 @@ public class Pokedex extends javax.swing.JDialog {
     private Integer idEntrenador;
     private Pokemon pokemonSeleccionado;
     private MenuEntrenadores menuEntrenadores;
+    private CapturarPokemon zonaCapturaActual;
+    
 
     /**
      * Creates new form poki
      *
      *
+     * @param menuEntrenadores
      * @param modal
-     * @param entrenador
+     *
      */
     public Pokedex(MenuEntrenadores menuEntrenadores, boolean modal, String entrenador) {
-         super(menuEntrenadores, modal); // Pasamos la ventana de entrenadores como padre
+        super(menuEntrenadores, modal); // Pasamos la ventana de entrenadores como padre
         EntrenadorController ec = new EntrenadorController();
         this.idEntrenador = ec.obtenerIdPorNombre(entrenador);
         this.menuEntrenadores = menuEntrenadores;
-        
+//         this.idEntrenador = entrenador.getIdEntrenador();
         initComponents();              // Inicializa los componentes del diseño
         imagenBasePokedex();           // Añade imagen de fondo
         setTitle("Pokedex de " + entrenador); // Título de la ventana
@@ -58,15 +61,15 @@ public class Pokedex extends javax.swing.JDialog {
         ListaPokemonEntrenador.setBackground(new Color(224, 159, 159, 255)); // fonde del color de la imagen
         ListaPokemonEntrenador.setBorder(BorderFactory.createLineBorder(Color.red));
 
-          // Agregar un WindowListener para volver a mostrar el menú de entrenadores al cerrar la Pokédex
-    this.addWindowListener(new java.awt.event.WindowAdapter() {
-        @Override
-        public void windowClosing(java.awt.event.WindowEvent e) {
-            if (menuEntrenadores != null) {
-                menuEntrenadores.setVisible(true); // Volver a mostrar el menú de entrenadores al cerrar Pokédex
+        // Agregar un WindowListener para volver a mostrar el menú de entrenadores al cerrar la Pokédex
+        this.addWindowListener(new java.awt.event.WindowAdapter() {
+            @Override
+            public void windowClosing(java.awt.event.WindowEvent e) {
+                if (menuEntrenadores != null) {
+                    menuEntrenadores.setVisible(true); // Volver a mostrar el menú de entrenadores al cerrar Pokédex
+                }
             }
-        }
-    });
+        });
 
     }
 
@@ -381,28 +384,41 @@ public class Pokedex extends javax.swing.JDialog {
     }//GEN-LAST:event_BotonEditarAliasActionPerformed
 
     private void ZonaCapturaActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_ZonaCapturaActionPerformed
+ System.out.println("🔥 Evento ZonaCapturaActionPerformed ejecutado.");
 
-        // Ocultar la Pokédex
-        this.setVisible(false);
+    // 🔥 Si hay una instancia previa de `CapturarPokemon`, cerrarla antes de crear una nueva
+    if (zonaCapturaActual != null) {
+        System.out.println("⚠️ Cerrando instancia anterior de CapturarPokemon...");
+        zonaCapturaActual.dispose(); // ✅ Asegurar que la anterior se elimine
+        zonaCapturaActual = null;
+    }
 
-        if (menuEntrenadores != null) {
-             menuEntrenadores.dispose();
-        }
-        CapturarPokemon zona = new CapturarPokemon();
-        zona.setLocationRelativeTo(this);
-        
-        // Esperar a que el usuario cierre manualmente `CapturarPokemon` antes de mostrar la Pokédex
-    zona.addWindowListener(new java.awt.event.WindowAdapter() {
+    // Ocultar la Pokédex
+    this.setVisible(false);
+    
+    if (menuEntrenadores != null) {
+        menuEntrenadores.dispose();
+    }
+
+    // 🔥 Obtener el nombre del entrenador actual antes de abrir la zona de captura
+    String nombreEntrenador = MostrarNombreEntrenador.getText().replace("Pokedex de: ", "").trim();
+
+    // 🔥 Crear nueva instancia y guardarla en la variable para futuras referencias
+    zonaCapturaActual = new CapturarPokemon(menuEntrenadores, nombreEntrenador);
+    zonaCapturaActual.setLocationRelativeTo(this);
+
+    // 🔥 Esperar a que el usuario cierre `CapturarPokemon` antes de volver a la Pokédex
+    zonaCapturaActual.addWindowListener(new java.awt.event.WindowAdapter() {
         @Override
         public void windowClosed(java.awt.event.WindowEvent e) {
+            System.out.println("🔥 CapturarPokemon cerrado, volviendo a la Pokédex...");
             Pokedex.this.setVisible(true);
+            zonaCapturaActual = null; // 🔥 Limpiar la referencia cuando se cierre
         }
     });
 
-    zona.setVisible(true);
+    zonaCapturaActual.setVisible(true);
 
-
-        
 
 
     }//GEN-LAST:event_ZonaCapturaActionPerformed
@@ -501,14 +517,25 @@ public class Pokedex extends javax.swing.JDialog {
         }
     }
 
+//    public void actualizarListaPokemon() {
+//    EntrenadorController entrenadorCtrl = new EntrenadorController();
+//    List<Pokemon> listaCapturados = entrenadorCtrl.obtenerPokemonPorEntrenadorId(entrenadorActual.getIdEntrenador());
+//
+//    DefaultListModel<String> modeloLista = new DefaultListModel<>();
+//    for (Pokemon p : listaCapturados) {
+//        modeloLista.addElement(p.getNombrePokemon() + " - Nivel " + p.getNivel());
+//    }
+//
+//    jListPokemonCapturados.setModel(modeloLista);
+//}
     /**
      * @param args the command line arguments
      */
     public static void main(String[] args) {
         // Aseguramos que todo se ejecute en el hilo de eventos de Swing
         SwingUtilities.invokeLater(() -> {
-              MenuEntrenadores menuEntrenadores = new MenuEntrenadores();
-        menuEntrenadores.setVisible(true);
+            MenuEntrenadores menuEntrenadores = new MenuEntrenadores();
+            menuEntrenadores.setVisible(true);
 
             Pokedex dialog = new Pokedex(menuEntrenadores, true, "Ash Ketchum");
             dialog.setVisible(true);

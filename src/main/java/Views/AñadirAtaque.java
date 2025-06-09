@@ -6,14 +6,10 @@ package Views;
 
 import Controladores.AtaquesController;
 import Entidades.Ataque;
-import Entidades.Pokemon;
 import java.awt.BorderLayout;
 import java.awt.FlowLayout;
 import java.awt.Frame;
 import java.awt.GridLayout;
-import javax.persistence.EntityManager;
-import javax.persistence.EntityManagerFactory;
-import javax.persistence.Persistence;
 import javax.swing.JButton;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;

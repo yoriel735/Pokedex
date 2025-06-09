@@ -7,6 +7,7 @@ import javax.persistence.EntityManager;
 import javax.persistence.EntityManagerFactory;
 import javax.persistence.Persistence;
 import java.util.List;
+import javax.persistence.Query;
 import javax.persistence.TypedQuery;
 
 public class EntrenadorController {
@@ -109,13 +110,56 @@ public class EntrenadorController {
         }
     }
 
+    // ----------------------------------------------------------------------------
+    /*
+    Busca al entrenador en la base de datos por su ID. 🔥
+    Asigna el Pokémon capturado al entrenador y lo guarda en la base de datos. 
+     Añade el Pokémon a la colección del entrenador para que se refleje en la Pokédex. 
+    🔥 Confirma la transacción para que los cambios se guarden correctamente.
+     */
+    public void agregarPokemonACaptura(Integer idEntrenador, Pokemon pokemonCapturado) {
+    EntityManager em = emf.createEntityManager();
+
+    try {
+        em.getTransaction().begin();
+
+        // 🔥 Buscar al entrenador en la base de datos
+        Entrenador entrenador = em.find(Entrenador.class, idEntrenador);
+        if (entrenador == null) {
+            System.out.println("❌ Entrenador no encontrado en la BD.");
+            em.getTransaction().rollback();
+            return;
+        }
+
+        System.out.println("✅ ID del entrenador encontrado: " + entrenador.getIdEntrenador());
+
+        // 🔥 Asignar el Pokémon al entrenador antes de persistirlo
+        pokemonCapturado.setEntrenador(entrenador);
+
+        System.out.println("✅ Entrenador asignado al Pokémon: " + pokemonCapturado.getEntrenador().getIdEntrenador());
+
+        // 🔥 Persistir el Pokémon en la BD
+        em.persist(pokemonCapturado);
+        em.flush(); // ✅ Forzar la sincronización con la BD
+
+        System.out.println("🔥 Pokémon guardado en la BD con entrenador: " + pokemonCapturado.getEntrenador().getIdEntrenador());
+
+        em.getTransaction().commit();
+
+        System.out.println("✅ Pokémon " + pokemonCapturado.getNombrePokemon() + " asignado correctamente.");
+
+    } catch (Exception e) {
+        if (em.getTransaction().isActive()) {
+            em.getTransaction().rollback();
+        }
+        e.printStackTrace();
+    } finally {
+        em.close();
+    }
+}
     public void cerrar() {
         if (em.isOpen()) {
             em.close();
         }
-        if (emf.isOpen()) {
-            emf.close();
-        }
     }
-
 }
