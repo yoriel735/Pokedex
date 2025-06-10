@@ -257,5 +257,20 @@ public class PokemonController {
     query.setParameter("numero", numeroPokedex);
     return ((Long) query.getSingleResult()) > 0;
 }
+    public Integer generarNumeroPokedexUnico() {
+    EntityManager em = emf.createEntityManager();
+    Integer numeroPokedex;
+
+    try {
+        do {
+            numeroPokedex = new Random().nextInt(10000) + 1; // 🔥 Generamos un número aleatorio
+        } while (existeNumeroPokedex(numeroPokedex, em)); // ✅ Verificamos que no exista
+
+    } finally {
+        em.close();
+    }
+
+    return numeroPokedex;
     
+}
 }

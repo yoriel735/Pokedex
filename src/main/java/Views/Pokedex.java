@@ -203,16 +203,17 @@ public class Pokedex extends javax.swing.JDialog {
                             .addGap(111, 111, 111)))
                     .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, InterfazPokedexLayout.createSequentialGroup()
                         .addGroup(InterfazPokedexLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
-                            .addComponent(ZonaCaptura)
                             .addGroup(InterfazPokedexLayout.createSequentialGroup()
-                                .addGroup(InterfazPokedexLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
-                                    .addGroup(InterfazPokedexLayout.createSequentialGroup()
-                                        .addComponent(AliasPokemon)
-                                        .addGap(94, 94, 94))
-                                    .addComponent(NivelPokemon, javax.swing.GroupLayout.PREFERRED_SIZE, 165, javax.swing.GroupLayout.PREFERRED_SIZE))
-                                .addGap(2, 2, 2)
-                                .addComponent(BotonEditarAlias, javax.swing.GroupLayout.PREFERRED_SIZE, 37, javax.swing.GroupLayout.PREFERRED_SIZE)))
-                        .addGap(32, 32, 32))))
+                                .addComponent(NivelPokemon, javax.swing.GroupLayout.PREFERRED_SIZE, 165, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addGap(2, 2, 2))
+                            .addGroup(InterfazPokedexLayout.createSequentialGroup()
+                                .addComponent(AliasPokemon)
+                                .addGap(92, 92, 92)))
+                        .addComponent(BotonEditarAlias, javax.swing.GroupLayout.PREFERRED_SIZE, 37, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addGap(32, 32, 32))
+                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, InterfazPokedexLayout.createSequentialGroup()
+                        .addComponent(ZonaCaptura)
+                        .addGap(40, 40, 40))))
             .addGroup(InterfazPokedexLayout.createSequentialGroup()
                 .addGroup(InterfazPokedexLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(InterfazPokedexLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
@@ -257,7 +258,7 @@ public class Pokedex extends javax.swing.JDialog {
                 .addComponent(PokemonShiny, javax.swing.GroupLayout.PREFERRED_SIZE, 83, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                 .addComponent(AliasPokemon)
-                .addGap(30, 30, 30)
+                .addGap(18, 18, 18)
                 .addComponent(NivelPokemon)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(Tipo1Pokemon)
@@ -386,39 +387,40 @@ public class Pokedex extends javax.swing.JDialog {
     private void ZonaCapturaActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_ZonaCapturaActionPerformed
  System.out.println("🔥 Evento ZonaCapturaActionPerformed ejecutado.");
 
-    // 🔥 Si hay una instancia previa de `CapturarPokemon`, cerrarla antes de crear una nueva
+    // Si hay una instancia previa de CapturarPokemon, se cierra.
     if (zonaCapturaActual != null) {
         System.out.println("⚠️ Cerrando instancia anterior de CapturarPokemon...");
-        zonaCapturaActual.dispose(); // ✅ Asegurar que la anterior se elimine
+        zonaCapturaActual.dispose();
         zonaCapturaActual = null;
     }
 
-    // Ocultar la Pokédex
+    // Se oculta la Pokédex.
     this.setVisible(false);
     
     if (menuEntrenadores != null) {
         menuEntrenadores.dispose();
     }
 
-    // 🔥 Obtener el nombre del entrenador actual antes de abrir la zona de captura
+    // Obtener el nombre del entrenador actual.
     String nombreEntrenador = MostrarNombreEntrenador.getText().replace("Pokedex de: ", "").trim();
 
-    // 🔥 Crear nueva instancia y guardarla en la variable para futuras referencias
+    // Crear y mostrar la instancia de CapturarPokemon.
     zonaCapturaActual = new CapturarPokemon(menuEntrenadores, nombreEntrenador);
     zonaCapturaActual.setLocationRelativeTo(this);
 
-    // 🔥 Esperar a que el usuario cierre `CapturarPokemon` antes de volver a la Pokédex
+    // Registrar un listener para que cuando se cierre CapturarPokemon se actualice y se vuelva a mostrar la misma Pokédex.
     zonaCapturaActual.addWindowListener(new java.awt.event.WindowAdapter() {
         @Override
         public void windowClosed(java.awt.event.WindowEvent e) {
             System.out.println("🔥 CapturarPokemon cerrado, volviendo a la Pokédex...");
+            // Actualizamos la lista de Pokémon de la instancia original.
+            Pokedex.this.cargarListaPokemon(new EntrenadorController().obtenerIdPorNombre(nombreEntrenador));
             Pokedex.this.setVisible(true);
-            zonaCapturaActual = null; // 🔥 Limpiar la referencia cuando se cierre
+            zonaCapturaActual = null;
         }
     });
 
     zonaCapturaActual.setVisible(true);
-
 
 
     }//GEN-LAST:event_ZonaCapturaActionPerformed
@@ -437,7 +439,7 @@ public class Pokedex extends javax.swing.JDialog {
         }
     }
 
-    private void cargarListaPokemon(Integer idEntrenador) {
+    public void cargarListaPokemon(Integer idEntrenador) {
         PokemonController pc = new PokemonController();
         List<Pokemon> pokemons = pc.obtenerPokemonPorEntrenadorId(idEntrenador);
 

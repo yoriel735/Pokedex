@@ -177,7 +177,7 @@ private List<PokemonAtaque> pokemonAtaques = new ArrayList<>();
         this.entrenador = entrenador; // ✅ Asignamos el entrenador al Pokémon
         entrenador.getListaPokemons().add(this); // ✅ Añadimos el Pokémon a la colección del entrenador
     } else {
-        System.out.println("❌ Error: Intentando asignar un Pokémon a un entrenador nulo.");
+        System.out.println(" Error: Intentando asignar un Pokémon a un entrenador nulo.");
     }
 }
     // hashCode, equals y toString

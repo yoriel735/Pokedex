@@ -36,6 +36,7 @@ import javax.swing.JLayeredPane;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.SwingConstants;
+import javax.swing.SwingUtilities;
 import javax.swing.TransferHandler;
 
 /**
@@ -48,7 +49,8 @@ public class CapturarPokemon extends javax.swing.JFrame {
     private PokemonController pokemonController;
     private MenuEntrenadores menuEntrenadores;
     private String nombreEntrenador;
-
+    private Pokedex pokedexActiva; // 🔥 Variable para rastrear la Pokédex abierta
+private static CapturarPokemon zonaCapturaActual;
     /**
      * Creates new form CapturarPokemon
      */
@@ -220,65 +222,67 @@ public class CapturarPokemon extends javax.swing.JFrame {
         });
     }
 
-    private void iniciarCapturaVisual() {
-        new CapturarAnimada(this, "/Fotos/lanzarPokeball.gif", 1500, () -> {
-            new CapturarAnimada(this, "/Fotos/PokemonCapturado.gif", 10000, () -> {
-                int opcion = JOptionPane.showConfirmDialog(this, "¡Pokémon capturado! ¿Quieres asignarle un alias?", "Asignar alias", JOptionPane.YES_NO_OPTION);
+  private void iniciarCapturaVisual() {
+    System.out.println("🔥 Iniciando captura visual...");
 
-                if (opcion == JOptionPane.YES_OPTION) {
-                    pedirAliasPokemon(); // 🔥 Si elige "Sí", pedimos el alias
-                } else {
-                    abrirPokedex(""); // ✅ Si elige "No", va directo a la Pokédex sin alias
+    new CapturarAnimada(this, "/Fotos/lanzarPokeball.gif", 1500, () -> {
+        new CapturarAnimada(this, "/Fotos/PokemonCapturado.gif", 10000, () -> {
+            
+            // Mostrar el diálogo de confirmación con CapturarPokemon.this como padre.
+            int opcion = JOptionPane.showConfirmDialog(
+                    CapturarPokemon.this, 
+                    "¡Pokémon capturado! ¿Quieres asignarle un alias?", 
+                    "Asignar alias", 
+                    JOptionPane.YES_NO_OPTION);
+            System.out.println("🔥 El usuario eligió: " + (opcion == JOptionPane.YES_OPTION ? "Sí" : "No"));
+            
+            String alias;
+            if (opcion == JOptionPane.YES_OPTION) {
+                // Se usa CapturarPokemon.this como parent para que el diálogo quede en primer plano.
+                alias = JOptionPane.showInputDialog(
+                        CapturarPokemon.this,
+                        "Introduce el alias para tu Pokémon:",
+                        "Asignar alias",
+                        JOptionPane.QUESTION_MESSAGE);
+                if (alias == null || alias.trim().isEmpty()) {
+                    alias = "Sin alias";
                 }
+            } else {
+                alias = "Sin alias";
+            }
+            
+            // Asignar alias y guardar el Pokémon.
+            pokemonActual.setAlias(alias);
+            System.out.println("✅ Alias asignado: " + alias);
+            guardarPokemonEnEntrenador();
 
-                dispose(); // 🔥 Cerramos `CapturarPokemon`
-            });
+            // Una vez se tiene el alias y se guarda, cerramos la ventana de captura y abrimos la Pokédex.
+            dispose();
+        
         });
-    }
-
-  private void abrirPokedex(String aliasPokemon) {
-    System.out.println("🔥 Método abrirPokedex() ejecutado con alias: " + aliasPokemon);
-
-    Pokedex pokedexFrame = new Pokedex(menuEntrenadores, true, nombreEntrenador);
-    pokedexFrame.setVisible(true);
+    });
 }
 
-  private void pedirAliasPokemon() {
-    System.out.println("🔥 Método pedirAliasPokemon() ejecutado.");
 
-    String alias = JOptionPane.showInputDialog(this, "¡Pokémon capturado! ¿Quieres asignarle un alias?", "Asignar alias", JOptionPane.QUESTION_MESSAGE);
 
-    if (alias != null && !alias.trim().isEmpty()) {
-        pokemonActual.setAlias(alias);
-        System.out.println("✅ Alias asignado: " + alias);
-    } else {
-        System.out.println("⚠️ Alias no asignado.");
+    private void guardarPokemonEnEntrenador() {
+        System.out.println("🔥 Método guardarPokemonEnEntrenador() ejecutado.");
+
+        EntrenadorController ec = new EntrenadorController();
+        Integer idEntrenador = ec.obtenerIdPorNombre(nombreEntrenador); // ✅ Obtener ID del entrenador
+
+        if (idEntrenador == null) {
+            System.out.println("❌ Error: El ID del entrenador es NULL.");
+            return;
+        }
+
+        System.out.println("✅ ID del entrenador: " + idEntrenador);
+        System.out.println("✅ Pokémon a guardar: " + pokemonActual.getNombrePokemon());
+
+        ec.agregarPokemonACaptura(idEntrenador, pokemonActual); // ✅ Guardar el Pokémon con el entrenador
     }
 
-    System.out.println("🔥 Cerrando CapturarPokemon antes de guardar.");
-    dispose(); // ✅ Cerrar antes de llamar a guardarPokemonEnEntrenador()
-
-    guardarPokemonEnEntrenador(); // ✅ Guardar el Pokémon con el entrenador después del cierre
-    abrirPokedex(alias); // ✅ Luego abrir la Pokédex del entrenador
-}
-
-   private void guardarPokemonEnEntrenador() {
-    System.out.println("🔥 Método guardarPokemonEnEntrenador() ejecutado.");
-
-    EntrenadorController ec = new EntrenadorController();
-    Integer idEntrenador = ec.obtenerIdPorNombre(nombreEntrenador); // ✅ Obtener ID del entrenador
-
-    if (idEntrenador == null) {
-        System.out.println("❌ Error: El ID del entrenador es NULL.");
-        return;
-    }
-
-    System.out.println("✅ ID del entrenador: " + idEntrenador);
-    System.out.println("✅ Pokémon a guardar: " + pokemonActual.getNombrePokemon());
-
-    ec.agregarPokemonACaptura(idEntrenador, pokemonActual); // ✅ Guardar el Pokémon con el entrenador
-}
-
+    
     private void mostrarCapturaFallida() {
         JOptionPane.showMessageDialog(this, "¡La captura falló! Intenta de nuevo.", "Captura fallida", JOptionPane.ERROR_MESSAGE);
     }

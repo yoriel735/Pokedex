@@ -123,6 +123,16 @@ public class EntrenadorController {
     try {
         em.getTransaction().begin();
 
+        // 🔥 Verificar si ya existe un Pokémon con el mismo número de Pokédex
+        Query query = em.createQuery("SELECT COUNT(p) FROM Pokemon p WHERE p.numeroPokedex = :numero");
+        query.setParameter("numero", pokemonCapturado.getNumeroPokedex());
+        Long count = (Long) query.getSingleResult();
+
+        if (count > 0) {
+            System.out.println("⚠️ Número de Pokédex duplicado, generando uno nuevo...");
+            pokemonCapturado.setNumeroPokedex(new PokemonController().generarNumeroPokedexUnico()); // ✅ Generar uno nuevo
+        }
+
         // 🔥 Buscar al entrenador en la base de datos
         Entrenador entrenador = em.find(Entrenador.class, idEntrenador);
         if (entrenador == null) {
@@ -131,18 +141,10 @@ public class EntrenadorController {
             return;
         }
 
-        System.out.println("✅ ID del entrenador encontrado: " + entrenador.getIdEntrenador());
-
         // 🔥 Asignar el Pokémon al entrenador antes de persistirlo
         pokemonCapturado.setEntrenador(entrenador);
-
-        System.out.println("✅ Entrenador asignado al Pokémon: " + pokemonCapturado.getEntrenador().getIdEntrenador());
-
-        // 🔥 Persistir el Pokémon en la BD
         em.persist(pokemonCapturado);
-        em.flush(); // ✅ Forzar la sincronización con la BD
-
-        System.out.println("🔥 Pokémon guardado en la BD con entrenador: " + pokemonCapturado.getEntrenador().getIdEntrenador());
+        em.merge(entrenador);
 
         em.getTransaction().commit();
 
