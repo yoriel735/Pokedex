@@ -62,6 +62,8 @@
                       <Component id="AñadirEntrenador" min="-2" max="-2" attributes="0"/>
                       <Component id="BotonELiminar" alignment="0" min="-2" max="-2" attributes="0"/>
                       <Component id="AccederPokedex" alignment="0" min="-2" max="-2" attributes="0"/>
+                      <Component id="GuardarEntrenador" min="-2" max="-2" attributes="0"/>
+                      <Component id="CargarEntrenador" min="-2" max="-2" attributes="0"/>
                   </Group>
                   <EmptySpace min="-2" pref="56" max="-2" attributes="0"/>
               </Group>
@@ -76,9 +78,13 @@
                   <Component id="BotonEditar" min="-2" max="-2" attributes="0"/>
                   <EmptySpace type="unrelated" max="-2" attributes="0"/>
                   <Component id="BotonELiminar" min="-2" max="-2" attributes="0"/>
-                  <EmptySpace min="-2" pref="178" max="-2" attributes="0"/>
+                  <EmptySpace min="-2" pref="39" max="-2" attributes="0"/>
+                  <Component id="GuardarEntrenador" min="-2" max="-2" attributes="0"/>
+                  <EmptySpace min="-2" pref="116" max="-2" attributes="0"/>
                   <Component id="AccederPokedex" min="-2" max="-2" attributes="0"/>
-                  <EmptySpace pref="134" max="32767" attributes="0"/>
+                  <EmptySpace min="-2" pref="35" max="-2" attributes="0"/>
+                  <Component id="CargarEntrenador" min="-2" max="-2" attributes="0"/>
+                  <EmptySpace pref="76" max="32767" attributes="0"/>
               </Group>
               <Group type="102" alignment="1" attributes="0">
                   <EmptySpace max="32767" attributes="0"/>
@@ -147,6 +153,22 @@
             </Component>
           </SubComponents>
         </Container>
+        <Component class="javax.swing.JButton" name="GuardarEntrenador">
+          <Properties>
+            <Property name="text" type="java.lang.String" value="Guardar Entrenador"/>
+          </Properties>
+          <Events>
+            <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="GuardarEntrenadorActionPerformed"/>
+          </Events>
+        </Component>
+        <Component class="javax.swing.JButton" name="CargarEntrenador">
+          <Properties>
+            <Property name="text" type="java.lang.String" value="Cargar Entrenador"/>
+          </Properties>
+          <Events>
+            <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="CargarEntrenadorActionPerformed"/>
+          </Events>
+        </Component>
       </SubComponents>
     </Container>
   </SubComponents>

@@ -7,7 +7,15 @@ package Views;
 import Controladores.EntrenadorController;
 import Controladores.JPanelimagen;
 import Entidades.Entrenador;
+import Entidades.Pokemon;
+import Entidades.TiposPokemon;
 import java.awt.Color;
+import java.io.BufferedReader;
+import java.io.BufferedWriter;
+import java.io.File;
+import java.io.FileReader;
+import java.io.FileWriter;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import javax.swing.BorderFactory;
@@ -26,11 +34,20 @@ public class MenuEntrenadores extends javax.swing.JFrame {
     DefaultListModel<Entrenador> modeloEntrenadores = new DefaultListModel<>();
     private EntrenadorController entrenadorController = new EntrenadorController();
     private List<Entrenador> listaEntrenadores = new ArrayList<>();
+    private Entrenador entrenadorActual;
 
     public MenuEntrenadores() {
         initComponents();
         setTitle("Selector de Entrenadores");
         ListaEntrenadores.setModel(modeloEntrenadores);
+        ListaEntrenadores.addListSelectionListener(e -> {
+    if (!e.getValueIsAdjusting()) {  // 🔥 Evita múltiples eventos en un solo clic
+        int indiceSeleccionado = ListaEntrenadores.getSelectedIndex();
+        if (indiceSeleccionado >= 0) {
+            entrenadorActual = modeloEntrenadores.getElementAt(indiceSeleccionado);  // 🔥 Guardamos el entrenador activo
+        }
+    }
+});
 
         imagenFondoEntrenador();
         setLocationRelativeTo(null);
@@ -61,6 +78,8 @@ public class MenuEntrenadores extends javax.swing.JFrame {
         BotonEditar = new javax.swing.JButton();
         jScrollPane1 = new javax.swing.JScrollPane();
         ListaEntrenadores = new javax.swing.JList();
+        GuardarEntrenador = new javax.swing.JButton();
+        CargarEntrenador = new javax.swing.JButton();
 
         jLabel1.setText("jLabel1");
 
@@ -102,6 +121,20 @@ public class MenuEntrenadores extends javax.swing.JFrame {
         ListaEntrenadores.setToolTipText("");
         jScrollPane1.setViewportView(ListaEntrenadores);
 
+        GuardarEntrenador.setText("Guardar Entrenador");
+        GuardarEntrenador.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                GuardarEntrenadorActionPerformed(evt);
+            }
+        });
+
+        CargarEntrenador.setText("Cargar Entrenador");
+        CargarEntrenador.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                CargarEntrenadorActionPerformed(evt);
+            }
+        });
+
         javax.swing.GroupLayout MenuEntreLayout = new javax.swing.GroupLayout(MenuEntre);
         MenuEntre.setLayout(MenuEntreLayout);
         MenuEntreLayout.setHorizontalGroup(
@@ -114,7 +147,9 @@ public class MenuEntrenadores extends javax.swing.JFrame {
                     .addComponent(BotonEditar)
                     .addComponent(AñadirEntrenador)
                     .addComponent(BotonELiminar)
-                    .addComponent(AccederPokedex))
+                    .addComponent(AccederPokedex)
+                    .addComponent(GuardarEntrenador)
+                    .addComponent(CargarEntrenador))
                 .addGap(56, 56, 56))
         );
         MenuEntreLayout.setVerticalGroup(
@@ -126,9 +161,13 @@ public class MenuEntrenadores extends javax.swing.JFrame {
                 .addComponent(BotonEditar)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addComponent(BotonELiminar)
-                .addGap(178, 178, 178)
+                .addGap(39, 39, 39)
+                .addComponent(GuardarEntrenador)
+                .addGap(116, 116, 116)
                 .addComponent(AccederPokedex)
-                .addContainerGap(134, Short.MAX_VALUE))
+                .addGap(35, 35, 35)
+                .addComponent(CargarEntrenador)
+                .addContainerGap(76, Short.MAX_VALUE))
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, MenuEntreLayout.createSequentialGroup()
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                 .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 425, javax.swing.GroupLayout.PREFERRED_SIZE)
@@ -237,8 +276,18 @@ public class MenuEntrenadores extends javax.swing.JFrame {
         ventanaPokedex.setLocationRelativeTo(this);
         ventanaPokedex.setVisible(true);
 
-      
+
     }//GEN-LAST:event_AccederPokedexActionPerformed
+
+    private void GuardarEntrenadorActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_GuardarEntrenadorActionPerformed
+      
+
+    }//GEN-LAST:event_GuardarEntrenadorActionPerformed
+
+    private void CargarEntrenadorActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_CargarEntrenadorActionPerformed
+   
+
+    }//GEN-LAST:event_CargarEntrenadorActionPerformed
 
     private void imagenFondoEntrenador() {
         JPanelimagen imagenFondo = new JPanelimagen(MenuEntre, "/Fotos/InterfazEntrenadores.png");
@@ -300,9 +349,9 @@ public class MenuEntrenadores extends javax.swing.JFrame {
         /* Create and display the form */
         java.awt.EventQueue.invokeLater(new Runnable() {
             public void run() {
-              MenuEntrenadores menuEntre = new MenuEntrenadores(); // se transformaen una variable
-              //para poder ocultarlo desde otras clases
-            menuEntre.setVisible(true);
+                MenuEntrenadores menuEntre = new MenuEntrenadores(); // se transformaen una variable
+                //para poder ocultarlo desde otras clases
+                menuEntre.setVisible(true);
             }
         });
     }
@@ -313,6 +362,8 @@ public class MenuEntrenadores extends javax.swing.JFrame {
     private javax.swing.JButton AñadirEntrenador;
     private javax.swing.JButton BotonELiminar;
     private javax.swing.JButton BotonEditar;
+    private javax.swing.JButton CargarEntrenador;
+    private javax.swing.JButton GuardarEntrenador;
     private javax.swing.JList ListaEntrenadores;
     private javax.swing.JPanel MenuEntre;
     private javax.swing.JLabel jLabel1;

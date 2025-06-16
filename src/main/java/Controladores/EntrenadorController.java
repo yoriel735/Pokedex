@@ -48,15 +48,38 @@ public class EntrenadorController {
     }
 
     public void eliminarEntrenador(Integer id) {
-        EntityManager em = emf.createEntityManager();
+     EntityManager em = emf.createEntityManager();
+    try {
         em.getTransaction().begin();
-        Entrenador entrenador = em.find(Entrenador.class, id);
-        if (entrenador != null) {
-            em.remove(entrenador);
-        }
+
+        // 🔥 Primero eliminar los ataques asociados a los Pokémon de este entrenador
+        em.createNativeQuery("DELETE FROM pokemon_ataque WHERE id_pokemon IN (SELECT idPokemon FROM pokemon WHERE idEntrenador = ?)")
+            .setParameter(1, id)
+            .executeUpdate();
+        System.out.println("✅ Ataques eliminados para los Pokémon del entrenador ID: " + id);
+
+        // 🔥 Luego eliminamos los Pokémon del entrenador
+        em.createNativeQuery("DELETE FROM pokemon WHERE idEntrenador = ?")
+            .setParameter(1, id)
+            .executeUpdate();
+        System.out.println("✅ Pokémon eliminados para el entrenador ID: " + id);
+
+        // 🔥 Finalmente eliminamos al entrenador
+        em.createNativeQuery("DELETE FROM entrenador WHERE idEntrenador = ?")
+            .setParameter(1, id)
+            .executeUpdate();
+        System.out.println("✅ Entrenador eliminado de la BD.");
+
         em.getTransaction().commit();
+    } catch (Exception e) {
+        if (em.getTransaction().isActive()) {
+            em.getTransaction().rollback();
+        }
+        e.printStackTrace();
+    } finally {
         em.close();
     }
+}
 
     public Entrenador buscarEntrenadorPorId(Integer id) {
         EntityManager em = emf.createEntityManager();

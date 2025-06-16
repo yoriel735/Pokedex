@@ -13,6 +13,16 @@
             <property name="javax.persistence.jdbc.user" value="root"/>
             <property name="javax.persistence.jdbc.driver" value="com.mysql.cj.jdbc.Driver"/>
             <property name="javax.persistence.jdbc.password" value="Tombol@7"/>
+            
+    <property name="eclipselink.default-primary-key-aliasing" value="false"/>
+<property name="eclipselink.jpa.uppercase-column-names" value="false"/>
+<property name="eclipselink.jpa.naming-policy" value="none"/>
+
+
+
+<property name="javax.persistence.schema-generation.scripts.action" value="create"/>
+<property name="javax.persistence.schema-generation.scripts.create-target" value="ddl.sql"/>
+
         </properties>
     </persistence-unit>
 </persistence>

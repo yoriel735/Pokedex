@@ -3,7 +3,9 @@ package Entidades;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 import javax.persistence.*;
 
 @Entity
@@ -54,9 +56,11 @@ public class Pokemon implements Serializable {
     @OneToOne
     @JoinColumn(name = "idHabilidad") // columna en la tabla pokemon que referencia a habilidad
     private Habilidad habilidad;
-
-    @OneToMany(mappedBy = "pokemon", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    
+@OneToMany(mappedBy = "pokemon", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+@JoinTable(name = "pokemon_ataque") // 🔥 Asegura que use el nombre correcto
 private List<PokemonAtaque> pokemonAtaques = new ArrayList<>();
+
 
     public List<PokemonAtaque> getPokemonAtaques() {
         return pokemonAtaques;
@@ -65,7 +69,7 @@ private List<PokemonAtaque> pokemonAtaques = new ArrayList<>();
     public void setPokemonAtaques(List<PokemonAtaque> pokemonAtaques) {
         this.pokemonAtaques = pokemonAtaques;
     }
-    
+
     private Collection<Ataque> listaAtaques = new ArrayList<>();
 
     // Constructores
@@ -173,13 +177,14 @@ private List<PokemonAtaque> pokemonAtaques = new ArrayList<>();
     }
 
     public void asignarAEntrenador(Entrenador entrenador) {
-    if (entrenador != null) {
-        this.entrenador = entrenador; // ✅ Asignamos el entrenador al Pokémon
-        entrenador.getListaPokemons().add(this); // ✅ Añadimos el Pokémon a la colección del entrenador
-    } else {
-        System.out.println(" Error: Intentando asignar un Pokémon a un entrenador nulo.");
+        if (entrenador != null) {
+            this.entrenador = entrenador; // ✅ Asignamos el entrenador al Pokémon
+            entrenador.getListaPokemons().add(this); // ✅ Añadimos el Pokémon a la colección del entrenador
+        } else {
+            System.out.println(" Error: Intentando asignar un Pokémon a un entrenador nulo.");
+        }
     }
-}
+
     // hashCode, equals y toString
     @Override
     public int hashCode() {
@@ -197,5 +202,4 @@ private List<PokemonAtaque> pokemonAtaques = new ArrayList<>();
         return (this.idPokemon != null || other.idPokemon == null) && (this.idPokemon == null || this.idPokemon.equals(other.idPokemon));
     }
 
-  
 }

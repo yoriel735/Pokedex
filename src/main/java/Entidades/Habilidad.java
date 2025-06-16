@@ -82,9 +82,7 @@ public class Habilidad implements Serializable {
 
     @Override
     public String toString() {
-        return "Habilidad{" +
-                "idHabilidad=" + idHabilidad +
-                ", nombreHabilidad='" + nombreHabilidad + '\'' +
+        return "Habilidad:" + nombreHabilidad +  
                 ", descripcionHabilidad='" + descripcionHabilidad + '\'' +
                 '}';
     }

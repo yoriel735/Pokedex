@@ -76,7 +76,7 @@ public class Entrenador implements Serializable {
         return listaPokemons;
     }
 
-    public void setListaPokemons(Collection<Pokemon> listaPokemons) {
+    public void setListaPokemon(Collection<Pokemon> listaPokemons) {
         this.listaPokemons = listaPokemons;
         for (Pokemon p : listaPokemons) {
             p.setEntrenador(this);

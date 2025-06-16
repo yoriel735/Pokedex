@@ -8,12 +8,12 @@ import java.util.Objects;
 @Embeddable
 public class PokemonAtaqueId implements Serializable {
 
-    @Column(name = "id_pokemon")
+    @Column(name = "id_pokemon", nullable = false) // 🔥 Asegura que EclipseLink no haga conversiones
     private Integer idPokemon;
 
-    @Column(name = "id_ataque")
+  @Column(name = "id_ataque", nullable = false) // 🔥 Asegura que EclipseLink no haga conversiones
     private Integer idAtaque;
-
+  
     public PokemonAtaqueId() {}
 
     public PokemonAtaqueId(Integer idPokemon, Integer idAtaque) {

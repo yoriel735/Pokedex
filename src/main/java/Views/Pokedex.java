@@ -12,6 +12,7 @@ import java.awt.Color;
 import java.awt.Cursor;
 import java.awt.Image;
 import java.net.URL;
+import java.util.ArrayList;
 import java.util.List;
 import javax.swing.BorderFactory;
 import javax.swing.DefaultListModel;
@@ -31,7 +32,8 @@ public class Pokedex extends javax.swing.JDialog {
     private Pokemon pokemonSeleccionado;
     private MenuEntrenadores menuEntrenadores;
     private CapturarPokemon zonaCapturaActual;
-    
+    private List<Pokemon> listaPokemon = new ArrayList<>();
+    private Entrenador entrenadorActual;
 
     /**
      * Creates new form poki
@@ -52,7 +54,10 @@ public class Pokedex extends javax.swing.JDialog {
         setTitle("Pokedex de " + entrenador); // Título de la ventana
         setLocationRelativeTo(null);
         this.setResizable(false);
-        cargarListaPokemon(idEntrenador);
+
+        // Llamamos a ActualizarListaPokemon para cargar la lista desde la BD
+        ActualizarListaPokemon(idEntrenador);
+
         MostrarNombreEntrenador.setText("Pokedex de: " + entrenador);
         MostrarIdEntrenador.setText("ID : " + idEntrenador);
         configurarIconoBotonEditar();
@@ -93,6 +98,7 @@ public class Pokedex extends javax.swing.JDialog {
         jButton1 = new javax.swing.JButton();
         Habilidad1 = new javax.swing.JButton();
         jCheckBox1 = new javax.swing.JCheckBox();
+        jButton2 = new javax.swing.JButton();
         InterfazPokedex = new javax.swing.JPanel();
         jScrollPane1 = new javax.swing.JScrollPane();
         ListaPokemonEntrenador = new javax.swing.JList<>();
@@ -103,14 +109,14 @@ public class Pokedex extends javax.swing.JDialog {
         Tipo2Pokemon = new javax.swing.JLabel();
         AliasPokemon = new javax.swing.JLabel();
         HabilidadPokemon = new javax.swing.JLabel();
-        Tipo1 = new javax.swing.JLabel();
-        Tipo2 = new javax.swing.JLabel();
         Habilidad = new javax.swing.JButton();
         BotonAtaques = new javax.swing.JToggleButton();
         ImagenPokemon = new javax.swing.JLabel();
         PokemonShiny = new javax.swing.JLabel();
         BotonEditarAlias = new javax.swing.JButton();
         ZonaCaptura = new javax.swing.JButton();
+        LiberarPokemon = new javax.swing.JButton();
+        AñadirPokemonManualmente = new javax.swing.JButton();
 
         jButton1.setText("jButton1");
 
@@ -122,6 +128,8 @@ public class Pokedex extends javax.swing.JDialog {
         });
 
         jCheckBox1.setText("jCheckBox1");
+
+        jButton2.setText("jButton2");
 
         setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
 
@@ -144,10 +152,6 @@ public class Pokedex extends javax.swing.JDialog {
         Tipo2Pokemon.setText("Tipo2");
 
         AliasPokemon.setText("Alias");
-
-        Tipo1.setText("modi");
-
-        Tipo2.setText("modi");
 
         Habilidad.setText("Habilidad:");
         Habilidad.addActionListener(new java.awt.event.ActionListener() {
@@ -175,6 +179,20 @@ public class Pokedex extends javax.swing.JDialog {
         ZonaCaptura.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 ZonaCapturaActionPerformed(evt);
+            }
+        });
+
+        LiberarPokemon.setText("Liberar");
+        LiberarPokemon.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                LiberarPokemonActionPerformed(evt);
+            }
+        });
+
+        AñadirPokemonManualmente.setText("Añadir Pokemon");
+        AñadirPokemonManualmente.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                AñadirPokemonManualmenteActionPerformed(evt);
             }
         });
 
@@ -207,70 +225,76 @@ public class Pokedex extends javax.swing.JDialog {
                                 .addComponent(NivelPokemon, javax.swing.GroupLayout.PREFERRED_SIZE, 165, javax.swing.GroupLayout.PREFERRED_SIZE)
                                 .addGap(2, 2, 2))
                             .addGroup(InterfazPokedexLayout.createSequentialGroup()
-                                .addComponent(AliasPokemon)
-                                .addGap(92, 92, 92)))
+                                .addGroup(InterfazPokedexLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                                    .addComponent(PokemonShiny, javax.swing.GroupLayout.PREFERRED_SIZE, 94, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                    .addComponent(AliasPokemon))
+                                .addGap(23, 23, 23)))
                         .addComponent(BotonEditarAlias, javax.swing.GroupLayout.PREFERRED_SIZE, 37, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addGap(32, 32, 32))
                     .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, InterfazPokedexLayout.createSequentialGroup()
-                        .addComponent(ZonaCaptura)
+                        .addGroup(InterfazPokedexLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
+                            .addComponent(AñadirPokemonManualmente)
+                            .addComponent(ZonaCaptura))
                         .addGap(40, 40, 40))))
             .addGroup(InterfazPokedexLayout.createSequentialGroup()
+                .addGap(30, 30, 30)
                 .addGroup(InterfazPokedexLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addGroup(InterfazPokedexLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
-                        .addGroup(InterfazPokedexLayout.createSequentialGroup()
-                            .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 228, javax.swing.GroupLayout.PREFERRED_SIZE)
-                            .addGap(251, 251, 251)
-                            .addComponent(Tipo1))
-                        .addComponent(Tipo2))
-                    .addGroup(InterfazPokedexLayout.createSequentialGroup()
-                        .addGap(30, 30, 30)
-                        .addGroup(InterfazPokedexLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addComponent(MostrarIdEntrenador)
-                            .addComponent(MostrarNombreEntrenador, javax.swing.GroupLayout.PREFERRED_SIZE, 240, javax.swing.GroupLayout.PREFERRED_SIZE))))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                .addComponent(PokemonShiny, javax.swing.GroupLayout.PREFERRED_SIZE, 94, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(82, 82, 82))
+                    .addComponent(MostrarIdEntrenador)
+                    .addComponent(MostrarNombreEntrenador, javax.swing.GroupLayout.PREFERRED_SIZE, 438, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+            .addGroup(InterfazPokedexLayout.createSequentialGroup()
+                .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 228, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(18, 18, 18)
+                .addComponent(LiberarPokemon)
+                .addGap(0, 0, Short.MAX_VALUE))
         );
         InterfazPokedexLayout.setVerticalGroup(
             InterfazPokedexLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(InterfazPokedexLayout.createSequentialGroup()
                 .addGap(30, 30, 30)
-                .addComponent(MostrarNombreEntrenador)
-                .addGap(18, 18, 18)
-                .addComponent(MostrarIdEntrenador)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 558, javax.swing.GroupLayout.PREFERRED_SIZE))
-            .addGroup(InterfazPokedexLayout.createSequentialGroup()
-                .addGroup(InterfazPokedexLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
+                .addGroup(InterfazPokedexLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(InterfazPokedexLayout.createSequentialGroup()
-                        .addComponent(ZonaCaptura)
-                        .addGap(172, 172, 172)
-                        .addComponent(BotonEditarAlias, javax.swing.GroupLayout.PREFERRED_SIZE, 37, javax.swing.GroupLayout.PREFERRED_SIZE))
+                        .addComponent(PokemonShiny, javax.swing.GroupLayout.PREFERRED_SIZE, 83, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addGroup(InterfazPokedexLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addGroup(InterfazPokedexLayout.createSequentialGroup()
+                                .addGap(47, 47, 47)
+                                .addGroup(InterfazPokedexLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
+                                    .addGroup(InterfazPokedexLayout.createSequentialGroup()
+                                        .addComponent(ZonaCaptura)
+                                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                                        .addComponent(AñadirPokemonManualmente)
+                                        .addGap(137, 137, 137)
+                                        .addComponent(BotonEditarAlias, javax.swing.GroupLayout.PREFERRED_SIZE, 37, javax.swing.GroupLayout.PREFERRED_SIZE))
+                                    .addComponent(ImagenPokemon, javax.swing.GroupLayout.PREFERRED_SIZE, 366, javax.swing.GroupLayout.PREFERRED_SIZE))
+                                .addContainerGap(164, Short.MAX_VALUE))
+                            .addGroup(InterfazPokedexLayout.createSequentialGroup()
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                                .addComponent(AliasPokemon)
+                                .addGap(18, 18, 18)
+                                .addComponent(NivelPokemon)
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                .addComponent(Tipo1Pokemon)
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                .addComponent(Tipo2Pokemon)
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                .addComponent(Habilidad)
+                                .addGap(8, 8, 8)
+                                .addComponent(BotonAtaques)
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                .addComponent(HabilidadPokemon)
+                                .addGap(16, 16, 16))))
                     .addGroup(InterfazPokedexLayout.createSequentialGroup()
-                        .addComponent(Tipo1)
-                        .addGap(0, 0, 0)
-                        .addComponent(Tipo2)
-                        .addGap(128, 128, 128)
-                        .addComponent(ImagenPokemon, javax.swing.GroupLayout.PREFERRED_SIZE, 366, javax.swing.GroupLayout.PREFERRED_SIZE)))
-                .addContainerGap(164, Short.MAX_VALUE))
-            .addGroup(InterfazPokedexLayout.createSequentialGroup()
-                .addGap(31, 31, 31)
-                .addComponent(PokemonShiny, javax.swing.GroupLayout.PREFERRED_SIZE, 83, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                .addComponent(AliasPokemon)
-                .addGap(18, 18, 18)
-                .addComponent(NivelPokemon)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(Tipo1Pokemon)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(Tipo2Pokemon)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(Habilidad)
-                .addGap(8, 8, 8)
-                .addComponent(BotonAtaques)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(HabilidadPokemon)
-                .addGap(16, 16, 16))
+                        .addComponent(MostrarNombreEntrenador)
+                        .addGroup(InterfazPokedexLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addGroup(InterfazPokedexLayout.createSequentialGroup()
+                                .addGap(18, 18, 18)
+                                .addComponent(MostrarIdEntrenador)
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                                .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 558, javax.swing.GroupLayout.PREFERRED_SIZE))
+                            .addGroup(InterfazPokedexLayout.createSequentialGroup()
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                                .addComponent(LiberarPokemon)
+                                .addContainerGap())))))
         );
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
@@ -385,45 +409,93 @@ public class Pokedex extends javax.swing.JDialog {
     }//GEN-LAST:event_BotonEditarAliasActionPerformed
 
     private void ZonaCapturaActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_ZonaCapturaActionPerformed
- System.out.println("🔥 Evento ZonaCapturaActionPerformed ejecutado.");
+        System.out.println("🔥 Evento ZonaCapturaActionPerformed ejecutado.");
 
-    // Si hay una instancia previa de CapturarPokemon, se cierra.
-    if (zonaCapturaActual != null) {
-        System.out.println("⚠️ Cerrando instancia anterior de CapturarPokemon...");
-        zonaCapturaActual.dispose();
-        zonaCapturaActual = null;
-    }
-
-    // Se oculta la Pokédex.
-    this.setVisible(false);
-    
-    if (menuEntrenadores != null) {
-        menuEntrenadores.dispose();
-    }
-
-    // Obtener el nombre del entrenador actual.
-    String nombreEntrenador = MostrarNombreEntrenador.getText().replace("Pokedex de: ", "").trim();
-
-    // Crear y mostrar la instancia de CapturarPokemon.
-    zonaCapturaActual = new CapturarPokemon(menuEntrenadores, nombreEntrenador);
-    zonaCapturaActual.setLocationRelativeTo(this);
-
-    // Registrar un listener para que cuando se cierre CapturarPokemon se actualice y se vuelva a mostrar la misma Pokédex.
-    zonaCapturaActual.addWindowListener(new java.awt.event.WindowAdapter() {
-        @Override
-        public void windowClosed(java.awt.event.WindowEvent e) {
-            System.out.println("🔥 CapturarPokemon cerrado, volviendo a la Pokédex...");
-            // Actualizamos la lista de Pokémon de la instancia original.
-            Pokedex.this.cargarListaPokemon(new EntrenadorController().obtenerIdPorNombre(nombreEntrenador));
-            Pokedex.this.setVisible(true);
+        // Si hay una instancia previa de CapturarPokemon, se cierra.
+        if (zonaCapturaActual != null) {
+            System.out.println("⚠️ Cerrando instancia anterior de CapturarPokemon...");
+            zonaCapturaActual.dispose();
             zonaCapturaActual = null;
         }
-    });
 
-    zonaCapturaActual.setVisible(true);
+        // Se oculta la Pokédex.
+        this.setVisible(false);
+
+        if (menuEntrenadores != null) {
+            menuEntrenadores.dispose();
+        }
+
+        // Obtener el nombre del entrenador actual.
+        String nombreEntrenador = MostrarNombreEntrenador.getText().replace("Pokedex de: ", "").trim();
+
+        // Crear y mostrar la instancia de CapturarPokemon.
+        zonaCapturaActual = new CapturarPokemon(menuEntrenadores, nombreEntrenador);
+        zonaCapturaActual.setLocationRelativeTo(this);
+
+        // Registrar un listener para que cuando se cierre CapturarPokemon se actualice y se vuelva a mostrar la misma Pokédex.
+        zonaCapturaActual.addWindowListener(new java.awt.event.WindowAdapter() {
+            @Override
+            public void windowClosed(java.awt.event.WindowEvent e) {
+                System.out.println("🔥 CapturarPokemon cerrado, volviendo a la Pokédex...");
+                // Actualizamos la lista de Pokémon de la instancia original.
+                Pokedex.this.ActualizarListaPokemon(new EntrenadorController().obtenerIdPorNombre(nombreEntrenador));
+                Pokedex.this.setVisible(true);
+                zonaCapturaActual = null;
+            }
+        });
+
+        zonaCapturaActual.setVisible(true);
 
 
     }//GEN-LAST:event_ZonaCapturaActionPerformed
+
+    private void LiberarPokemonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_LiberarPokemonActionPerformed
+        int index = ListaPokemonEntrenador.getSelectedIndex();
+        if (index == -1) {
+            JOptionPane.showMessageDialog(this, "Selecciona un Pokémon para liberar.", "Error", JOptionPane.WARNING_MESSAGE);
+            return;
+        }
+
+        // Aquí usamos el campo 'listaPokemon' que ya se actualizó
+        Pokemon pokemonAEliminar = listaPokemon.get(index);
+
+        int confirmacion = JOptionPane.showConfirmDialog(
+                this, "¿Seguro que quieres liberar a " + pokemonAEliminar.getNombrePokemon() + "?",
+                "Confirmar Liberación", JOptionPane.YES_NO_OPTION);
+
+        if (confirmacion == JOptionPane.YES_OPTION) {
+            PokemonController pokemonController = new PokemonController();
+            boolean eliminado = pokemonController.eliminarPokemon(pokemonAEliminar.getIdPokemon());
+
+            if (eliminado) {
+                JOptionPane.showMessageDialog(this,
+                        "Ha sido un placer, " + pokemonAEliminar.getNombrePokemon() + "!",
+                        "Pokémon Liberado", JOptionPane.INFORMATION_MESSAGE);
+
+                // Actualizamos la lista tras la eliminación
+                ActualizarListaPokemon(idEntrenador);
+            } else {
+                JOptionPane.showMessageDialog(this,
+                        "No se pudo liberar a " + pokemonAEliminar.getNombrePokemon() + ".",
+                        "Error", JOptionPane.ERROR_MESSAGE);
+            }
+        }
+
+
+    }//GEN-LAST:event_LiberarPokemonActionPerformed
+
+    private void AñadirPokemonManualmenteActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_AñadirPokemonManualmenteActionPerformed
+EntrenadorController ec = new EntrenadorController();
+Entrenador entrenadorActual = ec.buscarEntrenadorPorId(idEntrenador);  // 🔥 Obtenerlo desde la BD
+
+AñadirPokemon dialog = new AñadirPokemon(menuEntrenadores, entrenadorActual);  // 🔥 Pasamos `menuEntrenadores`, que es un Frame
+dialog.setVisible(true);
+
+if (dialog.isConfirmado()) {
+    ActualizarListaPokemon(idEntrenador);  // 🔥 Refrescar la lista
+}
+
+    }//GEN-LAST:event_AñadirPokemonManualmenteActionPerformed
     private void configurarIconoBotonEditar() {
         try {
             ImageIcon iconoLapiz = new ImageIcon(getClass().getResource("/Fotos/lapiz.png"));
@@ -439,29 +511,30 @@ public class Pokedex extends javax.swing.JDialog {
         }
     }
 
-    public void cargarListaPokemon(Integer idEntrenador) {
+    public void ActualizarListaPokemon(Integer idEntrenador) {
         PokemonController pc = new PokemonController();
-        List<Pokemon> pokemons = pc.obtenerPokemonPorEntrenadorId(idEntrenador);
+
+        // Guardamos la lista en el atributo de la clase
+        this.listaPokemon = pc.obtenerPokemonPorEntrenadorId(idEntrenador);
 
         DefaultListModel<String> modelo = new DefaultListModel<>();
-        for (Pokemon p : pokemons) {
-            modelo.addElement(p.getNombrePokemon());  // O cualquier atributo que quieras mostrar en la lista
+        for (Pokemon p : this.listaPokemon) {
+            modelo.addElement(p.getNombrePokemon());  // Puedes mostrar el atributo que prefieras
         }
-
         ListaPokemonEntrenador.setModel(modelo);
 
-        //  Listener para mostrar detalles al seleccionar un Pokémon
-        ListaPokemonEntrenador.addListSelectionListener(e -> {
-            if (!e.getValueIsAdjusting()) {
-                int index = ListaPokemonEntrenador.getSelectedIndex();
-                if (index >= 0 && index < pokemons.size()) {
-                    mostrarDetallesPokemon(pokemons.get(index));
-                    mostrarImagenPokemon(pokemons.get(index)); // ✅ Ahora también carga la imagen
+        // Agregamos el listener si aún no existe alguno, para evitar duplicados
+        if (ListaPokemonEntrenador.getListSelectionListeners().length == 0) {
+            ListaPokemonEntrenador.addListSelectionListener(e -> {
+                if (!e.getValueIsAdjusting()) {
+                    int index = ListaPokemonEntrenador.getSelectedIndex();
+                    if (index >= 0 && index < listaPokemon.size()) {
+                        mostrarDetallesPokemon(listaPokemon.get(index));
+                        mostrarImagenPokemon(listaPokemon.get(index));
+                    }
                 }
-
-            }
-
-        });
+            });
+        }
     }
 
     private void mostrarDetallesPokemon(Pokemon p) {
@@ -545,6 +618,7 @@ public class Pokedex extends javax.swing.JDialog {
     }
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JLabel AliasPokemon;
+    private javax.swing.JButton AñadirPokemonManualmente;
     private javax.swing.JToggleButton BotonAtaques;
     private javax.swing.JButton BotonEditarAlias;
     private javax.swing.JButton Habilidad;
@@ -552,17 +626,17 @@ public class Pokedex extends javax.swing.JDialog {
     private javax.swing.JLabel HabilidadPokemon;
     private javax.swing.JLabel ImagenPokemon;
     private javax.swing.JPanel InterfazPokedex;
+    private javax.swing.JButton LiberarPokemon;
     private javax.swing.JList<String> ListaPokemonEntrenador;
     private javax.swing.JLabel MostrarIdEntrenador;
     private javax.swing.JLabel MostrarNombreEntrenador;
     private javax.swing.JLabel NivelPokemon;
     private javax.swing.JLabel PokemonShiny;
-    private javax.swing.JLabel Tipo1;
     private javax.swing.JLabel Tipo1Pokemon;
-    private javax.swing.JLabel Tipo2;
     private javax.swing.JLabel Tipo2Pokemon;
     private javax.swing.JButton ZonaCaptura;
     private javax.swing.JButton jButton1;
+    private javax.swing.JButton jButton2;
     private javax.swing.JCheckBox jCheckBox1;
     private javax.swing.JScrollPane jScrollPane1;
     // End of variables declaration//GEN-END:variables

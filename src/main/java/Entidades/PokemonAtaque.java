@@ -4,7 +4,8 @@ import java.io.Serializable;
 import javax.persistence.*;
 
 @Entity
-@Table(name = "pokemon_ataque")
+@Table(name = "`pokemon_ataque`")
+@TableGenerator(name = "PokemonAtaqueGen", table = "pokemon_ataque")
 public class PokemonAtaque implements Serializable {
 
     @EmbeddedId
@@ -12,12 +13,12 @@ public class PokemonAtaque implements Serializable {
 
     @ManyToOne(fetch = FetchType.EAGER) // 🔥 Cambiado a EAGER para forzar la carga
     @MapsId("idPokemon")
-    @JoinColumn(name = "id_pokemon")
+    @JoinColumn(name = "id_pokemon") // ✅ Cambiado al nombre correcto
     private Pokemon pokemon;
 
     @ManyToOne(fetch = FetchType.EAGER) // 🔥 Cambiado a EAGER para forzar la carga
     @MapsId("idAtaque")
-    @JoinColumn(name = "id_ataque")
+    @JoinColumn(name = "id_ataque") // ✅ Cambiado al nombre correcto
     private Ataque ataque;
 
     @Column(name = "metodoAprendizaje", length = 50)
