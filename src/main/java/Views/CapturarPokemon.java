@@ -293,7 +293,7 @@ private static CapturarPokemon zonaCapturaActual;
 
         Fondos = new javax.swing.JPanel();
         ImagenPokemonAle = new javax.swing.JLabel();
-        jButton2 = new javax.swing.JButton();
+        BotonHuir = new javax.swing.JButton();
         CuadroCombates = new javax.swing.JPanel();
         Texto = new javax.swing.JLabel();
         CuadroNivel = new javax.swing.JPanel();
@@ -303,7 +303,12 @@ private static CapturarPokemon zonaCapturaActual;
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
 
-        jButton2.setText("jButton2");
+        BotonHuir.setText("HUIR");
+        BotonHuir.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                BotonHuirActionPerformed(evt);
+            }
+        });
 
         CuadroCombates.setBackground(new java.awt.Color(255, 51, 0));
 
@@ -373,7 +378,7 @@ private static CapturarPokemon zonaCapturaActual;
                         .addComponent(CuadroCombates, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addGap(18, 18, 18)
                         .addGroup(FondosLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                            .addComponent(jButton2, javax.swing.GroupLayout.DEFAULT_SIZE, 94, Short.MAX_VALUE)
+                            .addComponent(BotonHuir, javax.swing.GroupLayout.DEFAULT_SIZE, 94, Short.MAX_VALUE)
                             .addComponent(Pokeball, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
                         .addContainerGap(16, Short.MAX_VALUE))))
         );
@@ -382,17 +387,14 @@ private static CapturarPokemon zonaCapturaActual;
             .addGroup(FondosLayout.createSequentialGroup()
                 .addGap(18, 18, 18)
                 .addGroup(FondosLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addGroup(FondosLayout.createSequentialGroup()
-                        .addComponent(ImagenPokemonAle, javax.swing.GroupLayout.PREFERRED_SIZE, 355, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 43, Short.MAX_VALUE))
-                    .addGroup(FondosLayout.createSequentialGroup()
-                        .addComponent(CuadroNivel, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)))
+                    .addComponent(ImagenPokemonAle, javax.swing.GroupLayout.PREFERRED_SIZE, 355, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(CuadroNivel, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                 .addGroup(FondosLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(FondosLayout.createSequentialGroup()
                         .addComponent(Pokeball, javax.swing.GroupLayout.PREFERRED_SIZE, 96, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(jButton2, javax.swing.GroupLayout.PREFERRED_SIZE, 84, javax.swing.GroupLayout.PREFERRED_SIZE))
+                        .addComponent(BotonHuir, javax.swing.GroupLayout.PREFERRED_SIZE, 84, javax.swing.GroupLayout.PREFERRED_SIZE))
                     .addComponent(CuadroCombates, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addContainerGap())
         );
@@ -411,11 +413,24 @@ private static CapturarPokemon zonaCapturaActual;
         pack();
     }// </editor-fold>//GEN-END:initComponents
 
+    private void BotonHuirActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_BotonHuirActionPerformed
+        // 🔥 Mostrar mensaje de huida exitosa                                   
+    JOptionPane.showMessageDialog(this, "¡Has escapado sin problemas!", "Huida exitosa", JOptionPane.INFORMATION_MESSAGE);
+
+    // 🔥 Pasar los argumentos correctos al constructor
+    this.setVisible(false); // Ocultar la ventana actual
+    new Pokedex(menuEntrenadores, true, nombreEntrenador).setVisible(true);
+
+
+
+    }//GEN-LAST:event_BotonHuirActionPerformed
+
     /**
      * @param args the command line arguments
      */
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
+    private javax.swing.JButton BotonHuir;
     private javax.swing.JPanel CuadroCombates;
     private javax.swing.JPanel CuadroNivel;
     private javax.swing.JPanel Fondos;
@@ -424,6 +439,5 @@ private static CapturarPokemon zonaCapturaActual;
     private javax.swing.JLabel NombrePokemon;
     private javax.swing.JLabel Pokeball;
     private javax.swing.JLabel Texto;
-    private javax.swing.JButton jButton2;
     // End of variables declaration//GEN-END:variables
 }

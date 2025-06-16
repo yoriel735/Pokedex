@@ -117,6 +117,7 @@ public class Pokedex extends javax.swing.JDialog {
         ZonaCaptura = new javax.swing.JButton();
         LiberarPokemon = new javax.swing.JButton();
         AñadirPokemonManualmente = new javax.swing.JButton();
+        BotonRetroceder = new javax.swing.JButton();
 
         jButton1.setText("jButton1");
 
@@ -196,6 +197,13 @@ public class Pokedex extends javax.swing.JDialog {
             }
         });
 
+        BotonRetroceder.setText("Volver Al menu");
+        BotonRetroceder.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                BotonRetrocederActionPerformed(evt);
+            }
+        });
+
         javax.swing.GroupLayout InterfazPokedexLayout = new javax.swing.GroupLayout(InterfazPokedex);
         InterfazPokedex.setLayout(InterfazPokedexLayout);
         InterfazPokedexLayout.setHorizontalGroup(
@@ -246,6 +254,8 @@ public class Pokedex extends javax.swing.JDialog {
                 .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 228, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addGap(18, 18, 18)
                 .addComponent(LiberarPokemon)
+                .addGap(18, 18, 18)
+                .addComponent(BotonRetroceder)
                 .addGap(0, 0, Short.MAX_VALUE))
         );
         InterfazPokedexLayout.setVerticalGroup(
@@ -293,7 +303,9 @@ public class Pokedex extends javax.swing.JDialog {
                                 .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 558, javax.swing.GroupLayout.PREFERRED_SIZE))
                             .addGroup(InterfazPokedexLayout.createSequentialGroup()
                                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                                .addComponent(LiberarPokemon)
+                                .addGroup(InterfazPokedexLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                                    .addComponent(LiberarPokemon)
+                                    .addComponent(BotonRetroceder))
                                 .addContainerGap())))))
         );
 
@@ -496,6 +508,11 @@ if (dialog.isConfirmado()) {
 }
 
     }//GEN-LAST:event_AñadirPokemonManualmenteActionPerformed
+
+    private void BotonRetrocederActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_BotonRetrocederActionPerformed
+       this.setVisible(false);
+       new MenuEntrenadores().setVisible(true);
+    }//GEN-LAST:event_BotonRetrocederActionPerformed
     private void configurarIconoBotonEditar() {
         try {
             ImageIcon iconoLapiz = new ImageIcon(getClass().getResource("/Fotos/lapiz.png"));
@@ -621,6 +638,7 @@ if (dialog.isConfirmado()) {
     private javax.swing.JButton AñadirPokemonManualmente;
     private javax.swing.JToggleButton BotonAtaques;
     private javax.swing.JButton BotonEditarAlias;
+    private javax.swing.JButton BotonRetroceder;
     private javax.swing.JButton Habilidad;
     private javax.swing.JButton Habilidad1;
     private javax.swing.JLabel HabilidadPokemon;

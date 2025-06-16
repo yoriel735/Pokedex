@@ -13,14 +13,23 @@ import java.awt.Color;
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
 import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
 import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.io.InputStreamReader;
+import java.io.OutputStreamWriter;
+import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import javax.swing.BorderFactory;
 import javax.swing.DefaultListModel;
+import javax.swing.JFileChooser;
 import javax.swing.JOptionPane;
+import javax.swing.filechooser.FileNameExtensionFilter;
 
 /**
  *
@@ -41,13 +50,13 @@ public class MenuEntrenadores extends javax.swing.JFrame {
         setTitle("Selector de Entrenadores");
         ListaEntrenadores.setModel(modeloEntrenadores);
         ListaEntrenadores.addListSelectionListener(e -> {
-    if (!e.getValueIsAdjusting()) {  // 🔥 Evita múltiples eventos en un solo clic
-        int indiceSeleccionado = ListaEntrenadores.getSelectedIndex();
-        if (indiceSeleccionado >= 0) {
-            entrenadorActual = modeloEntrenadores.getElementAt(indiceSeleccionado);  // 🔥 Guardamos el entrenador activo
-        }
-    }
-});
+            if (!e.getValueIsAdjusting()) {  // 🔥 Evita múltiples eventos en un solo clic
+                int indiceSeleccionado = ListaEntrenadores.getSelectedIndex();
+                if (indiceSeleccionado >= 0) {
+                    entrenadorActual = modeloEntrenadores.getElementAt(indiceSeleccionado);  // 🔥 Guardamos el entrenador activo
+                }
+            }
+        });
 
         imagenFondoEntrenador();
         setLocationRelativeTo(null);
@@ -280,12 +289,121 @@ public class MenuEntrenadores extends javax.swing.JFrame {
     }//GEN-LAST:event_AccederPokedexActionPerformed
 
     private void GuardarEntrenadorActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_GuardarEntrenadorActionPerformed
-      
+  {                                                  
+    if (entrenadorActual == null) {
+        JOptionPane.showMessageDialog(this, "Selecciona un entrenador antes de guardar.", "Error", JOptionPane.WARNING_MESSAGE);
+        return;
+    }
 
+    File archivo = new File("Entrenador_" + entrenadorActual.getNomEntrenador() + ".csv");
+
+    try (BufferedWriter bw = new BufferedWriter(new OutputStreamWriter(new FileOutputStream(archivo), StandardCharsets.UTF_8))) {
+        bw.write("Nombre,Numero Pokédex,Nombre Pokémon,Alias,Tipo 1,Tipo 2,Nivel,Habilidad\n");
+
+        List<Pokemon> listaPokemon = entrenadorController.obtenerPokemonPorEntrenadorId(entrenadorActual.getIdEntrenador());
+
+        for (Pokemon p : listaPokemon) {
+            String alias = (p.getAlias() != null) ? p.getAlias() : "Sin alias";
+            String tipo2 = (p.getSegundoTipo() != null) ? p.getSegundoTipo().toString() : "N/A";
+            String habilidad = (p.getHabilidad() != null) ? p.getHabilidad().getNombreHabilidad() : "N/A";
+
+            bw.write(entrenadorActual.getNomEntrenador() + "," + p.getNumeroPokedex() + "," + p.getNombrePokemon() + "," + alias + ","
+                    + p.getTipoPokemon() + "," + tipo2 + "," + p.getNivel() + "," + habilidad + "\n");
+        }
+
+        JOptionPane.showMessageDialog(this, "Entrenador guardado correctamente en CSV.", "Éxito", JOptionPane.INFORMATION_MESSAGE);
+    } catch (IOException e) {
+        JOptionPane.showMessageDialog(this, "Error al guardar el entrenador: " + e.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
+    }
+}
+     
     }//GEN-LAST:event_GuardarEntrenadorActionPerformed
 
     private void CargarEntrenadorActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_CargarEntrenadorActionPerformed
-   
+    JFileChooser fileChooser = new JFileChooser(new File(System.getProperty("user.dir")));
+    fileChooser.setDialogTitle("Seleccionar archivo CSV");
+    fileChooser.setFileFilter(new FileNameExtensionFilter("Archivo CSV", "csv"));
+
+    int userSelection = fileChooser.showOpenDialog(this);
+
+    if (userSelection == JFileChooser.APPROVE_OPTION) {
+        File archivo = fileChooser.getSelectedFile();
+
+        try (BufferedReader br = new BufferedReader(new InputStreamReader(new FileInputStream(archivo), StandardCharsets.UTF_8))) {
+            String linea;
+            br.readLine(); // 🔥 Saltar encabezados
+
+            Map<String, Entrenador> entrenadoresMap = new HashMap<>();
+            Map<String, List<Pokemon>> pokemonesPorEntrenador = new HashMap<>();
+
+            while ((linea = br.readLine()) != null) {
+                String[] datos = linea.split(",");
+
+                if (datos.length < 8) {  
+                    JOptionPane.showMessageDialog(this, "Error en el CSV: Formato incorrecto. Revisar archivo.", "Error", JOptionPane.ERROR_MESSAGE);
+                    continue;
+                }
+
+                // ✅ Obtener datos del entrenador
+                String nombreEntrenador = datos[0];
+
+                // ✅ Verificar si el entrenador ya está en la BD y recuperarlo en lugar de duplicarlo
+                Entrenador entrenadorExistenteEnBD = entrenadorController.buscarEntrenadorPorNombre(nombreEntrenador);
+                Entrenador entrenador;
+                if (entrenadorExistenteEnBD != null) {
+                    entrenador = entrenadorExistenteEnBD;
+                } else {
+                    entrenador = new Entrenador();
+                    entrenador.setNomEntrenador(nombreEntrenador);
+                    entrenadorController.crearEntrenador(entrenador);
+                }
+
+                entrenadoresMap.put(nombreEntrenador, entrenador);
+                pokemonesPorEntrenador.putIfAbsent(nombreEntrenador, new ArrayList<>());
+
+                try {
+                    if (!datos[1].matches("\\d+") || !datos[6].matches("\\d+")) {  
+                        JOptionPane.showMessageDialog(this, "Error en el CSV: Número Pokédex o nivel no son números válidos.", "Error", JOptionPane.ERROR_MESSAGE);
+                        continue;
+                    }
+
+                    // ✅ Obtener datos del Pokémon
+                    int numeroPokedex = Integer.parseInt(datos[1]);
+                    int nivel = Integer.parseInt(datos[6]);
+
+                    Pokemon nuevoPokemon = new Pokemon();
+                    nuevoPokemon.setNumeroPokedex(numeroPokedex);
+                    nuevoPokemon.setNombrePokemon(datos[2]);
+                    nuevoPokemon.setAlias(!datos[3].equals("Sin alias") ? datos[3] : null);
+                    nuevoPokemon.setTipoPokemon(TiposPokemon.valueOf(datos[4]));
+                    nuevoPokemon.setSegundoTipo(!datos[5].equals("N/A") ? TiposPokemon.valueOf(datos[5]) : null);
+                    nuevoPokemon.setNivel(nivel);
+
+                    pokemonesPorEntrenador.get(nombreEntrenador).add(nuevoPokemon);
+                } catch (NumberFormatException e) {
+                    JOptionPane.showMessageDialog(this, "Error en el CSV: Datos incorrectos en Número Pokédex o nivel.", "Error", JOptionPane.ERROR_MESSAGE);
+                    continue;
+                }
+            }
+
+            // ✅ Guardar entrenadores y sus Pokémon en la BD
+            for (String nombre : entrenadoresMap.keySet()) {
+                Entrenador entrenador = entrenadoresMap.get(nombre);
+                List<Pokemon> pokemones = pokemonesPorEntrenador.get(nombre);
+
+                entrenadorController.crearEntrenadorConPokemon(entrenador, pokemones);
+                listaEntrenadores.add(entrenador);
+                modeloEntrenadores.addElement(entrenador);
+            }
+
+            JOptionPane.showMessageDialog(this, "Entrenadores y sus Pokémon restaurados correctamente desde CSV.", "Éxito", JOptionPane.INFORMATION_MESSAGE);
+        } catch (IOException e) {
+            JOptionPane.showMessageDialog(this, "Error al cargar los entrenadores: " + e.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
+        }
+    }
+
+
+
 
     }//GEN-LAST:event_CargarEntrenadorActionPerformed
 
@@ -332,16 +450,24 @@ public class MenuEntrenadores extends javax.swing.JFrame {
                 if ("Nimbus".equals(info.getName())) {
                     javax.swing.UIManager.setLookAndFeel(info.getClassName());
                     break;
+
                 }
             }
         } catch (ClassNotFoundException ex) {
-            java.util.logging.Logger.getLogger(MenuEntrenadores.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+            java.util.logging.Logger.getLogger(MenuEntrenadores.class
+                    .getName()).log(java.util.logging.Level.SEVERE, null, ex);
+
         } catch (InstantiationException ex) {
-            java.util.logging.Logger.getLogger(MenuEntrenadores.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+            java.util.logging.Logger.getLogger(MenuEntrenadores.class
+                    .getName()).log(java.util.logging.Level.SEVERE, null, ex);
+
         } catch (IllegalAccessException ex) {
-            java.util.logging.Logger.getLogger(MenuEntrenadores.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+            java.util.logging.Logger.getLogger(MenuEntrenadores.class
+                    .getName()).log(java.util.logging.Level.SEVERE, null, ex);
+
         } catch (javax.swing.UnsupportedLookAndFeelException ex) {
-            java.util.logging.Logger.getLogger(MenuEntrenadores.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+            java.util.logging.Logger.getLogger(MenuEntrenadores.class
+                    .getName()).log(java.util.logging.Level.SEVERE, null, ex);
         }
         //</editor-fold>
         //</editor-fold>

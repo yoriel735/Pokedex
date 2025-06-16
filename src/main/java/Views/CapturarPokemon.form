@@ -51,7 +51,7 @@
                           <Component id="CuadroCombates" min="-2" max="-2" attributes="0"/>
                           <EmptySpace type="separate" max="-2" attributes="0"/>
                           <Group type="103" groupAlignment="0" max="-2" attributes="0">
-                              <Component id="jButton2" pref="94" max="32767" attributes="0"/>
+                              <Component id="BotonHuir" pref="94" max="32767" attributes="0"/>
                               <Component id="Pokeball" max="32767" attributes="0"/>
                           </Group>
                           <EmptySpace pref="16" max="32767" attributes="0"/>
@@ -73,7 +73,7 @@
                       <Group type="102" attributes="0">
                           <Component id="Pokeball" min="-2" pref="96" max="-2" attributes="0"/>
                           <EmptySpace max="-2" attributes="0"/>
-                          <Component id="jButton2" min="-2" pref="84" max="-2" attributes="0"/>
+                          <Component id="BotonHuir" min="-2" pref="84" max="-2" attributes="0"/>
                       </Group>
                       <Component id="CuadroCombates" min="-2" max="-2" attributes="0"/>
                   </Group>
@@ -85,10 +85,13 @@
       <SubComponents>
         <Component class="javax.swing.JLabel" name="ImagenPokemonAle">
         </Component>
-        <Component class="javax.swing.JButton" name="jButton2">
+        <Component class="javax.swing.JButton" name="BotonHuir">
           <Properties>
-            <Property name="text" type="java.lang.String" value="jButton2"/>
+            <Property name="text" type="java.lang.String" value="HUIR"/>
           </Properties>
+          <Events>
+            <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="BotonHuirActionPerformed"/>
+          </Events>
         </Component>
         <Container class="javax.swing.JPanel" name="CuadroCombates">
           <Properties>
