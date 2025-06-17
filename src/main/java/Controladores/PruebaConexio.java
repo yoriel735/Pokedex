@@ -15,6 +15,8 @@ import javax.persistence.TypedQuery;
  *
  * @author yoriel
  */
+
+//clase de prueba para la conexion, no la borro por si en futuro es necesaria
 public class PruebaConexio {
     public static void main(String[] args) {
         EntityManagerFactory emf = null;

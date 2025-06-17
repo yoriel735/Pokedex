@@ -38,8 +38,8 @@ public class AñadirPokemon extends javax.swing.JDialog {
         super(parent, "Añadir Pokémon", true);
         this.pokemonController = new PokemonController();
         this.entrenadorActual = entrenador;
-        initComponents();  // 🔥 No lo tocamos
-        configurarFormulario();  // 🔥 Agrega los componentes después
+        initComponents();
+        configurarFormulario(); //Agregar los componentes 
         setSize(400, 300);
         setLocationRelativeTo(parent);
         setResizable(false);
@@ -72,25 +72,26 @@ public class AñadirPokemon extends javax.swing.JDialog {
  private void guardarPokemon() {
         try {
             if (nombreField.getText().isEmpty() || nivelField.getText().isEmpty()) {
-                JOptionPane.showMessageDialog(this, "Los campos obligatorios no pueden estar vacíos.", "Error", JOptionPane.WARNING_MESSAGE);
+                JOptionPane.showMessageDialog(this, "Los campos obligatorios no pueden estar vacios.", "Error", JOptionPane.WARNING_MESSAGE);
                 return;
             }
 
             int nivel;
             try {
                 nivel = Integer.parseInt(nivelField.getText());
-                if (nivel <= 0 || nivel > 100) {  // 🔥 Límite de nivel
+                if (nivel <= 0 || nivel > 100) {  // 🔥 Comprobamos el limite de nivel 
                     JOptionPane.showMessageDialog(this, "El nivel debe estar entre 1 y 100.", "Error", JOptionPane.WARNING_MESSAGE);
                     return;
                 }
             } catch (NumberFormatException ex) {
-                JOptionPane.showMessageDialog(this, "Nivel debe ser un número entre 1 y 100.", "Error", JOptionPane.WARNING_MESSAGE);
+                JOptionPane.showMessageDialog(this, "El nivel debe estar entre 1 y 100.", "Error", JOptionPane.WARNING_MESSAGE);
                 return;
             }
 
-            int numeroPokedex = pokemonController.generarNumeroPokedexUnico();  // 🔥 Generar número único
+            int numeroPokedex = pokemonController.generarNumeroPokedexUnico();  //Llamamos al metodo de
+                //generar un numero de pokedex unico
 
-            // 🔥 Crear la instancia de Pokémon antes de asignar valores
+            //Crear "el objeto" de pokemon antes de asignar valores
             nuevoPokemon = new Pokemon();
             nuevoPokemon.setNombrePokemon(nombreField.getText());
             nuevoPokemon.setAlias(aliasField.getText().isEmpty() ? null : aliasField.getText());
@@ -103,15 +104,15 @@ public class AñadirPokemon extends javax.swing.JDialog {
 
             pokemonController.guardarPokemon(nuevoPokemon);
             confirmado = true;
-            JOptionPane.showMessageDialog(this, "Pokémon añadido correctamente con número #" + numeroPokedex, "Éxito", JOptionPane.INFORMATION_MESSAGE);
+            JOptionPane.showMessageDialog(this, "El pokemon se añadio correctamente. Num_Pokedex: #" + numeroPokedex, "Exito", JOptionPane.INFORMATION_MESSAGE);
             dispose();
         } catch (Exception ex) {
-            JOptionPane.showMessageDialog(this, "Error al guardar el Pokémon: " + ex.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
+            JOptionPane.showMessageDialog(this, "Error al guardar el Pokemon: " + ex.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
         }
     }
 
     private void configurarFormulario() {
-        JPanel panelCampos = new JPanel(new GridLayout(0, 2, 5, 5));
+        JPanel panelCampos = new JPanel(new GridLayout(0, 2, 4, 4));
 
         nombreField = new JTextField(20);
         aliasField = new JTextField(20);
@@ -121,12 +122,13 @@ public class AñadirPokemon extends javax.swing.JDialog {
         tipo2Box = new JComboBox<>(TiposPokemon.values());
         tipo2Box.insertItemAt(null, 0);
 
-        // 🔥 Agregar validación para evitar tipos duplicados
+        //Agregar una validacion para evitar los tipos duplicados
         tipo1Box.addActionListener(e -> {
             TiposPokemon tipoSeleccionado = (TiposPokemon) tipo1Box.getSelectedItem();
             tipo2Box.removeItem(tipoSeleccionado); // 🔥 Eliminamos el tipo primario de opciones secundarias
 
-            // 🔥 Si el usuario ya había seleccionado el mismo tipo, lo vaciamos
+            //Aqui hacemos que si el usuario eligio primero el tipo fuego, este 
+            //no pueda aparecer de tipo secundario
             if (tipoSeleccionado == tipo2Box.getSelectedItem()) {
                 tipo2Box.setSelectedItem(null);
             }

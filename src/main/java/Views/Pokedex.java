@@ -146,12 +146,16 @@ public class Pokedex extends javax.swing.JDialog {
 
         MostrarIdEntrenador.setText("IDEntre");
 
+        NivelPokemon.setFont(new java.awt.Font("Segoe UI Semibold", 0, 14)); // NOI18N
         NivelPokemon.setText("Nivel");
 
+        Tipo1Pokemon.setFont(new java.awt.Font("Segoe UI Variable", 0, 14)); // NOI18N
         Tipo1Pokemon.setText("Tipo1");
 
+        Tipo2Pokemon.setFont(new java.awt.Font("Segoe UI Variable", 0, 14)); // NOI18N
         Tipo2Pokemon.setText("Tipo2");
 
+        AliasPokemon.setFont(new java.awt.Font("Segoe UI Semibold", 0, 14)); // NOI18N
         AliasPokemon.setText("Alias");
 
         Habilidad.setText("Habilidad:");
@@ -319,9 +323,7 @@ public class Pokedex extends javax.swing.JDialog {
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(layout.createSequentialGroup()
-                .addComponent(InterfazPokedex, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(0, 0, Short.MAX_VALUE))
+            .addComponent(InterfazPokedex, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
         );
 
         pack();
@@ -357,6 +359,7 @@ public class Pokedex extends javax.swing.JDialog {
             return;
         }
 
+        //Esto es para evitar que netbeans se me congelara, me estaba dando muchos fallos
         SwingWorker<List<PokemonAtaque>, Void> worker = new SwingWorker<>() {
             @Override
             protected List<PokemonAtaque> doInBackground() throws Exception {
@@ -376,7 +379,7 @@ public class Pokedex extends javax.swing.JDialog {
                         }
                     }
 
-                    // Mostrar diálogo, con el padre para evitar problemas de foco/modalidad
+                    // Mostrar dialog, con el padre para evitar problemas de foco/modalidad
                     MostrarAtaques dialog = new MostrarAtaques(Pokedex.this, java.awt.Dialog.ModalityType.APPLICATION_MODAL, pokemonSeleccionado);
 
                     dialog.cargarAtaques(ataques);
@@ -421,11 +424,10 @@ public class Pokedex extends javax.swing.JDialog {
     }//GEN-LAST:event_BotonEditarAliasActionPerformed
 
     private void ZonaCapturaActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_ZonaCapturaActionPerformed
-        System.out.println("🔥 Evento ZonaCapturaActionPerformed ejecutado.");
 
         // Si hay una instancia previa de CapturarPokemon, se cierra.
         if (zonaCapturaActual != null) {
-            System.out.println("⚠️ Cerrando instancia anterior de CapturarPokemon...");
+            System.out.println("Cerrando instancia anterior de CapturarPokemon...");
             zonaCapturaActual.dispose();
             zonaCapturaActual = null;
         }
@@ -448,7 +450,7 @@ public class Pokedex extends javax.swing.JDialog {
         zonaCapturaActual.addWindowListener(new java.awt.event.WindowAdapter() {
             @Override
             public void windowClosed(java.awt.event.WindowEvent e) {
-                System.out.println("🔥 CapturarPokemon cerrado, volviendo a la Pokédex...");
+                System.out.println("🔥CapturarPokemon cerrado, volviendo a la Pokédex...");
                 // Actualizamos la lista de Pokémon de la instancia original.
                 Pokedex.this.ActualizarListaPokemon(new EntrenadorController().obtenerIdPorNombre(nombreEntrenador));
                 Pokedex.this.setVisible(true);
@@ -468,7 +470,7 @@ public class Pokedex extends javax.swing.JDialog {
             return;
         }
 
-        // Aquí usamos el campo 'listaPokemon' que ya se actualizó
+        //Aquí usamos el campo 'listaPokemon' que ya se actualizó
         Pokemon pokemonAEliminar = listaPokemon.get(index);
 
         int confirmacion = JOptionPane.showConfirmDialog(
@@ -484,7 +486,7 @@ public class Pokedex extends javax.swing.JDialog {
                         "Ha sido un placer, " + pokemonAEliminar.getNombrePokemon() + "!",
                         "Pokémon Liberado", JOptionPane.INFORMATION_MESSAGE);
 
-                // Actualizamos la lista tras la eliminación
+                //Actualizamos la lista tras la eliminación
                 ActualizarListaPokemon(idEntrenador);
             } else {
                 JOptionPane.showMessageDialog(this,
@@ -497,21 +499,21 @@ public class Pokedex extends javax.swing.JDialog {
     }//GEN-LAST:event_LiberarPokemonActionPerformed
 
     private void AñadirPokemonManualmenteActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_AñadirPokemonManualmenteActionPerformed
-EntrenadorController ec = new EntrenadorController();
-Entrenador entrenadorActual = ec.buscarEntrenadorPorId(idEntrenador);  // 🔥 Obtenerlo desde la BD
+        EntrenadorController ec = new EntrenadorController();
+        Entrenador entrenadorActual = ec.buscarEntrenadorPorId(idEntrenador);  //Obtenerlo desde la BD
 
-AñadirPokemon dialog = new AñadirPokemon(menuEntrenadores, entrenadorActual);  // 🔥 Pasamos `menuEntrenadores`, que es un Frame
-dialog.setVisible(true);
+        AñadirPokemon dialog = new AñadirPokemon(menuEntrenadores, entrenadorActual);  //Pasamos `menuEntrenadores`, que es un Frame
+        dialog.setVisible(true);
 
-if (dialog.isConfirmado()) {
-    ActualizarListaPokemon(idEntrenador);  // 🔥 Refrescar la lista
-}
+        if (dialog.isConfirmado()) {
+            ActualizarListaPokemon(idEntrenador);  //Refrescar la lista
+        }
 
     }//GEN-LAST:event_AñadirPokemonManualmenteActionPerformed
 
     private void BotonRetrocederActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_BotonRetrocederActionPerformed
-       this.setVisible(false);
-       new MenuEntrenadores().setVisible(true);
+        this.setVisible(false);
+        new MenuEntrenadores().setVisible(true);
     }//GEN-LAST:event_BotonRetrocederActionPerformed
     private void configurarIconoBotonEditar() {
         try {
@@ -623,16 +625,16 @@ if (dialog.isConfirmado()) {
     /**
      * @param args the command line arguments
      */
-    public static void main(String[] args) {
-        // Aseguramos que todo se ejecute en el hilo de eventos de Swing
-        SwingUtilities.invokeLater(() -> {
-            MenuEntrenadores menuEntrenadores = new MenuEntrenadores();
-            menuEntrenadores.setVisible(true);
-
-            Pokedex dialog = new Pokedex(menuEntrenadores, true, "Ash Ketchum");
-            dialog.setVisible(true);
-        });
-    }
+//    public static void main(String[] args) {
+//        // Aseguramos que todo se ejecute en el hilo de eventos de Swing
+//        SwingUtilities.invokeLater(() -> {
+//            MenuEntrenadores menuEntrenadores = new MenuEntrenadores();
+//            menuEntrenadores.setVisible(true);
+//
+//            Pokedex dialog = new Pokedex(menuEntrenadores, true, "Ash Ketchum");
+//            dialog.setVisible(true);
+//        });
+//    }
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JLabel AliasPokemon;
     private javax.swing.JButton AñadirPokemonManualmente;

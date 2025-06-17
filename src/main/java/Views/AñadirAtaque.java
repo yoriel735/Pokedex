@@ -38,7 +38,7 @@ public class AñadirAtaque extends javax.swing.JDialog {
     }
 
     private void AñadirAtaques() {
-        // Panel para los campos de entrada (configurado con GridLayout para dos columnas)
+        //Panel para los campos de entrada (configurado con GridLayout para dos columnas)
         JPanel panelCampos = new JPanel(new GridLayout(0, 2, 5, 5));
 
         nombreField = new JTextField(20);
@@ -61,23 +61,23 @@ public class AñadirAtaque extends javax.swing.JDialog {
         panelCampos.add(new JLabel("PP:"));
         panelCampos.add(ppField);
 
-        // Panel para los botones
+        //Panel para los botones
         JPanel panelBotones = new JPanel(new FlowLayout(FlowLayout.CENTER, 10, 10));
         JButton btnGuardar = new JButton("Guardar");
         JButton btnCancelar = new JButton("Cancelar");
         panelBotones.add(btnGuardar);
         panelBotones.add(btnCancelar);
 
-        // Acción para el botón Guardar
+        //Accion para el boton Guardar
         btnGuardar.addActionListener(e -> guardarAtaque());
 
-        // Acción para el botón Cancelar
+        //Accion para el boton Cancelar
         btnCancelar.addActionListener(e -> {
             confirmado = false;
             dispose();
         });
 
-        // Configuración del layout principal del diálogo
+        // Configuracion del layout principal del diálogo
         getContentPane().setLayout(new BorderLayout(10, 10));
         getContentPane().add(panelCampos, BorderLayout.CENTER);
         getContentPane().add(panelBotones, BorderLayout.SOUTH);
@@ -88,14 +88,14 @@ public class AñadirAtaque extends javax.swing.JDialog {
 
     private void guardarAtaque() {
         try {
-            // Validar que ningún campo esté vacío
+            //Validar que ningun campo esté vacio
             if (nombreField.getText().isEmpty() || tipoField.getText().isEmpty() || categoriaField.getText().isEmpty()
                     || efectoField.getText().isEmpty() || potenciaField.getText().isEmpty() || ppField.getText().isEmpty()) {
                 JOptionPane.showMessageDialog(this, "Todos los campos son obligatorios.", "Error", JOptionPane.WARNING_MESSAGE);
                 return;
             }
 
-            //Validar que potencia y PP sean números
+            //Validar que potencia y PP sean numeros
             int potencia, pp;
             try {
                 potencia = Integer.parseInt(potenciaField.getText());

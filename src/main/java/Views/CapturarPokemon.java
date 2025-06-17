@@ -1,20 +1,10 @@
-/*
- * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
- * Click nbfs://nbhost/SystemFileSystem/Templates/GUIForms/JFrame.java to edit this template
- */
 package Views;
 
 import Controladores.EntrenadorController;
 import Controladores.JPanelimagen;
-import Controladores.LectorJSONPokeApi;
 import Controladores.PokemonController;
-import Controladores.gifsController;
-import Entidades.Entrenador;
 import Entidades.Pokemon;
 import java.awt.Color;
-import java.awt.Dimension;
-import java.awt.Font;
-import java.awt.Graphics;
 import java.awt.Image;
 import java.awt.datatransfer.DataFlavor;
 import java.awt.datatransfer.Transferable;
@@ -24,19 +14,12 @@ import java.awt.dnd.DropTargetDropEvent;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.net.URL;
-import java.util.List;
 import java.util.Random;
-import javax.swing.DefaultListModel;
 import javax.swing.Icon;
 import javax.swing.ImageIcon;
-import javax.swing.JButton;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
-import javax.swing.JLayeredPane;
 import javax.swing.JOptionPane;
-import javax.swing.JPanel;
-import javax.swing.SwingConstants;
-import javax.swing.SwingUtilities;
 import javax.swing.TransferHandler;
 
 /**
@@ -45,19 +28,18 @@ import javax.swing.TransferHandler;
  */
 public class CapturarPokemon extends javax.swing.JFrame {
 
-    private Pokemon pokemonActual; // 🔹 Aquí almacenamos el Pokémon salvaje actual
+    private Pokemon pokemonActual; //Aqui almacenamos al pokemon salvaje actual
     private PokemonController pokemonController;
     private MenuEntrenadores menuEntrenadores;
     private String nombreEntrenador;
-    private Pokedex pokedexActiva; // 🔥 Variable para rastrear la Pokédex abierta
-private static CapturarPokemon zonaCapturaActual;
+
     /**
      * Creates new form CapturarPokemon
      */
     public CapturarPokemon(MenuEntrenadores menuEntrenadores, String nombreEntrenador) {
         initComponents();
         this.menuEntrenadores = menuEntrenadores;
-        this.nombreEntrenador = nombreEntrenador; // ✅ Guardamos el nombre correctamente
+        this.nombreEntrenador = nombreEntrenador; //Guardamos el nombre correctamente
         pokemonController = new PokemonController();
         imagenFondoCaptura();
         configurarCuadroNivel();
@@ -66,7 +48,7 @@ private static CapturarPokemon zonaCapturaActual;
         configurarArrastrePokeball(Pokeball);
         ajustarImagenPokeball(Pokeball, "/Fotos/pokeball.png", 100, 100);
         configurarDropPokemon();
-        setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE); // Cuando cierre la captura, liberará recursos y se cerrará correctamente
+        setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE); //Cuando cierre la captura, liberará recursos y se cerrará correctamente
 //        mostrarDetallesPokemon();
     }
 
@@ -75,10 +57,7 @@ private static CapturarPokemon zonaCapturaActual;
             "/Fotos/Cueva.png",
             "/Fotos/LlanuraOscura.png",
             "/Fotos/Llanura.png",
-            "/Fotos/BatallaAnimada.gif",
-            "/Fotos/Playa.jpg",
-            "Fotos/FondoPrueba.png"
-        };
+            "/Fotos/Playa.jpg",};
 
         int fondoIndex = new Random().nextInt(fondos.length);
         String ruta = fondos[fondoIndex];
@@ -94,25 +73,25 @@ private static CapturarPokemon zonaCapturaActual;
 
     private void mostrarImagenPokemon() {
         if (pokemonActual == null) {
-            JOptionPane.showMessageDialog(this, "Error: No hay Pokémon generado.", "Error", JOptionPane.ERROR_MESSAGE);
+            JOptionPane.showMessageDialog(this, "Error: No hay Pokemon generado.", "Error", JOptionPane.ERROR_MESSAGE);
             return;
         }
 
         try {
-            //  Obtener el nombre del Pokémon desde `pokemonActual`
+            //Obtener el nombre del Pokémon desde `pokemonActual`
             String nombrePokemon = pokemonActual.getNombrePokemon();
 
-            // Construir la URL del sprite
+            //Construir la URL del sprite
             String urlImagen = "https://img.pokemondb.net/sprites/home/normal/" + nombrePokemon.toLowerCase() + ".png";
 
-            // Descargar la imagen
+            //Descargar la imagen
             ImageIcon pokemonRandom = new ImageIcon(new URL(urlImagen));
 
-            // Ajustar el tamaño de la imagen
+            //Ajustar el tamaño de la imagen
             Image image = pokemonRandom.getImage().getScaledInstance(325, 325, Image.SCALE_SMOOTH);
             ImagenPokemonAle.setIcon(new ImageIcon(image));
 
-            // Actualizar el texto en la interfaz
+            //Actualizar el texto en la interfaz
             Texto.setText("¡Un " + nombrePokemon + " salvaje ha aparecido!");
             Texto.repaint();
 
@@ -133,7 +112,7 @@ private static CapturarPokemon zonaCapturaActual;
     }
 
     private void configurarCuadroCombate() {
-        // Crear el fondo dentro del panel CuadroCombates
+        //Crear el fondo dentro del panel CuadroCombates
         JPanelimagen imagenFondo = new JPanelimagen(CuadroCombates, "/Fotos/cuadroTexto.jpg");
 
         CuadroCombates.add(imagenFondo).repaint();
@@ -147,7 +126,7 @@ private static CapturarPokemon zonaCapturaActual;
     }
 
     private void configurarCuadroNivel() {
-        // Crear el fondo dentro del panel CuadroCombates
+        //Crear el fondo dentro del panel CuadroCombates
         JPanelimagen imagenFondo = new JPanelimagen(CuadroNivel, "/Fotos/CuadroNivel.png");
 
         CuadroNivel.add(imagenFondo).repaint();
@@ -182,37 +161,44 @@ private static CapturarPokemon zonaCapturaActual;
 
     private void configurarArrastrePokeball(JLabel Pokeball) {
         Pokeball.setTransferHandler(new TransferHandler("icon"));
+        //preparamos el icono de la pokeball para que se puedan arrastrar
 
-        Pokeball.addMouseListener(new MouseAdapter() {
+        Pokeball.addMouseListener(new MouseAdapter() {//detecta cuando el usuario toca la pokeball
             @Override
             public void mousePressed(MouseEvent e) {
                 TransferHandler handler = Pokeball.getTransferHandler();
-                handler.exportAsDrag(Pokeball, e, TransferHandler.COPY);
+                handler.exportAsDrag(Pokeball, e, TransferHandler.COPY);//y esto es lo que permite
+                //que la pokeball se pueda soltar en otro objeto
             }
         });
     }
 
     private void configurarDropPokemon() {
-        ImagenPokemonAle.setDropTarget(new DropTarget() {
+        ImagenPokemonAle.setDropTarget(new DropTarget() { //aqui convertimos la imagen del
+            //pokemon aleatorio, en un "contenedor" donde se pueden soltar objetos
             @Override
-            public void drop(DropTargetDropEvent dtde) {
-                dtde.acceptDrop(DnDConstants.ACTION_COPY);
+            public void drop(DropTargetDropEvent dtde) {//y esto se ejecuta cuando 
+                //se suelta la pokeball
+                dtde.acceptDrop(DnDConstants.ACTION_COPY); //y este es el "boton de confirmar"
 
-                Transferable transferable = dtde.getTransferable();
+                Transferable transferable = dtde.getTransferable();//comprobamos si 
+                //los objetos son compatibles entre si
                 try {
-                    // 🔥 Verificar qué formato se está recibiendo
+                    //
                     DataFlavor[] flavors = transferable.getTransferDataFlavors();
                     for (DataFlavor flavor : flavors) {
                         System.out.println("Formato recibido: " + flavor.getMimeType());
                     }
 
-                    // 🔥 Usar `javaJVMLocalObjectFlavor` en lugar de `imageFlavor`
+                    //Esta parte tan rara de codigo, verifica que lo que se esta arrastrando
+                    //es realmente un icon, y no cualquier otra cosa
                     Object data = transferable.getTransferData(new DataFlavor("application/x-java-jvm-local-objectref; class=javax.swing.Icon"));
 
                     if (data instanceof Icon) { //Verificar que es un `Icon`
-                        iniciarCapturaVisual(); // Lanzamos los GIFs de captura
+                        iniciarCapturaVisual(); //Hacemos que si se confirma el la captura
+                        //se muestren los gifs
                     } else {
-                        mostrarCapturaFallida(); //Captura fallida si el objeto no es válido
+                        mostrarCapturaFallida(); //Captura fallida si el objeto no es valido
                     }
                 } catch (Exception e) {
                     mostrarCapturaFallida(); //Captura fallida por error en la detección
@@ -222,69 +208,67 @@ private static CapturarPokemon zonaCapturaActual;
         });
     }
 
-  private void iniciarCapturaVisual() {
-    System.out.println("🔥 Iniciando captura visual...");
+    private void iniciarCapturaVisual() {
+        System.out.println("🔥 Iniciando captura visual...");
 
-    new CapturarAnimada(this, "/Fotos/lanzarPokeball.gif", 1500, () -> {
-        new CapturarAnimada(this, "/Fotos/PokemonCapturado.gif", 10000, () -> {
-            
-            // Mostrar el diálogo de confirmación con CapturarPokemon.this como padre.
-            int opcion = JOptionPane.showConfirmDialog(
-                    CapturarPokemon.this, 
-                    "¡Pokémon capturado! ¿Quieres asignarle un alias?", 
-                    "Asignar alias", 
-                    JOptionPane.YES_NO_OPTION);
-            System.out.println("🔥 El usuario eligió: " + (opcion == JOptionPane.YES_OPTION ? "Sí" : "No"));
-            
-            String alias;
-            if (opcion == JOptionPane.YES_OPTION) {
-                // Se usa CapturarPokemon.this como parent para que el diálogo quede en primer plano.
-                alias = JOptionPane.showInputDialog(
+            //duracion de los gifs y ubicacion de los gifs
+            new CapturarAnimada(this, "/Fotos/lanzarPokeball.gif", 1500, () -> {
+            new CapturarAnimada(this, "/Fotos/PokemonCapturado.gif", 9000, () -> {
+
+                //Mostrar el dialogo de confirmacion luego de que se completen los gifs
+                // y preguntar al usuario si quiere ponerle un alias
+                int opcion = JOptionPane.showConfirmDialog(
                         CapturarPokemon.this,
-                        "Introduce el alias para tu Pokémon:",
+                        "¡Pokémon capturado! ¿Quieres asignarle un alias?",
                         "Asignar alias",
-                        JOptionPane.QUESTION_MESSAGE);
-                if (alias == null || alias.trim().isEmpty()) {
+                        JOptionPane.YES_NO_OPTION);
+                System.out.println("🔥El usuario Eligio: " + (opcion == JOptionPane.YES_OPTION ? "Si" : "No"));
+
+                String alias;
+                if (opcion == JOptionPane.YES_OPTION) {
+                    // Se usa CapturarPokemon.this como parent para que el dialog quede en primer plano.
+                    alias = JOptionPane.showInputDialog(
+                            CapturarPokemon.this,
+                            "Introduce el alias para tu Pokémon:",
+                            "Asignar alias",
+                            JOptionPane.QUESTION_MESSAGE);
+                    if (alias == null || alias.trim().isEmpty()) {
+                        alias = "Sin alias";
+                    }
+                } else {
                     alias = "Sin alias";
                 }
-            } else {
-                alias = "Sin alias";
-            }
-            
-            // Asignar alias y guardar el Pokémon.
-            pokemonActual.setAlias(alias);
-            System.out.println("✅ Alias asignado: " + alias);
-            guardarPokemonEnEntrenador();
 
-            // Una vez se tiene el alias y se guarda, cerramos la ventana de captura y abrimos la Pokédex.
-            dispose();
-        
+                // Asignar alias y guardar el Pokémon.
+                pokemonActual.setAlias(alias);
+                System.out.println("✅Alias asignado: " + alias);
+                guardarPokemonEnEntrenador();
+
+                //Una vez tenemos el alias y se guarda, cerramos la ventana de captura y abrimos la Pokedex.
+                dispose();
+
+            });
         });
-    });
-}
-
-
+    }
 
     private void guardarPokemonEnEntrenador() {
-        System.out.println("🔥 Método guardarPokemonEnEntrenador() ejecutado.");
 
-        EntrenadorController ec = new EntrenadorController();
-        Integer idEntrenador = ec.obtenerIdPorNombre(nombreEntrenador); // ✅ Obtener ID del entrenador
+        EntrenadorController entrenador = new EntrenadorController();
+        Integer idEntrenador = entrenador.obtenerIdPorNombre(nombreEntrenador); //Obtener ID del entrenador
 
         if (idEntrenador == null) {
-            System.out.println("❌ Error: El ID del entrenador es NULL.");
+            System.out.println("❌Error: El ID del entrenador es NULL.");
             return;
         }
 
-        System.out.println("✅ ID del entrenador: " + idEntrenador);
-        System.out.println("✅ Pokémon a guardar: " + pokemonActual.getNombrePokemon());
+        System.out.println("✅ID del entrenador: " + idEntrenador);
+        System.out.println("✅Pokémon a guardar: " + pokemonActual.getNombrePokemon());
 
-        ec.agregarPokemonACaptura(idEntrenador, pokemonActual); // ✅ Guardar el Pokémon con el entrenador
+        entrenador.agregarPokemonACaptura(idEntrenador, pokemonActual); //Guardar el Pokemon con el entrenador
     }
 
-    
     private void mostrarCapturaFallida() {
-        JOptionPane.showMessageDialog(this, "¡La captura falló! Intenta de nuevo.", "Captura fallida", JOptionPane.ERROR_MESSAGE);
+        JOptionPane.showMessageDialog(this, "¡La captura fallo! Intenta de nuevo.", "Captura fallida", JOptionPane.ERROR_MESSAGE);
     }
 
     @SuppressWarnings("unchecked")
@@ -347,8 +331,8 @@ private static CapturarPokemon zonaCapturaActual;
             CuadroNivelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, CuadroNivelLayout.createSequentialGroup()
                 .addGap(18, 18, 18)
-                .addComponent(NombrePokemon, javax.swing.GroupLayout.PREFERRED_SIZE, 255, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 70, Short.MAX_VALUE)
+                .addComponent(NombrePokemon, javax.swing.GroupLayout.PREFERRED_SIZE, 286, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 39, Short.MAX_VALUE)
                 .addComponent(NivelPokemon)
                 .addGap(66, 66, 66))
         );
@@ -415,12 +399,11 @@ private static CapturarPokemon zonaCapturaActual;
 
     private void BotonHuirActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_BotonHuirActionPerformed
         // 🔥 Mostrar mensaje de huida exitosa                                   
-    JOptionPane.showMessageDialog(this, "¡Has escapado sin problemas!", "Huida exitosa", JOptionPane.INFORMATION_MESSAGE);
+        JOptionPane.showMessageDialog(this, "¡Has escapado sin problemas!", "Huida exitosa", JOptionPane.INFORMATION_MESSAGE);
 
-    // 🔥 Pasar los argumentos correctos al constructor
-    this.setVisible(false); // Ocultar la ventana actual
-    new Pokedex(menuEntrenadores, true, nombreEntrenador).setVisible(true);
-
+        // 🔥 Pasar los argumentos correctos al constructor
+        this.setVisible(false); //Ocultar la ventana actual
+        new Pokedex(menuEntrenadores, true, nombreEntrenador).setVisible(true);
 
 
     }//GEN-LAST:event_BotonHuirActionPerformed

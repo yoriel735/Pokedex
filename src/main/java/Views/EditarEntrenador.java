@@ -23,7 +23,7 @@ public class EditarEntrenador extends javax.swing.JDialog {
      * Creates new form EditarEntrenador
      */
     private JTextField txtNombre;
-    private JButton btnGuardar, btnCancelar;
+    private JButton botonguardar, botoncancelar;
     private String nombreOriginal;
     private Entrenador entrenador; 
 
@@ -42,17 +42,17 @@ public class EditarEntrenador extends javax.swing.JDialog {
         JLabel lblNombre = new JLabel("Nombre del Entrenador:");
         txtNombre = new JTextField(20);
 
-        btnGuardar = new JButton("Guardar");
-        btnCancelar = new JButton("Cancelar");
+        botonguardar = new JButton("Guardar");
+        botoncancelar = new JButton("Cancelar");
 
-        btnGuardar.addActionListener(e -> guardarCambios());
-        btnCancelar.addActionListener(e -> cancelar());
+        botonguardar.addActionListener(e -> guardarCambios());
+        botoncancelar.addActionListener(e -> cancelar());
 
         JPanel editar = new JPanel();
         editar.add(lblNombre);
         editar.add(txtNombre);
-        editar.add(btnGuardar);
-        editar.add(btnCancelar);
+        editar.add(botonguardar);
+        editar.add(botoncancelar);
 
         this.setContentPane(editar);
         this.setDefaultCloseOperation(JDialog.DISPOSE_ON_CLOSE);
@@ -61,14 +61,14 @@ public class EditarEntrenador extends javax.swing.JDialog {
     private void guardarCambios() {
      String nuevoNombre = txtNombre.getText().trim();
         if (nuevoNombre.isEmpty()) {
-            JOptionPane.showMessageDialog(this, "El nombre no puede estar vacío.");
+            JOptionPane.showMessageDialog(this, "El nombre no puede estar vacio.");
             return;
         }
 
         try {
             entrenador.setNomEntrenador(nuevoNombre);
             EntrenadorController controlador = new EntrenadorController();
-            controlador.editarEntrenador(entrenador);
+            controlador.editarNombreEntrenador(entrenador);
 
             JOptionPane.showMessageDialog(this, "Entrenador actualizado correctamente.");
             this.dispose();

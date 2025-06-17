@@ -1,7 +1,4 @@
-/*
- * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
- * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Class.java to edit this template
- */
+
 package Controladores;
 
 import Entidades.Ataque;
@@ -19,11 +16,13 @@ import javax.swing.JOptionPane;
  * @author yoriel
  */
 public class AtaquesController {
-
+    //Definimos una variable para trabajar con la base de datos, cada operacion con la base de datos
+    //partira de esta linea de codigo
     private static final EntityManagerFactory emf = Persistence.createEntityManagerFactory("pokemondb");
 
+    //Hacemos un select de los ataques del pokemon, en base a su id
     public List<PokemonAtaque> obtenerAtaquesPorPokemon(int idPokemon) {
-        EntityManager em = emf.createEntityManager();
+        EntityManager em = emf.createEntityManager(); //con esta parte es donde conectamos con la base de datos
         try {
             Query query = em.createQuery("SELECT pa FROM PokemonAtaque pa WHERE pa.pokemon.idPokemon = :idPokemon");
             query.setParameter("idPokemon", idPokemon);
@@ -33,12 +32,16 @@ public class AtaquesController {
         }
     }
 
+    //Este metodo es para guardar un ataque en un pokemon
+   //la idea es comprobar si un ataque ya existe, y si este ya existia, lo reutiliza
+    //en lugar de crear un duplicado
     public void guardarAtaqueYPokemon(Pokemon pokemon, Ataque nuevoAtaque) {
         EntityManager em = emf.createEntityManager();
         try {
-            em.getTransaction().begin();
+            em.getTransaction().begin(); //iniciamos transaccion para evitar
+            //pposibles errores
 
-            // Verificar si el ataque ya existe
+            //verificamos si el ataque ya existe
             Query query = em.createQuery("SELECT a FROM Ataque a WHERE a.nombreAtaque = :nombre AND a.tipo = :tipo AND a.categoria = :categoria");
             query.setParameter("nombre", nuevoAtaque.getNombreAtaque());
             query.setParameter("tipo", nuevoAtaque.getTipo());
@@ -46,13 +49,15 @@ public class AtaquesController {
             List<Ataque> ataquesExistentes = query.getResultList();
 
             if (!ataquesExistentes.isEmpty()) {
-                nuevoAtaque = ataquesExistentes.get(0); // Usa el ataque existente
+                nuevoAtaque = ataquesExistentes.get(0); //y si si existe, usamos 
+                //el ya existente
             } else {
-                em.persist(nuevoAtaque);
-                em.flush();
+                em.persist(nuevoAtaque); //con esto garantizamos que se guarde el nuevo ataque en la BD
+                em.flush();//con esto garantizamos que los datos se envien siempre
+                //se fuerza
             }
 
-            // Verificar si el Pokémon ya tiene el ataque
+            //Verificar si el Pokemon ya tiene el ataque
             Query queryAtaqueExistente = em.createQuery("SELECT pa FROM PokemonAtaque pa WHERE pa.pokemon.idPokemon = :idPokemon AND pa.ataque.idAtaque = :idAtaque");
             queryAtaqueExistente.setParameter("idPokemon", pokemon.getIdPokemon());
             queryAtaqueExistente.setParameter("idAtaque", nuevoAtaque.getIdAtaque());
@@ -63,12 +68,13 @@ public class AtaquesController {
                 em.persist(nuevoPokemonAtaque);
             }
 
-            em.getTransaction().commit();
+            em.getTransaction().commit(); //se guarda todos los resultados en la BD
         } finally {
             em.close();
         }
     }
 
+    //Un metood que verifica si este ataque ya existia anteriormente
     public boolean ataqueExiste(Ataque ataque) {
         EntityManager em = emf.createEntityManager();
         try {
@@ -76,12 +82,14 @@ public class AtaquesController {
             query.setParameter("nombre", ataque.getNombreAtaque());
             query.setParameter("tipo", ataque.getTipo());
             query.setParameter("categoria", ataque.getCategoria());
-            return !query.getResultList().isEmpty();
+            return !query.getResultList().isEmpty(); //y devuelve true si el ataque
+            //ya existe en la bd
         } finally {
             em.close();
         }
     }
 
+    //y este metodo es para guardar un nuevo ataque sin registrarlo a un pokemon
     public void guardarNuevoAtaque(Ataque nuevoAtaque) {
         EntityManager em = emf.createEntityManager();
         try {
@@ -92,51 +100,32 @@ public class AtaquesController {
             em.close();
         }
     }
+    //Metodo para eliminar ataques
    public void eliminarAtaque(int idPokemon, int idAtaque) {
     EntityManager em = emf.createEntityManager();
     try {
         em.getTransaction().begin();
 
-        //  Buscar la relación específica entre el Pokémon y el ataque
+        //Primero buscamos la relacion exacta entre el pokemon y los ataques
         Query queryRelacion = em.createQuery("SELECT pa FROM PokemonAtaque pa WHERE pa.pokemon.idPokemon = :idPokemon AND pa.ataque.idAtaque = :idAtaque");
         queryRelacion.setParameter("idPokemon", idPokemon);
         queryRelacion.setParameter("idAtaque", idAtaque);
         List<PokemonAtaque> relaciones = queryRelacion.getResultList();
 
-        //  Si existe la relación, eliminarla
+        //y si existe esa relacion, la eliminamos
         if (!relaciones.isEmpty()) {
             for (PokemonAtaque pa : relaciones) {
                 em.remove(pa);
             }
+           em.getTransaction().commit(); //Confirmar cambios en la BD
+            JOptionPane.showMessageDialog(null, "Ataque eliminado correctamente del Pokémon.", "Exito", JOptionPane.INFORMATION_MESSAGE);
         } else {
             JOptionPane.showMessageDialog(null, "Este Pokémon no tiene asignado este ataque.", "Aviso", JOptionPane.WARNING_MESSAGE);
-            return;
         }
-
-        em.flush(); // ✅ Asegurar que la BD actualice los cambios antes de continuar
-
-        // 🔎 Comprobar si el ataque sigue asignado a otros Pokémon
-        Query queryOtrosUsos = em.createQuery("SELECT pa FROM PokemonAtaque pa WHERE pa.ataque.idAtaque = :idAtaque");
-        queryOtrosUsos.setParameter("idAtaque", idAtaque);
-        List<PokemonAtaque> usosRestantes = queryOtrosUsos.getResultList();
-
-        // 📌 Si el ataque ya no está asignado a ningún Pokémon, preguntar si se quiere eliminar de `ataques`
-        if (usosRestantes.isEmpty()) {
-            int opcion = JOptionPane.showConfirmDialog(null, "Este ataque ya no está asignado a ningún Pokémon. ¿Quieres eliminarlo de la base de datos?", "Confirmar", JOptionPane.YES_NO_OPTION);
-            if (opcion == JOptionPane.YES_OPTION) {
-                Ataque ataque = em.find(Ataque.class, idAtaque);
-                if (ataque != null) {
-                    em.remove(ataque);
-                }
-            }
-        }
-
-        em.getTransaction().commit();
-        JOptionPane.showMessageDialog(null, "Ataque eliminado correctamente del Pokémon.", "Éxito", JOptionPane.INFORMATION_MESSAGE);
     } catch (Exception ex) {
         JOptionPane.showMessageDialog(null, "Error al eliminar el ataque: " + ex.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
     } finally {
-        em.close();
+        em.close(); //Cerrar conexion con la BD
     }
-   }
+}
 }

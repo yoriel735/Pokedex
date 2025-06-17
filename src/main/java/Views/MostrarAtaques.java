@@ -52,7 +52,7 @@ public class MostrarAtaques extends javax.swing.JDialog {
             Ataque ataque = pa.getAtaque();
 
             Object[] fila = new Object[]{
-                ataque.getIdAtaque(), // ✅ Agregar el ID del ataque aquí
+                ataque.getIdAtaque(), //Agregar el ID del ataque aquí
                 ataque.getNombreAtaque() != null ? ataque.getNombreAtaque() : "--",
                 ataque.getTipo() != null ? ataque.getTipo() : "--",
                 ataque.getCategoria() != null ? ataque.getCategoria() : "--",
@@ -180,7 +180,7 @@ public class MostrarAtaques extends javax.swing.JDialog {
 
         if (dialogoAñadir.isConfirmado()) {
             Ataque nuevoAtaque = dialogoAñadir.getAtaque();
-            ataquesController.guardarAtaqueYPokemon(pokemon, nuevoAtaque); // ✅ Usamos el controlador
+            ataquesController.guardarAtaqueYPokemon(pokemon, nuevoAtaque); //Usamos el controlador
             actualizarTabla();
         }
 
@@ -204,7 +204,7 @@ public class MostrarAtaques extends javax.swing.JDialog {
     //esto me transforma el string de la tabla, a integer, para que se pueda borrar
     //por el id
     private int obtenerIdAtaqueDesdeFila(int fila) {
-        Object idValue = tablaAtaques.getValueAt(fila, 0); // ✅ Primera columna debe ser ID
+        Object idValue = tablaAtaques.getValueAt(fila, 0); //Primera columna debe ser ID
 
         if (idValue instanceof Integer) {
             return (Integer) idValue;
@@ -224,14 +224,14 @@ public class MostrarAtaques extends javax.swing.JDialog {
     }//GEN-LAST:event_BotonEliminarActionPerformed
     public void actualizarTabla() {
         DefaultTableModel modelo = new DefaultTableModel(new Object[]{"ID", "Nombre", "Tipo", "Categoría", "Efecto", "Potencia", "PP"}, 0);
-    tablaAtaques.setModel(modelo); // ✅ Asegurar que el modelo tenga todas las columnas
+    tablaAtaques.setModel(modelo); //Asegurar que el modelo tenga todas las columnas
 
     List<PokemonAtaque> ataques = ataquesController.obtenerAtaquesPorPokemon(pokemon.getIdPokemon());
     for (PokemonAtaque pa : ataques) {
         Ataque ataque = pa.getAtaque();
 
         Object[] fila = new Object[]{
-            ataque.getIdAtaque(), // ✅ ID oculto
+            ataque.getIdAtaque(), //ID oculto
             ataque.getNombreAtaque(),
             ataque.getTipo(),
             ataque.getCategoria(),

@@ -16,22 +16,23 @@ import javax.swing.Timer;
 public class gifsController {
      public static void mostrarGifTemporal(JLabel label, String rutaGif, int tiempoMs, Runnable despuesDeGif) {
         try {
+            //obtenemos la ruta de un gif, y retornamos error si esta no funciona
             URL gifURL = gifsController.class.getResource(rutaGif);
             if (gifURL == null) {
-                System.err.println(" No se encontró el GIF en " + rutaGif);
+                System.err.println(" No se encontro el GIF en " + rutaGif);
                 return;
             }
-
+        
             ImageIcon gifIcon = new ImageIcon(gifURL);
             label.setIcon(gifIcon);
 
-            // Después de 'tiempoMs' milisegundos, ejecutamos la siguiente acción
+            // Despues de 'tiempoMs' milisegundos, ejecutamos la siguiente accion
             Timer timer = new Timer(tiempoMs, e -> {
                 ((Timer) e.getSource()).stop();
                 despuesDeGif.run(); // Ejecutar acción posterior al GIF
             });
 
-            timer.setRepeats(false);
+            timer.setRepeats(false);//lo que dice que el gif solo se ejecute una vez
             timer.start();
         } catch (Exception e) {
             System.out.println("Error al mostrar el GIF: " + e.getMessage());

@@ -15,8 +15,6 @@ import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
-import java.io.FileReader;
-import java.io.FileWriter;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.OutputStreamWriter;
@@ -50,10 +48,10 @@ public class MenuEntrenadores extends javax.swing.JFrame {
         setTitle("Selector de Entrenadores");
         ListaEntrenadores.setModel(modeloEntrenadores);
         ListaEntrenadores.addListSelectionListener(e -> {
-            if (!e.getValueIsAdjusting()) {  // 🔥 Evita múltiples eventos en un solo clic
+            if (!e.getValueIsAdjusting()) {  //Evita varios eventos con un solo clic
                 int indiceSeleccionado = ListaEntrenadores.getSelectedIndex();
                 if (indiceSeleccionado >= 0) {
-                    entrenadorActual = modeloEntrenadores.getElementAt(indiceSeleccionado);  // 🔥 Guardamos el entrenador activo
+                    entrenadorActual = modeloEntrenadores.getElementAt(indiceSeleccionado);  //Guardamos el entrenador activo
                 }
             }
         });
@@ -65,7 +63,6 @@ public class MenuEntrenadores extends javax.swing.JFrame {
         cargarEntrenadores();
 
         //Para que la lista sea transparente o bueno, tengo el color del fondo
-        // ListaEntrenadores.setOpaque(false);             // Quita el fondo opaco
         ListaEntrenadores.setBackground(new Color(13, 173, 239, 255)); // Fondo completamente transparente
         ListaEntrenadores.setBorder(BorderFactory.createLineBorder(Color.red));
     }
@@ -170,9 +167,9 @@ public class MenuEntrenadores extends javax.swing.JFrame {
                 .addComponent(BotonEditar)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addComponent(BotonELiminar)
-                .addGap(39, 39, 39)
+                .addGap(18, 18, 18)
                 .addComponent(GuardarEntrenador)
-                .addGap(116, 116, 116)
+                .addGap(137, 137, 137)
                 .addComponent(AccederPokedex)
                 .addGap(35, 35, 35)
                 .addComponent(CargarEntrenador)
@@ -295,19 +292,22 @@ public class MenuEntrenadores extends javax.swing.JFrame {
         return;
     }
 
-    File archivo = new File("Entrenador_" + entrenadorActual.getNomEntrenador() + ".csv");
+    File archivo = new File("Entrenador:" + entrenadorActual.getNomEntrenador() + ".csv");
 
-    try (BufferedWriter bw = new BufferedWriter(new OutputStreamWriter(new FileOutputStream(archivo), StandardCharsets.UTF_8))) {
-        bw.write("Nombre,Numero Pokédex,Nombre Pokémon,Alias,Tipo 1,Tipo 2,Nivel,Habilidad\n");
+    try (BufferedWriter escritor = new BufferedWriter(new OutputStreamWriter(new FileOutputStream(archivo), StandardCharsets.UTF_8))) {
+        escritor.write("Nombre,Numero Pokédex,Nombre Pokémon,Alias,Tipo 1,Tipo 2,Nivel,Habilidad\n");
 
         List<Pokemon> listaPokemon = entrenadorController.obtenerPokemonPorEntrenadorId(entrenadorActual.getIdEntrenador());
 
+        //recorremos la lista del entrenador, y mostramos las siguientes especificaciones
+        //si no tiene alias, si no tiene segundo tipo o si no tiene habilidad
         for (Pokemon p : listaPokemon) {
             String alias = (p.getAlias() != null) ? p.getAlias() : "Sin alias";
             String tipo2 = (p.getSegundoTipo() != null) ? p.getSegundoTipo().toString() : "N/A";
             String habilidad = (p.getHabilidad() != null) ? p.getHabilidad().getNombreHabilidad() : "N/A";
 
-            bw.write(entrenadorActual.getNomEntrenador() + "," + p.getNumeroPokedex() + "," + p.getNombrePokemon() + "," + alias + ","
+            //y aqui escribimos todos los datos separados por comas
+            escritor.write(entrenadorActual.getNomEntrenador() + "," + p.getNumeroPokedex() + "," + p.getNombrePokemon() + "," + alias + ","
                     + p.getTipoPokemon() + "," + tipo2 + "," + p.getNivel() + "," + habilidad + "\n");
         }
 
@@ -321,17 +321,19 @@ public class MenuEntrenadores extends javax.swing.JFrame {
 
     private void CargarEntrenadorActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_CargarEntrenadorActionPerformed
     JFileChooser fileChooser = new JFileChooser(new File(System.getProperty("user.dir")));
-    fileChooser.setDialogTitle("Seleccionar archivo CSV");
+    //es donde el usuario podra elegir la carpeta del archivo
+    fileChooser.setDialogTitle("Seleccionar archivo CSV"); //titulo
     fileChooser.setFileFilter(new FileNameExtensionFilter("Archivo CSV", "csv"));
+    //esto para que solo se muestren arhcivos scv
 
-    int userSelection = fileChooser.showOpenDialog(this);
+    int seleccionArchivoUsuario = fileChooser.showOpenDialog(this);
 
-    if (userSelection == JFileChooser.APPROVE_OPTION) {
+    if (seleccionArchivoUsuario == JFileChooser.APPROVE_OPTION) {
         File archivo = fileChooser.getSelectedFile();
 
         try (BufferedReader br = new BufferedReader(new InputStreamReader(new FileInputStream(archivo), StandardCharsets.UTF_8))) {
             String linea;
-            br.readLine(); // 🔥 Saltar encabezados
+            br.readLine(); //Saltar encabezados
 
             Map<String, Entrenador> entrenadoresMap = new HashMap<>();
             Map<String, List<Pokemon>> pokemonesPorEntrenador = new HashMap<>();
@@ -344,10 +346,10 @@ public class MenuEntrenadores extends javax.swing.JFrame {
                     continue;
                 }
 
-                // ✅ Obtener datos del entrenador
+                //Obtener datos del entrenador
                 String nombreEntrenador = datos[0];
 
-                // ✅ Verificar si el entrenador ya está en la BD y recuperarlo en lugar de duplicarlo
+                //Verificar si el entrenador ya esta en la BD y recuperarlo en lugar de duplicarlo
                 Entrenador entrenadorExistenteEnBD = entrenadorController.buscarEntrenadorPorNombre(nombreEntrenador);
                 Entrenador entrenador;
                 if (entrenadorExistenteEnBD != null) {
@@ -367,7 +369,7 @@ public class MenuEntrenadores extends javax.swing.JFrame {
                         continue;
                     }
 
-                    // ✅ Obtener datos del Pokémon
+                    //Obtener datos del Pokémon
                     int numeroPokedex = Integer.parseInt(datos[1]);
                     int nivel = Integer.parseInt(datos[6]);
 

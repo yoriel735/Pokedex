@@ -9,31 +9,35 @@ import javax.persistence.Persistence;
 import java.util.List;
 import javax.persistence.Query;
 import javax.persistence.TypedQuery;
-import javax.swing.JOptionPane;
 
 public class EntrenadorController {
 
+    //Estas 2 lineas es como definimos antes, para crear una variable que sea "la que esta conectada" 
+    //con la base de datos
     private static final EntityManagerFactory emf = Persistence.createEntityManagerFactory("pokemondb");
-    private EntityManager em = emf.createEntityManager();
+    private EntityManager em = emf.createEntityManager(); //esto esta mas hecho para manejar operaciones puntuales y cerrarse
 
+    //creamos un entrenador, basicamente un insert a la tabla de entrenador
     public static void crearEntrenador(Entrenador entrenador) {
         EntityManager em = emf.createEntityManager();
         try {
             em.getTransaction().begin();
 
-            // 🔥 Insertar el entrenador manualmente si tiene un ID específico
+            //Insertar el entrenador manualmente si tiene un ID específico
             if (entrenador.getIdEntrenador() != null) {
                 em.createNativeQuery("INSERT INTO entrenador (idEntrenador, nomEntrenador) VALUES (?, ?)")
                         .setParameter(1, entrenador.getIdEntrenador())
                         .setParameter(2, entrenador.getNomEntrenador())
-                        .executeUpdate();
+                        .executeUpdate(); //esto es realmente para identificar los ficheros, ya qeu nunca añado directamente el 
+                //id del entrenador a menos que sea por estos
             } else {
-                em.persist(entrenador);  // ✅ Si no tiene ID, dejar que la BD asigne uno automáticamente
+                em.persist(entrenador);  //Si no tiene ID, dejar que la BD asigne uno automáticamente
             }
 
             em.getTransaction().commit();
         } catch (Exception e) {
-            if (em.getTransaction().isActive()) {
+            if (em.getTransaction().isActive()) {//estas 2 operaciones son por seguridad, comprueba si la transaccion sigue en pie, 
+                //y si sigue y ha habido un error, vuelve al estado inicial, no "guarde un pikachu partido a la mitad"
                 em.getTransaction().rollback();
             }
             throw e;
@@ -42,11 +46,12 @@ public class EntrenadorController {
         }
     }
 
-    public void editarEntrenador(Entrenador entrenador) {
+    //editar el nombre de un entrenador
+    public void editarNombreEntrenador(Entrenador entrenador) {
         EntityManager em = emf.createEntityManager();
         try {
             em.getTransaction().begin();
-            em.merge(entrenador);
+            em.merge(entrenador);//actualiza el objeto en la BD.
             em.getTransaction().commit();
         } catch (Exception e) {
             if (em.getTransaction().isActive()) {
@@ -58,28 +63,30 @@ public class EntrenadorController {
         }
     }
 
+    //Metodo para eliminar un entrenador junto a todos sus pokemon relacionados
     public void eliminarEntrenador(Integer id) {
         EntityManager em = emf.createEntityManager();
         try {
             em.getTransaction().begin();
 
-            // 🔥 Primero eliminar los ataques asociados a los Pokémon de este entrenador
+            //La idea poder borrarlo todo, y los pokemon tienen ataques que dependen de estos
+            //Lo primero que haremos es eliminar los ataques asociados al pokemon en cuestion
             em.createNativeQuery("DELETE FROM pokemon_ataque WHERE id_pokemon IN (SELECT idPokemon FROM pokemon WHERE idEntrenador = ?)")
-                    .setParameter(1, id)
-                    .executeUpdate();
-            System.out.println("✅ Ataques eliminados para los Pokémon del entrenador ID: " + id);
+                    .setParameter(1, id) //identifica el id del entrenador
+                    .executeUpdate(); //Ejecuta la consulta y realiza los cambios
+            System.out.println("Ataques eliminados para los Pokemon del entrenador ID: " + id);
 
-            // 🔥 Luego eliminamos los Pokémon del entrenador
+            //Ahora si eliminamos los Pokemon del entrenador
             em.createNativeQuery("DELETE FROM pokemon WHERE idEntrenador = ?")
                     .setParameter(1, id)
                     .executeUpdate();
-            System.out.println("✅ Pokémon eliminados para el entrenador ID: " + id);
+            System.out.println("Pokemon eliminados para el entrenador ID: " + id);
 
-            // 🔥 Finalmente eliminamos al entrenador
+            // y ya por ultimo, eliminamos al entrenador
             em.createNativeQuery("DELETE FROM entrenador WHERE idEntrenador = ?")
                     .setParameter(1, id)
                     .executeUpdate();
-            System.out.println("✅ Entrenador eliminado de la BD.");
+            System.out.println("Entrenador eliminado");
 
             em.getTransaction().commit();
         } catch (Exception e) {
@@ -92,20 +99,23 @@ public class EntrenadorController {
         }
     }
 
+    //agregamos un metodo de busqueda por id de entrenador
     public Entrenador buscarEntrenadorPorId(Integer id) {
         if (id == null || id <= 0) {
-            System.err.println("❌ Error: ID de entrenador inválido.");
+            System.err.println("Error: ID de entrenador inválido.");
             return null;
         }
 
         EntityManager em = emf.createEntityManager();
         try {
-            return em.find(Entrenador.class, id);
+            return em.find(Entrenador.class, id); //comprueba si existe tal id
         } finally {
             em.close();
         }
     }
 
+    //Una lista que muestra todos los entrenadores existentens basicamente
+    //para el jList
     public List<Entrenador> obtenerTodosLosEntrenadores() {
         EntityManager em = emf.createEntityManager();
         try {
@@ -116,22 +126,16 @@ public class EntrenadorController {
         }
     }
 
-    public List<Entrenador> listarEntrenadores() {
-        EntityManager em = emf.createEntityManager();
-        List<Entrenador> lista = em.createQuery("SELECT e FROM Entrenador e", Entrenador.class).getResultList();
-        em.close();
-        return lista;
-    }
-
     public Integer obtenerIdPorNombre(String nombre) {
         try {
+            //Buscamos el entrenador por su nombre
             TypedQuery<Entrenador> query = em.createNamedQuery("Entrenador.findByNomEntrenador", Entrenador.class);
             query.setParameter("nomEntrenador", nombre);
-            Entrenador entrenador = query.getSingleResult();
+            Entrenador entrenador = query.getSingleResult(); //y se obtiene su resultado
             if (entrenador != null) {
                 return entrenador.getIdEntrenador();
             } else {
-                return null;
+                return null;//si no se encuentra por alguna razon, mostramos el siguiente mensaje
             }
         } catch (Exception e) {
             System.err.println("No se encontró entrenador con nombre: " + nombre);
@@ -142,6 +146,8 @@ public class EntrenadorController {
     public List<Pokemon> obtenerPokemonPorEntrenadorId(Integer idEntrenador) {
         EntityManager em = emf.createEntityManager();
         try {
+            //Similar a antes, pero ahora sacamos el pokemon en base a su id Entrenador
+            //y como cada pokemon esta asignado a un entrenador, no hay problemas
             TypedQuery<Pokemon> query = em.createQuery(
                     "SELECT p FROM Pokemon p WHERE p.entrenador.idEntrenador = :idEntrenador", Pokemon.class);
             query.setParameter("idEntrenador", idEntrenador);
@@ -154,71 +160,70 @@ public class EntrenadorController {
     public Entrenador buscarEntrenadorPorNombre(String nombre) {
         EntityManager em = emf.createEntityManager();
         try {
+            // y buscamos nuevamente por el nombre
             List<Entrenador> resultado = em.createQuery(
                     "SELECT e FROM Entrenador e WHERE e.nomEntrenador = :nombre", Entrenador.class)
                     .setParameter("nombre", nombre)
-                    .getResultList();
+                    .getResultList();//guardamos el resultado 
 
-            return resultado.isEmpty() ? null : resultado.get(0);  // 🔥 Si hay coincidencia, devuelve el entrenador
+            return resultado.isEmpty() ? null : resultado.get(0);  //Si hay coincidencia, devuelve el entrenador
         } finally {
             em.close();
         }
     }
-public void crearEntrenadorConPokemon(Entrenador entrenador, List<Pokemon> listaPokemon) {
-    EntityManager em = emf.createEntityManager();
-    try {
-        em.getTransaction().begin();
 
-        // 1️⃣ Persistir el entrenador (si es nuevo)
-        if (entrenador.getIdEntrenador() == null) {
-            em.persist(entrenador);
-            em.flush();
-            // Usar refresh para actualizar el objeto con el ID generado
-            em.refresh(entrenador);
-        } else {
-            entrenador = em.merge(entrenador);
-        }
+//este es el metodo para poder crear un entrenador con sus pokemon y que posteriormente se pueda guardar en fichero   
+//Si el entrenador es nuevo, se guarda en la base de datos y la BD asigna un ID.
+//Si el entrenador ya existe, se actualiza.
+//Luego, cada pokemon de la lista se vincula con el entrenador y se guarda en la BD.
+    public void crearEntrenadorConPokemon(Entrenador entrenador, List<Pokemon> listaPokemon) {
+        EntityManager em = emf.createEntityManager();
+        try {
+            em.getTransaction().begin();
 
-        // Comprobamos que el entrenador tiene un ID válido (debería tenerlo tras flush/refresh)
-        if (entrenador.getIdEntrenador() == null) {
-            throw new IllegalStateException("El entrenador no tiene un ID asignado tras persistirlo.");
-        }
-
-        // 2️⃣ Asignar y persistir cada Pokémon nuevo
-        for (Pokemon p : listaPokemon) {
-            // Asignar el entrenador a cada Pokémon
-            p.setEntrenador(entrenador);
-
-            // Dado que estamos leyendo de un CSV nuevo, p.getIdPokemon() es null → persistir directamente
-            if (p.getIdPokemon() == null) {
-                em.persist(p);
+            //Añadir el entrenador si es nuevo
+            if (entrenador.getIdEntrenador() == null) {
+                em.persist(entrenador);
+                em.flush();
+                // Usar refresh para actualizar el objeto con el ID generado
+                em.refresh(entrenador);
             } else {
-                // Si se llegara a actualizar un Pokémon existente:
-                em.merge(p);
+                entrenador = em.merge(entrenador);
             }
-        }
 
-        em.getTransaction().commit();
-    } catch (Exception e) {
-        if (em.getTransaction().isActive()) {
-            em.getTransaction().rollback();
+            // Comprobamos que el entrenador tiene un ID valido (deberaa tenerlo tras flush/refresh)
+            if (entrenador.getIdEntrenador() == null) {
+                throw new IllegalStateException("El entrenador no tiene un ID asignado tras persistirlo.");
+            }
+
+            // Asignar cada pokemon
+            for (Pokemon p : listaPokemon) {
+                p.setEntrenador(entrenador);
+                if (p.getIdPokemon() == null) {
+                    em.persist(p);
+                } else {
+                    // Si se llegara a actualizar un Pokemon existente:
+                    em.merge(p);
+                }
+            }
+
+            em.getTransaction().commit();
+        } catch (Exception e) {
+            if (em.getTransaction().isActive()) {
+                em.getTransaction().rollback();
+            }
+            e.printStackTrace();
+        } finally {
+            em.close();
         }
-        e.printStackTrace();
-    } finally {
-        em.close();
     }
-}
-
-
-
-
 
     // ----------------------------------------------------------------------------
     /*
-    Busca al entrenador en la base de datos por su ID. 🔥
-    Asigna el Pokémon capturado al entrenador y lo guarda en la base de datos. 
-     Añade el Pokémon a la colección del entrenador para que se refleje en la Pokédex. 
-    🔥 Confirma la transacción para que los cambios se guarden correctamente.
+    Busca al entrenador en la base de datos por su ID.
+    Asigna el Pokemon capturado al entrenador y lo guarda en la base de datos. 
+     Añade el Pokémon a la coleccion del entrenador para que se refleje en la Pokedex. 
+    Confirma la transaccion para que los cambios se guarden correctamente.
      */
     public void agregarPokemonACaptura(Integer idEntrenador, Pokemon pokemonCapturado) {
         EntityManager em = emf.createEntityManager();
@@ -226,32 +231,30 @@ public void crearEntrenadorConPokemon(Entrenador entrenador, List<Pokemon> lista
         try {
             em.getTransaction().begin();
 
-            // 🔥 Verificar si ya existe un Pokémon con el mismo número de Pokédex
+            //Verificar si ya existe un Pokemon con el mismo numero de Pokedex
             Query query = em.createQuery("SELECT COUNT(p) FROM Pokemon p WHERE p.numeroPokedex = :numero");
             query.setParameter("numero", pokemonCapturado.getNumeroPokedex());
             Long count = (Long) query.getSingleResult();
 
             if (count > 0) {
-                System.out.println("⚠️ Número de Pokédex duplicado, generando uno nuevo...");
                 pokemonCapturado.setNumeroPokedex(new PokemonController().generarNumeroPokedexUnico()); // ✅ Generar uno nuevo
             }
 
-            // 🔥 Buscar al entrenador en la base de datos
+            //Buscar al entrenador en la base de datos
             Entrenador entrenador = em.find(Entrenador.class, idEntrenador);
             if (entrenador == null) {
-                System.out.println("❌ Entrenador no encontrado en la BD.");
                 em.getTransaction().rollback();
                 return;
             }
 
-            // 🔥 Asignar el Pokémon al entrenador antes de persistirlo
+            //Asignar el Pokemon al entrenador antes de persistirlo
             pokemonCapturado.setEntrenador(entrenador);
             em.persist(pokemonCapturado);
             em.merge(entrenador);
 
             em.getTransaction().commit();
 
-            System.out.println("✅ Pokémon " + pokemonCapturado.getNombrePokemon() + " asignado correctamente.");
+            System.out.println("Pokemon " + pokemonCapturado.getNombrePokemon() + " asignado correctamente.");
 
         } catch (Exception e) {
             if (em.getTransaction().isActive()) {

@@ -14,7 +14,8 @@ import javax.swing.JPanel;
  * @author yoriel
  */
 public class JPanelimagen extends JLabel {
-    
+    //Esta es una clase hace que los Jpanel extiendan de JLabel, lo que les permite
+    //poder agregarle imagenes comodamente en base a la ruta que le de
    private ImageIcon img;
 
     public JPanelimagen(JPanel panel, String path) {
@@ -27,6 +28,7 @@ public class JPanelimagen extends JLabel {
         this.setSize(panel.getWidth(), panel.getHeight());
     }
 
+    //y esto es para tener mas control sobre la imagen
     @Override
     public void paint(Graphics g) {
         if (img != null) {
