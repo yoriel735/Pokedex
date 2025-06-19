@@ -127,7 +127,7 @@ public class AñadirAtaque extends javax.swing.JDialog {
             ataquesController.guardarNuevoAtaque(nuevoAtaque);
             confirmado = true;
             JOptionPane.showMessageDialog(this, "Ataque guardado correctamente.", "Éxito", JOptionPane.INFORMATION_MESSAGE);
-            dispose();
+            dispose(); //se cierra la tabla al guardar ataque
         } catch (Exception ex) {
             JOptionPane.showMessageDialog(this, "Error al guardar el ataque: " + ex.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
         }

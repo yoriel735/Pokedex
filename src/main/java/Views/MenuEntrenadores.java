@@ -1,7 +1,4 @@
-/*
- * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
- * Click nbfs://nbhost/SystemFileSystem/Templates/GUIForms/JFrame.java to edit this template
- */
+
 package Views;
 
 import Controladores.AtaquesController;
@@ -347,7 +344,7 @@ public class MenuEntrenadores extends javax.swing.JFrame {
             try (BufferedReader br = new BufferedReader(
                     new InputStreamReader(new FileInputStream(archivo), StandardCharsets.UTF_8))) {
                 String linea;
-                br.readLine(); // Saltar encabezados
+                br.readLine(); //Saltar encabezados
 
                 // Instanciar los controladores
                 PokemonController pokemonController = new PokemonController();
@@ -377,7 +374,7 @@ public class MenuEntrenadores extends javax.swing.JFrame {
                     } else {
                         entrenador = new Entrenador();
                         entrenador.setNomEntrenador(nombreEntrenador);
-                        // Persistimos el entrenador para asegurar que tenga ID
+                        // 
                         entrenadorController.crearEntrenadorConPokemon(entrenador, new ArrayList<>());
                     }
 
@@ -455,7 +452,7 @@ public class MenuEntrenadores extends javax.swing.JFrame {
                 JOptionPane.showMessageDialog(this, "Entrenador restaurado correctamente",
                         "Exito", JOptionPane.INFORMATION_MESSAGE);
 
-                // Actualizar la lista de entrenadores de la interfaz (modeloEntrenadores es tu ListModel)
+                // Actualizar la lista de entrenadores de la interfaz 
                 modeloEntrenadores.removeAllElements();
                 for (Entrenador e : entrenadorController.obtenerTodosLosEntrenadores()) {
                     modeloEntrenadores.addElement(e);

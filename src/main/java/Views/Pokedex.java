@@ -33,7 +33,7 @@ public class Pokedex extends javax.swing.JDialog {
     private MenuEntrenadores menuEntrenadores;
     private CapturarPokemon zonaCapturaActual;
     private List<Pokemon> listaPokemon = new ArrayList<>();
-    private Entrenador entrenadorActual;
+ 
 
     /**
      * Creates new form poki
@@ -531,14 +531,14 @@ public class Pokedex extends javax.swing.JDialog {
     }
 
     public void ActualizarListaPokemon(Integer idEntrenador) {
-        PokemonController pc = new PokemonController();
+        PokemonController pokimon = new PokemonController();
 
         // Guardamos la lista en el atributo de la clase
-        this.listaPokemon = pc.obtenerPokemonPorEntrenadorId(idEntrenador);
+        this.listaPokemon = pokimon.obtenerPokemonPorEntrenadorId(idEntrenador);
 
         DefaultListModel<String> modelo = new DefaultListModel<>();
         for (Pokemon p : this.listaPokemon) {
-            modelo.addElement(p.getNombrePokemon());  // Puedes mostrar el atributo que prefieras
+            modelo.addElement(p.getNombrePokemon());//lo que muestra el atributo en cuestion del pokemon, en este caso el nombre
         }
         ListaPokemonEntrenador.setModel(modelo);
 
@@ -593,8 +593,8 @@ public class Pokedex extends javax.swing.JDialog {
         try {
             //URL basada en el nombre del Pokémon, no en su ID
 
-            String urlImagen = "https://img.pokemondb.net/sprites/home/normal/" + p.getNombrePokemon().toLowerCase() + ".png";
-            String urlImagenShiny = "https://img.pokemondb.net/sprites/home/shiny/" + p.getNombrePokemon().toLowerCase() + ".png";
+            String urlImagen = "https://img.pokemondb.net/sprites/home/normal/" + p.getNombrePokemon().toLowerCase().trim() + ".png";
+            String urlImagenShiny = "https://img.pokemondb.net/sprites/home/shiny/" + p.getNombrePokemon().toLowerCase().trim() + ".png";
 
             // Descargar la imagen desde la URL
             ImageIcon Pokemon = new ImageIcon(new URL(urlImagen));
