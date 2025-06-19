@@ -1,7 +1,7 @@
 package Views;
 
 import Controladores.EntrenadorController;
-import Controladores.JPanelimagen;
+import ControladoresExtras.JPanelimagen;
 import Controladores.PokemonController;
 import Entidades.Entrenador;
 import Entidades.Habilidad;

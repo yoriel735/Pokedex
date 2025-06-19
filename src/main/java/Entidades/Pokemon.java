@@ -13,7 +13,8 @@ import javax.persistence.*;
 @NamedQueries({
     @NamedQuery(name = "Pokemon.findAll", query = "SELECT p FROM Pokemon p"),
     @NamedQuery(name = "Pokemon.findByIdPokemon", query = "SELECT p FROM Pokemon p WHERE p.idPokemon = :idPokemon"),
-    @NamedQuery(name = "Pokemon.findByNombrePokemon", query = "SELECT p FROM Pokemon p WHERE p.nombrePokemon = :nombrePokemon")
+    @NamedQuery(name = "Pokemon.findByNombrePokemon", query = "SELECT p FROM Pokemon p WHERE p.nombrePokemon = :nombrePokemon"),
+    @NamedQuery(name = "Pokemon.findByNumeroPokedex", query = "SELECT p FROM Pokemon p WHERE p.numeroPokedex = :numeroPokedex")
 })
 public class Pokemon implements Serializable {
 
@@ -58,7 +59,7 @@ public class Pokemon implements Serializable {
     private Habilidad habilidad;
     
 @OneToMany(mappedBy = "pokemon", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
-@JoinTable(name = "pokemon_ataque") // 🔥 Asegura que use el nombre correcto
+
 private List<PokemonAtaque> pokemonAtaques = new ArrayList<>();
 
 
@@ -149,14 +150,6 @@ private List<PokemonAtaque> pokemonAtaques = new ArrayList<>();
 
     public void setEntrenador(Entrenador entrenador) {
         this.entrenador = entrenador;
-    }
-
-    public Collection<Ataque> getListaAtaques() {
-        return listaAtaques;
-    }
-
-    public void setListaAtaques(Collection<Ataque> listaAtaques) {
-        this.listaAtaques = listaAtaques;
     }
 
     // Métodos para añadir/quitar Ataques y Habilidades

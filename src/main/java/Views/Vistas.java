@@ -4,7 +4,7 @@
  */
 package Views;
 
-import Controladores.JPanelimagen;
+import ControladoresExtras.JPanelimagen;
 import java.awt.Color;
 import java.net.URL;
 import javax.swing.Icon;

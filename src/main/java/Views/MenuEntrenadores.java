@@ -4,10 +4,15 @@
  */
 package Views;
 
+import Controladores.AtaquesController;
 import Controladores.EntrenadorController;
-import Controladores.JPanelimagen;
+import ControladoresExtras.JPanelimagen;
+import Controladores.PokemonController;
+import Entidades.Ataque;
 import Entidades.Entrenador;
+import Entidades.Habilidad;
 import Entidades.Pokemon;
+import Entidades.PokemonAtaque;
 import Entidades.TiposPokemon;
 import java.awt.Color;
 import java.io.BufferedReader;
@@ -15,6 +20,7 @@ import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
+import java.io.FileWriter;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.OutputStreamWriter;
@@ -23,6 +29,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 import javax.swing.BorderFactory;
 import javax.swing.DefaultListModel;
 import javax.swing.JFileChooser;
@@ -286,128 +293,202 @@ public class MenuEntrenadores extends javax.swing.JFrame {
     }//GEN-LAST:event_AccederPokedexActionPerformed
 
     private void GuardarEntrenadorActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_GuardarEntrenadorActionPerformed
-  {                                                  
-    if (entrenadorActual == null) {
-        JOptionPane.showMessageDialog(this, "Selecciona un entrenador antes de guardar.", "Error", JOptionPane.WARNING_MESSAGE);
-        return;
-    }
+        {
+            if (entrenadorActual == null) {
+                JOptionPane.showMessageDialog(this, "Selecciona un entrenador antes de guardar.", "Error", JOptionPane.WARNING_MESSAGE);
+                return;
+            }
 
-    File archivo = new File("Entrenador:" + entrenadorActual.getNomEntrenador() + ".csv");
+            File archivo = new File("Entrenador_" + entrenadorActual.getNomEntrenador() + ".csv");
 
-    try (BufferedWriter escritor = new BufferedWriter(new OutputStreamWriter(new FileOutputStream(archivo), StandardCharsets.UTF_8))) {
-        escritor.write("Nombre,Numero Pokédex,Nombre Pokémon,Alias,Tipo 1,Tipo 2,Nivel,Habilidad\n");
+            try (BufferedWriter escritor = new BufferedWriter(new OutputStreamWriter(new FileOutputStream(archivo), StandardCharsets.UTF_8))) {
+                escritor.write("Nombre,Numero Pokédex,Nombre Pokémon,Alias,Tipo 1,Tipo 2,Nivel,Habilidad\n");
 
-        List<Pokemon> listaPokemon = entrenadorController.obtenerPokemonPorEntrenadorId(entrenadorActual.getIdEntrenador());
+                List<Pokemon> listaPokemon = entrenadorController.obtenerPokemonPorEntrenadorId(entrenadorActual.getIdEntrenador());
 
-        //recorremos la lista del entrenador, y mostramos las siguientes especificaciones
-        //si no tiene alias, si no tiene segundo tipo o si no tiene habilidad
-        for (Pokemon p : listaPokemon) {
-            String alias = (p.getAlias() != null) ? p.getAlias() : "Sin alias";
-            String tipo2 = (p.getSegundoTipo() != null) ? p.getSegundoTipo().toString() : "N/A";
-            String habilidad = (p.getHabilidad() != null) ? p.getHabilidad().getNombreHabilidad() : "N/A";
+                //recorremos la lista del entrenador, y mostramos las siguientes especificaciones
+                //si no tiene alias, si no tiene segundo tipo o si no tiene habilidad
+                for (Pokemon p : listaPokemon) {
+                    String alias = (p.getAlias() != null) ? p.getAlias() : "Sin alias";
+                    String tipo2 = (p.getSegundoTipo() != null) ? p.getSegundoTipo().toString() : "N/A";
+                    String habilidad = (p.getHabilidad() != null) ? p.getHabilidad().getNombreHabilidad() : "N/A";
 
-            //y aqui escribimos todos los datos separados por comas
-            escritor.write(entrenadorActual.getNomEntrenador() + "," + p.getNumeroPokedex() + "," + p.getNombrePokemon() + "," + alias + ","
-                    + p.getTipoPokemon() + "," + tipo2 + "," + p.getNivel() + "," + habilidad + "\n");
+                    // Recuperar los ataques del Pokémon
+                    List<PokemonAtaque> ataques = p.getPokemonAtaques();
+                    String listaAtaques = ataques.isEmpty() ? "Sin ataques" : ataques.stream()
+                            .map(pa -> pa.getAtaque().getNombreAtaque())
+                            .collect(Collectors.joining("; "));
+
+                    //Guardar la información en el CSV
+                    escritor.write(entrenadorActual.getNomEntrenador() + "," + p.getNumeroPokedex() + "," + p.getNombrePokemon() + "," + alias + ","
+                            + p.getTipoPokemon() + "," + tipo2 + "," + p.getNivel() + "," + habilidad + "," + listaAtaques + "\n");
+                }
+
+                JOptionPane.showMessageDialog(this, "Entrenador guardado correctamente en CSV.", "Éxito", JOptionPane.INFORMATION_MESSAGE);
+                System.out.println("Archivo guardado en: " + archivo.getAbsolutePath());
+
+            } catch (IOException e) {
+                JOptionPane.showMessageDialog(this, "Error al guardar el entrenador: " + e.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
+            }
         }
 
-        JOptionPane.showMessageDialog(this, "Entrenador guardado correctamente en CSV.", "Éxito", JOptionPane.INFORMATION_MESSAGE);
-    } catch (IOException e) {
-        JOptionPane.showMessageDialog(this, "Error al guardar el entrenador: " + e.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
-    }
-}
-     
     }//GEN-LAST:event_GuardarEntrenadorActionPerformed
 
     private void CargarEntrenadorActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_CargarEntrenadorActionPerformed
-    JFileChooser fileChooser = new JFileChooser(new File(System.getProperty("user.dir")));
-    //es donde el usuario podra elegir la carpeta del archivo
-    fileChooser.setDialogTitle("Seleccionar archivo CSV"); //titulo
-    fileChooser.setFileFilter(new FileNameExtensionFilter("Archivo CSV", "csv"));
-    //esto para que solo se muestren arhcivos scv
+        JFileChooser fileChooser = new JFileChooser(new File(System.getProperty("user.dir")));
+        fileChooser.setDialogTitle("Seleccionar archivo CSV");
+        fileChooser.setFileFilter(new FileNameExtensionFilter("Archivo CSV", "csv"));
 
-    int seleccionArchivoUsuario = fileChooser.showOpenDialog(this);
+        int seleccionArchivoUsuario = fileChooser.showOpenDialog(this);
 
-    if (seleccionArchivoUsuario == JFileChooser.APPROVE_OPTION) {
-        File archivo = fileChooser.getSelectedFile();
+        if (seleccionArchivoUsuario == JFileChooser.APPROVE_OPTION) {
+            File archivo = fileChooser.getSelectedFile();
 
-        try (BufferedReader br = new BufferedReader(new InputStreamReader(new FileInputStream(archivo), StandardCharsets.UTF_8))) {
-            String linea;
-            br.readLine(); //Saltar encabezados
+            try (BufferedReader br = new BufferedReader(
+                    new InputStreamReader(new FileInputStream(archivo), StandardCharsets.UTF_8))) {
+                String linea;
+                br.readLine(); // Saltar encabezados
 
-            Map<String, Entrenador> entrenadoresMap = new HashMap<>();
-            Map<String, List<Pokemon>> pokemonesPorEntrenador = new HashMap<>();
+                // Instanciar los controladores
+                PokemonController pokemonController = new PokemonController();
+                AtaquesController ataquesController = new AtaquesController();
 
-            while ((linea = br.readLine()) != null) {
-                String[] datos = linea.split(",");
+                // Mapas para almacenar los entrenadores y sus Pokémon leidos del CSV
+                Map<String, Entrenador> entrenadoresMap = new HashMap<>();
+                Map<String, List<Pokemon>> pokemonesPorEntrenador = new HashMap<>();
 
-                if (datos.length < 8) {  
-                    JOptionPane.showMessageDialog(this, "Error en el CSV: Formato incorrecto. Revisar archivo.", "Error", JOptionPane.ERROR_MESSAGE);
-                    continue;
-                }
+                while ((linea = br.readLine()) != null) {
+                    String[] datos = linea.split(",");
 
-                //Obtener datos del entrenador
-                String nombreEntrenador = datos[0];
-
-                //Verificar si el entrenador ya esta en la BD y recuperarlo en lugar de duplicarlo
-                Entrenador entrenadorExistenteEnBD = entrenadorController.buscarEntrenadorPorNombre(nombreEntrenador);
-                Entrenador entrenador;
-                if (entrenadorExistenteEnBD != null) {
-                    entrenador = entrenadorExistenteEnBD;
-                } else {
-                    entrenador = new Entrenador();
-                    entrenador.setNomEntrenador(nombreEntrenador);
-                    entrenadorController.crearEntrenador(entrenador);
-                }
-
-                entrenadoresMap.put(nombreEntrenador, entrenador);
-                pokemonesPorEntrenador.putIfAbsent(nombreEntrenador, new ArrayList<>());
-
-                try {
-                    if (!datos[1].matches("\\d+") || !datos[6].matches("\\d+")) {  
-                        JOptionPane.showMessageDialog(this, "Error en el CSV: Número Pokédex o nivel no son números válidos.", "Error", JOptionPane.ERROR_MESSAGE);
+                    if (datos.length < 9) {
+                        JOptionPane.showMessageDialog(this, "Error en el CSV: Formato incorrecto. Revisar archivo.",
+                                "Error", JOptionPane.ERROR_MESSAGE);
                         continue;
                     }
 
-                    //Obtener datos del Pokémon
-                    int numeroPokedex = Integer.parseInt(datos[1]);
-                    int nivel = Integer.parseInt(datos[6]);
+                    // Datos del entrenador
+                    String nombreEntrenador = datos[0];
 
-                    Pokemon nuevoPokemon = new Pokemon();
-                    nuevoPokemon.setNumeroPokedex(numeroPokedex);
-                    nuevoPokemon.setNombrePokemon(datos[2]);
-                    nuevoPokemon.setAlias(!datos[3].equals("Sin alias") ? datos[3] : null);
-                    nuevoPokemon.setTipoPokemon(TiposPokemon.valueOf(datos[4]));
-                    nuevoPokemon.setSegundoTipo(!datos[5].equals("N/A") ? TiposPokemon.valueOf(datos[5]) : null);
-                    nuevoPokemon.setNivel(nivel);
+                    // Recuperar o crear el entrenador
+                    Entrenador entrenadorExistente = entrenadorController.buscarEntrenadorPorNombre(nombreEntrenador);
+                    Entrenador entrenador;
+                    if (entrenadorExistente != null) {
+                        entrenador = entrenadorExistente;
+                    } else {
+                        entrenador = new Entrenador();
+                        entrenador.setNomEntrenador(nombreEntrenador);
+                        // Persistimos el entrenador para asegurar que tenga ID
+                        entrenadorController.crearEntrenadorConPokemon(entrenador, new ArrayList<>());
+                    }
 
-                    pokemonesPorEntrenador.get(nombreEntrenador).add(nuevoPokemon);
-                } catch (NumberFormatException e) {
-                    JOptionPane.showMessageDialog(this, "Error en el CSV: Datos incorrectos en Número Pokédex o nivel.", "Error", JOptionPane.ERROR_MESSAGE);
-                    continue;
+                    entrenadoresMap.put(nombreEntrenador, entrenador);
+                    pokemonesPorEntrenador.putIfAbsent(nombreEntrenador, new ArrayList<>());
+
+                    try {
+                        if (!datos[1].matches("\\d+") || !datos[6].matches("\\d+")) {
+                            JOptionPane.showMessageDialog(this, "Error en el CSV: Número Pokédex o nivel no son números válidos.",
+                                    "Error", JOptionPane.ERROR_MESSAGE);
+                            continue;
+                        }
+
+                        // Datos del Pokémon
+                        int numeroPokedex = Integer.parseInt(datos[1]);
+                        int nivel = Integer.parseInt(datos[6]);
+
+                        Pokemon nuevoPokemon = new Pokemon();
+                        nuevoPokemon.setNumeroPokedex(numeroPokedex);
+                        nuevoPokemon.setNombrePokemon(datos[2]);
+                        nuevoPokemon.setAlias(!datos[3].equals("Sin alias") ? datos[3] : null);
+                        nuevoPokemon.setTipoPokemon(TiposPokemon.valueOf(datos[4]));
+                        nuevoPokemon.setSegundoTipo(!datos[5].equals("N/A") ? TiposPokemon.valueOf(datos[5]) : null);
+                        nuevoPokemon.setNivel(nivel);
+                        nuevoPokemon.setEntrenador(entrenador);
+
+                        // Recuperar la habilidad (suponiendo que obtenerTodasHabilidades() funciona correctamente)
+                        Habilidad habilidad = pokemonController.obtenerTodasHabilidades()
+                                .stream()
+                                .filter(h -> h.getNombreHabilidad().equals(datos[7]))
+                                .findFirst()
+                                .orElse(null);
+                        nuevoPokemon.setHabilidad(habilidad);
+
+                        // Restaurar los ataques guardados en el CSV
+                        List<PokemonAtaque> ataquesAsignados = new ArrayList<>();
+                        if (!datos[8].equals("Sin ataques")) {
+                            String[] nombresAtaques = datos[8].split(";");
+                            for (String nombreAtaque : nombresAtaques) {
+                                Ataque ataque = ataquesController.obtenerAtaquePorNombre(nombreAtaque);
+                                if (ataque == null) {
+                                    // Si no existe, se crea automáticamente con valores predeterminados
+                                    ataque = new Ataque();
+                                    ataque.setNombreAtaque(nombreAtaque);
+                                    ataque.setTipo("Normal");
+                                    ataque.setCategoria("Especial");
+                                    ataque.setEfecto("Sin efecto");
+                                    ataque.setPotencia(0);
+                                    ataque.setPp(10);
+                                    ataquesController.guardarNuevoAtaque(ataque);
+                                }
+                                ataquesAsignados.add(new PokemonAtaque(nuevoPokemon, ataque, "CSV Restore"));
+                            }
+                        }
+                        nuevoPokemon.setPokemonAtaques(ataquesAsignados);
+
+                        pokemonesPorEntrenador.get(nombreEntrenador).add(nuevoPokemon);
+                    } catch (NumberFormatException e) {
+                        JOptionPane.showMessageDialog(this, "Error en el CSV: Datos incorrectos en Número Pokédex o nivel.",
+                                "Error", JOptionPane.ERROR_MESSAGE);
+                        continue;
+                    }
                 }
+
+                // Persistir entrenadores y sus Pokémon (para cada entrenador se crea o actualiza)
+                for (String nombre : entrenadoresMap.keySet()) {
+                    Entrenador entrenador = entrenadoresMap.get(nombre);
+                    List<Pokemon> pokemones = pokemonesPorEntrenador.get(nombre);
+                    // Persistir el entrenador junto con sus Pokémon
+                    entrenadorController.crearEntrenadorConPokemon(entrenador, pokemones);
+                    // Aquí se asume que listaEntrenadores es una colección local en tu clase UI
+                    listaEntrenadores.add(entrenador);
+                }
+
+                JOptionPane.showMessageDialog(this, "Entrenador restaurado correctamente",
+                        "Exito", JOptionPane.INFORMATION_MESSAGE);
+
+                // Actualizar la lista de entrenadores de la interfaz (modeloEntrenadores es tu ListModel)
+                modeloEntrenadores.removeAllElements();
+                for (Entrenador e : entrenadorController.obtenerTodosLosEntrenadores()) {
+                    modeloEntrenadores.addElement(e);
+                }
+            } catch (IOException e) {
+                JOptionPane.showMessageDialog(this, "Error al cargar los entrenadores: " + e.getMessage(),
+                        "Error", JOptionPane.ERROR_MESSAGE);
             }
-
-            // ✅ Guardar entrenadores y sus Pokémon en la BD
-            for (String nombre : entrenadoresMap.keySet()) {
-                Entrenador entrenador = entrenadoresMap.get(nombre);
-                List<Pokemon> pokemones = pokemonesPorEntrenador.get(nombre);
-
-                entrenadorController.crearEntrenadorConPokemon(entrenador, pokemones);
-                listaEntrenadores.add(entrenador);
-                modeloEntrenadores.addElement(entrenador);
-            }
-
-            JOptionPane.showMessageDialog(this, "Entrenadores y sus Pokémon restaurados correctamente desde CSV.", "Éxito", JOptionPane.INFORMATION_MESSAGE);
-        } catch (IOException e) {
-            JOptionPane.showMessageDialog(this, "Error al cargar los entrenadores: " + e.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
         }
-    }
-
-
 
 
     }//GEN-LAST:event_CargarEntrenadorActionPerformed
+    public void guardarEntrenadorEnCSV(Entrenador entrenador, List<Pokemon> listaPokemon) {
+        try (BufferedWriter escritor = new BufferedWriter(new FileWriter("entrenadores.csv", true))) {
+            escritor.write("Nombre,Numero Pokédex,Nombre Pokémon,Alias,Tipo 1,Tipo 2,Nivel,Habilidad,Ataques\n");
+
+            for (Pokemon p : listaPokemon) {
+                String alias = (p.getAlias() != null) ? p.getAlias() : "Sin alias";
+                String tipo2 = (p.getSegundoTipo() != null) ? p.getSegundoTipo().toString() : "N/A";
+                String habilidad = (p.getHabilidad() != null) ? p.getHabilidad().getNombreHabilidad() : "N/A";
+
+                //Guardar ataques en CSV separados por ";"
+                String listaAtaques = p.getPokemonAtaques().stream()
+                        .map(pa -> pa.getAtaque().getNombreAtaque())
+                        .collect(Collectors.joining(";"));
+
+                escritor.write(entrenador.getNomEntrenador() + "," + p.getNumeroPokedex() + "," + p.getNombrePokemon() + "," + alias + ","
+                        + p.getTipoPokemon() + "," + tipo2 + "," + p.getNivel() + "," + habilidad + "," + listaAtaques + "\n");
+            }
+        } catch (IOException e) {
+            System.err.println("Error al guardar el entrenador en CSV: " + e.getMessage());
+        }
+    }
 
     private void imagenFondoEntrenador() {
         JPanelimagen imagenFondo = new JPanelimagen(MenuEntre, "/Fotos/InterfazEntrenadores.png");

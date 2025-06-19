@@ -1,5 +1,6 @@
 package Controladores;
 
+import ControladoresExtras.LectorJSONPokeApi;
 import Entidades.Ataque;
 import Entidades.Habilidad;
 import Entidades.Pokemon;
@@ -11,131 +12,131 @@ import javax.persistence.*;
 import java.util.List;
 import java.util.Random;
 
-public class PokemonController {
+    public class PokemonController {
 
-    //misma variable de siempre
-    private static final EntityManagerFactory emf = Persistence.createEntityManagerFactory("pokemondb");
+        //misma variable de siempre
+        private static final EntityManagerFactory emf = Persistence.createEntityManagerFactory("pokemondb");
 
-    public void guardarPokemon(Pokemon pokemon) {
-        EntityManager em = emf.createEntityManager();
-        try {
-            em.getTransaction().begin(); //iniciamos transaccion
-            em.persist(pokemon);//Guardar el nuevo Pokemon en la BD
-            em.getTransaction().commit();// Confirmar los cambios
-            System.out.println("Pokemon guardado: " + pokemon.getNombrePokemon());
-        } catch (Exception e) {
-            if (em.getTransaction().isActive()) {
-                em.getTransaction().rollback();//Si hay error, deshacemos los cambios para evitar inconsistencias.
+        public void guardarPokemon(Pokemon pokemon) {
+            EntityManager em = emf.createEntityManager();
+            try {
+                em.getTransaction().begin(); //iniciamos transaccion
+                em.persist(pokemon);//Guardar el nuevo Pokemon en la BD
+                em.getTransaction().commit();// Confirmar los cambios
+                System.out.println("Pokemon guardado: " + pokemon.getNombrePokemon());
+            } catch (Exception e) {
+                if (em.getTransaction().isActive()) {
+                    em.getTransaction().rollback();//Si hay error, deshacemos los cambios para evitar inconsistencias.
+                }
+                e.printStackTrace();
+            } finally {
+                em.close();
             }
-            e.printStackTrace();
-        } finally {
-            em.close();
         }
-    }
 
-    public void editarPokemon(Pokemon pokemon) {
-        EntityManager em = emf.createEntityManager();
-        try {
-            em.getTransaction().begin();
-            em.merge(pokemon); //actualizar los datos del pokemon en cuestion
-            em.getTransaction().commit();
-        } catch (Exception e) {
-            if (em.getTransaction().isActive()) {
-                em.getTransaction().rollback();
+        public void editarPokemon(Pokemon pokemon) {
+            EntityManager em = emf.createEntityManager();
+            try {
+                em.getTransaction().begin();
+                em.merge(pokemon); //actualizar los datos del pokemon en cuestion
+                em.getTransaction().commit();
+            } catch (Exception e) {
+                if (em.getTransaction().isActive()) {
+                    em.getTransaction().rollback();
+                }
+                throw e;
+            } finally {
+                em.close();
             }
-            throw e;
-        } finally {
-            em.close();
         }
-    }
 
-    public boolean eliminarPokemon(Integer id) {
-        EntityManager em = emf.createEntityManager();
-        boolean eliminado = false;
+        public boolean eliminarPokemon(Integer id) {
+            EntityManager em = emf.createEntityManager();
+            boolean eliminado = false;
 
-        try {
-            em.getTransaction().begin();
-            //Antes de borrar los pokemon se deben borrar sus ataques asignados
-            em.createNativeQuery("DELETE FROM pokemon_ataque WHERE id_pokemon = ?")
-                    .setParameter(1, id)
-                    .executeUpdate();
-            System.out.println("✅ Ataques eliminados para Pokémon ID: " + id);
+            try {
+                em.getTransaction().begin();
+                //Antes de borrar los pokemon se deben borrar sus ataques asignados
+                em.createNativeQuery("DELETE FROM pokemon_ataque WHERE id_pokemon = ?")
+                        .setParameter(1, id)
+                        .executeUpdate();
+                System.out.println("✅ Ataques eliminados para Pokémon ID: " + id);
 
-            //y ahora eliminamos realmente al pokemon
-            em.createNativeQuery("DELETE FROM pokemon WHERE idPokemon = ?")
-                    .setParameter(1, id)
-                    .executeUpdate();
-            System.out.println("✅ Pokémon eliminado de la BD.");
+                //y ahora eliminamos realmente al pokemon
+                em.createNativeQuery("DELETE FROM pokemon WHERE idPokemon = ?")
+                        .setParameter(1, id)
+                        .executeUpdate();
+                System.out.println("✅ Pokémon eliminado de la BD.");
 
-            eliminado = true;
-            em.getTransaction().commit();
-        } catch (Exception e) {
-            if (em.getTransaction().isActive()) {
-                em.getTransaction().rollback();
+                eliminado = true;
+                em.getTransaction().commit();
+            } catch (Exception e) {
+                if (em.getTransaction().isActive()) {
+                    em.getTransaction().rollback();
+                }
+                e.printStackTrace();
+            } finally {
+                em.close();
             }
-            e.printStackTrace();
-        } finally {
-            em.close();
+
+            return eliminado;
         }
 
-        return eliminado;
-    }
+        // -----------------------------
+        public List<PokemonAtaque> obtenerAtaquesPorPokemon(Integer idPokemon) {
+            EntityManager em = emf.createEntityManager();
+            try {
+                //Consulta que obtiene los ataques de un pokemon específico
+                String jpql = "SELECT pa FROM PokemonAtaque pa JOIN FETCH pa.ataque WHERE pa.pokemon.idPokemon = :idPokemon";
+                TypedQuery<PokemonAtaque> query = em.createQuery(jpql, PokemonAtaque.class);
 
-    // -----------------------------
-    public List<PokemonAtaque> obtenerAtaquesPorPokemon(Integer idPokemon) {
-        EntityManager em = emf.createEntityManager();
-        try {
-            //Consulta que obtiene los ataques de un pokemon específico
-            String jpql = "SELECT pa FROM PokemonAtaque pa JOIN FETCH pa.ataque WHERE pa.pokemon.idPokemon = :idPokemon";
-            TypedQuery<PokemonAtaque> query = em.createQuery(jpql, PokemonAtaque.class);
+                //por lo que filtraremos para obtener el pokemon
+                query.setParameter("idPokemon", idPokemon);
 
-            //por lo que filtraremos para obtener el pokemon
-            query.setParameter("idPokemon", idPokemon);
-
-            //Se ejecuta la consulta y se devuelve la lista de ataques directamente
-            return query.getResultList();
-        } catch (Exception e) {
-            e.printStackTrace(); //Manejo de error
-            return null;
-        } finally {
-            em.close(); //Cerrar la conexión con la BD
+                //Se ejecuta la consulta y se devuelve la lista de ataques directamente
+                return query.getResultList();
+            } catch (Exception e) {
+                e.printStackTrace(); //Manejo de error
+                return null;
+            } finally {
+                em.close(); //Cerrar la conexión con la BD
+            }
         }
-    }
 
-    public List<Pokemon> obtenerPokemonPorEntrenadorId(Integer idEntrenador) {
-        EntityManager em = emf.createEntityManager();
-        try {
-            System.out.println("Ejecutando consulta para ID de entrenador: " + idEntrenador);
+        public List<Pokemon> obtenerPokemonPorEntrenadorId(Integer idEntrenador) {
+            EntityManager em = emf.createEntityManager();
+            try {
+                System.out.println("Ejecutando consulta para ID de entrenador: " + idEntrenador);
 
-            //consulta para obtener todos los pokemon con el id del entrenador en cuestion
-            TypedQuery<Pokemon> query = em.createQuery(
-                    "SELECT p FROM Pokemon p WHERE p.entrenador.idEntrenador = :id", Pokemon.class);
-            query.setParameter("id", idEntrenador);
-            //y mostrarlos en una lista
-            List<Pokemon> resultado = query.getResultList();
-            System.out.println("Pokémon encontrados: " + resultado.size());
+                //consulta para obtener todos los pokemon con el id del entrenador en cuestion
+                TypedQuery<Pokemon> query = em.createQuery(
+                        "SELECT p FROM Pokemon p WHERE p.entrenador.idEntrenador = :id", Pokemon.class);
+                query.setParameter("id", idEntrenador);
+                //y mostrarlos en una lista
+                List<Pokemon> resultado = query.getResultList();
+                System.out.println("Pokémon encontrados: " + resultado.size());
 
-            return resultado; //aqui se devuelve la lista
-        } finally {
-            em.close();
+                return resultado; //aqui se devuelve la lista
+            } finally {
+                em.close();
+            }
         }
-    }
 
 
-    public List<Habilidad> obtenerTodasHabilidades() {
-        EntityManager em = emf.createEntityManager();
-        List<Habilidad> habilidades = new ArrayList<>();
-        try {
-            //de aqui sacamos todas las habilidades para poder elegir una a la hora
-            //de añadir un pokemon
-            habilidades = em.createQuery("SELECT h FROM Habilidad h", Habilidad.class).getResultList();
-        } catch (Exception e) {
-            e.printStackTrace();
-        } finally {
-            em.close();
+        public List<Habilidad> obtenerTodasHabilidades() {
+            EntityManager em = emf.createEntityManager();
+            List<Habilidad> habilidades = new ArrayList<>();
+            try {
+                //de aqui sacamos todas las habilidades para poder elegir una a la hora
+                //de añadir un pokemon
+                habilidades = em.createQuery("SELECT h FROM Habilidad h", Habilidad.class).getResultList();
+            } catch (Exception e) {
+                e.printStackTrace();
+            } finally {
+                em.close();
+            }
+            return habilidades;
         }
-        return habilidades;
-    }
 
     //metodo para actualizar el alias de un pokemon
     public void actualizarAliasPokemon(Integer idPokemon, String nuevoAlias) {

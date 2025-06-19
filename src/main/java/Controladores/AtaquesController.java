@@ -9,6 +9,7 @@ import javax.persistence.EntityManager;
 import javax.persistence.EntityManagerFactory;
 import javax.persistence.Persistence;
 import javax.persistence.Query;
+import javax.persistence.TypedQuery;
 import javax.swing.JOptionPane;
 
 /**
@@ -89,10 +90,46 @@ public class AtaquesController {
         }
     }
 
+    public Ataque buscarAtaquePorNombre(String nombreAtaque) {
+    EntityManager em = emf.createEntityManager();
+    try {
+        TypedQuery<Ataque> query = em.createQuery("SELECT a FROM Ataque a WHERE a.nombreAtaque = :nombre", Ataque.class);
+        query.setParameter("nombre", nombreAtaque);
+        List<Ataque> resultados = query.getResultList();
+        if(resultados.isEmpty()){
+            return null;
+        } else {
+            return resultados.get(0);
+        }
+    } finally {
+        em.close();
+    }
+}
     //y este metodo es para guardar un nuevo ataque sin registrarlo a un pokemon
+ // Guarda un nuevo ataque asegurando que los campos obligatorios tengan valores por defecto
     public void guardarNuevoAtaque(Ataque nuevoAtaque) {
         EntityManager em = emf.createEntityManager();
         try {
+            // Verificamos que los valores obligatorios no sean nulos ni vacíos
+            if (nuevoAtaque.getNombreAtaque() == null || nuevoAtaque.getNombreAtaque().isEmpty()) {
+                nuevoAtaque.setNombreAtaque("Ataque desconocido");
+            }
+            if (nuevoAtaque.getTipo() == null || nuevoAtaque.getTipo().isEmpty()) {
+                nuevoAtaque.setTipo("Normal");
+            }
+            if (nuevoAtaque.getCategoria() == null || nuevoAtaque.getCategoria().isEmpty()) {
+                nuevoAtaque.setCategoria("Especial");
+            }
+            if (nuevoAtaque.getEfecto() == null || nuevoAtaque.getEfecto().isEmpty()) {
+                nuevoAtaque.setEfecto("Sin efecto");
+            }
+            if (nuevoAtaque.getPotencia() == null) {
+                nuevoAtaque.setPotencia(0);
+            }
+            if (nuevoAtaque.getPp() == null) {
+                nuevoAtaque.setPp(10);
+            }
+
             em.getTransaction().begin();
             em.persist(nuevoAtaque);
             em.getTransaction().commit();
@@ -100,6 +137,7 @@ public class AtaquesController {
             em.close();
         }
     }
+
     //Metodo para eliminar ataques
    public void eliminarAtaque(int idPokemon, int idAtaque) {
     EntityManager em = emf.createEntityManager();
@@ -128,4 +166,19 @@ public class AtaquesController {
         em.close(); //Cerrar conexion con la BD
     }
 }
+  public Ataque obtenerAtaquePorNombre(String nombreAtaque) {
+        EntityManager em = emf.createEntityManager();
+        try {
+            TypedQuery<Ataque> query = em.createQuery(
+                "SELECT a FROM Ataque a WHERE a.nombreAtaque = :nombre", Ataque.class);
+            query.setParameter("nombre", nombreAtaque);
+            List<Ataque> resultados = query.getResultList();
+            if (!resultados.isEmpty()) {
+                return resultados.get(0);
+            }
+            return null;
+        } finally {
+            em.close();
+        }
+    }
 }

@@ -1,7 +1,7 @@
 package Views;
 
 import Controladores.EntrenadorController;
-import Controladores.JPanelimagen;
+import ControladoresExtras.JPanelimagen;
 import Controladores.PokemonController;
 import Entidades.Pokemon;
 import java.awt.Color;
@@ -209,7 +209,7 @@ public class CapturarPokemon extends javax.swing.JFrame {
     }
 
     private void iniciarCapturaVisual() {
-        System.out.println("🔥 Iniciando captura visual...");
+        System.out.println("Iniciando captura visual...");
 
             //duracion de los gifs y ubicacion de los gifs
             new CapturarAnimada(this, "/Fotos/lanzarPokeball.gif", 1500, () -> {
@@ -222,7 +222,7 @@ public class CapturarPokemon extends javax.swing.JFrame {
                         "¡Pokémon capturado! ¿Quieres asignarle un alias?",
                         "Asignar alias",
                         JOptionPane.YES_NO_OPTION);
-                System.out.println("🔥El usuario Eligio: " + (opcion == JOptionPane.YES_OPTION ? "Si" : "No"));
+                System.out.println("El usuario Eligio: " + (opcion == JOptionPane.YES_OPTION ? "Si" : "No"));
 
                 String alias;
                 if (opcion == JOptionPane.YES_OPTION) {
@@ -241,7 +241,7 @@ public class CapturarPokemon extends javax.swing.JFrame {
 
                 // Asignar alias y guardar el Pokémon.
                 pokemonActual.setAlias(alias);
-                System.out.println("✅Alias asignado: " + alias);
+                System.out.println("Alias asignado: " + alias);
                 guardarPokemonEnEntrenador();
 
                 //Una vez tenemos el alias y se guarda, cerramos la ventana de captura y abrimos la Pokedex.
@@ -257,12 +257,12 @@ public class CapturarPokemon extends javax.swing.JFrame {
         Integer idEntrenador = entrenador.obtenerIdPorNombre(nombreEntrenador); //Obtener ID del entrenador
 
         if (idEntrenador == null) {
-            System.out.println("❌Error: El ID del entrenador es NULL.");
+            System.out.println("Error: El ID del entrenador es NULL.");
             return;
         }
 
-        System.out.println("✅ID del entrenador: " + idEntrenador);
-        System.out.println("✅Pokémon a guardar: " + pokemonActual.getNombrePokemon());
+        System.out.println("ID del entrenador: " + idEntrenador);
+        System.out.println("Pokémon a guardar: " + pokemonActual.getNombrePokemon());
 
         entrenador.agregarPokemonACaptura(idEntrenador, pokemonActual); //Guardar el Pokemon con el entrenador
     }
@@ -398,10 +398,10 @@ public class CapturarPokemon extends javax.swing.JFrame {
     }// </editor-fold>//GEN-END:initComponents
 
     private void BotonHuirActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_BotonHuirActionPerformed
-        // 🔥 Mostrar mensaje de huida exitosa                                   
+        // Mostrar mensaje de huida exitosa                                   
         JOptionPane.showMessageDialog(this, "¡Has escapado sin problemas!", "Huida exitosa", JOptionPane.INFORMATION_MESSAGE);
 
-        // 🔥 Pasar los argumentos correctos al constructor
+        //Pasar los argumentos correctos al constructor
         this.setVisible(false); //Ocultar la ventana actual
         new Pokedex(menuEntrenadores, true, nombreEntrenador).setVisible(true);
 

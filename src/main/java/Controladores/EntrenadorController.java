@@ -2,6 +2,7 @@ package Controladores;
 
 import Entidades.Entrenador;
 import Entidades.Pokemon;
+import Entidades.PokemonAtaque;
 
 import javax.persistence.EntityManager;
 import javax.persistence.EntityManagerFactory;
@@ -82,7 +83,7 @@ public class EntrenadorController {
                     .executeUpdate();
             System.out.println("Pokemon eliminados para el entrenador ID: " + id);
 
-            // y ya por ultimo, eliminamos al entrenador
+            //y ya por ultimo, eliminamos al entrenador
             em.createNativeQuery("DELETE FROM entrenador WHERE idEntrenador = ?")
                     .setParameter(1, id)
                     .executeUpdate();
@@ -160,13 +161,11 @@ public class EntrenadorController {
     public Entrenador buscarEntrenadorPorNombre(String nombre) {
         EntityManager em = emf.createEntityManager();
         try {
-            // y buscamos nuevamente por el nombre
-            List<Entrenador> resultado = em.createQuery(
-                    "SELECT e FROM Entrenador e WHERE e.nomEntrenador = :nombre", Entrenador.class)
-                    .setParameter("nombre", nombre)
-                    .getResultList();//guardamos el resultado 
-
-            return resultado.isEmpty() ? null : resultado.get(0);  //Si hay coincidencia, devuelve el entrenador
+            TypedQuery<Entrenador> query = em.createQuery(
+                "SELECT e FROM Entrenador e WHERE e.nomEntrenador = :nombre", Entrenador.class);
+            query.setParameter("nombre", nombre);
+            List<Entrenador> resultados = query.getResultList();
+            return resultados.isEmpty() ? null : resultados.get(0);
         } finally {
             em.close();
         }
@@ -177,46 +176,56 @@ public class EntrenadorController {
 //Si el entrenador ya existe, se actualiza.
 //Luego, cada pokemon de la lista se vincula con el entrenador y se guarda en la BD.
     public void crearEntrenadorConPokemon(Entrenador entrenador, List<Pokemon> listaPokemon) {
-        EntityManager em = emf.createEntityManager();
-        try {
-            em.getTransaction().begin();
+    EntityManager em = emf.createEntityManager();
+    
+    try {
+        em.getTransaction().begin();
 
-            //Añadir el entrenador si es nuevo
-            if (entrenador.getIdEntrenador() == null) {
-                em.persist(entrenador);
-                em.flush();
-                // Usar refresh para actualizar el objeto con el ID generado
-                em.refresh(entrenador);
-            } else {
-                entrenador = em.merge(entrenador);
-            }
-
-            // Comprobamos que el entrenador tiene un ID valido (deberaa tenerlo tras flush/refresh)
-            if (entrenador.getIdEntrenador() == null) {
-                throw new IllegalStateException("El entrenador no tiene un ID asignado tras persistirlo.");
-            }
-
-            // Asignar cada pokemon
-            for (Pokemon p : listaPokemon) {
-                p.setEntrenador(entrenador);
-                if (p.getIdPokemon() == null) {
-                    em.persist(p);
-                } else {
-                    // Si se llegara a actualizar un Pokemon existente:
-                    em.merge(p);
-                }
-            }
-
-            em.getTransaction().commit();
-        } catch (Exception e) {
-            if (em.getTransaction().isActive()) {
-                em.getTransaction().rollback();
-            }
-            e.printStackTrace();
-        } finally {
-            em.close();
+        //añadir/actualizar el entrenador asegurando que tiene ID
+        if (entrenador.getIdEntrenador() == null) {
+            em.persist(entrenador);
+            em.flush();
+            em.refresh(entrenador);
+        } else {
+            entrenador = em.merge(entrenador);
         }
+
+        for (Pokemon p : listaPokemon) {
+            p.setEntrenador(entrenador);
+
+            //Verificar si el pokemon ya existe en la BD
+            TypedQuery<Pokemon> query = em.createQuery("SELECT p FROM Pokemon p WHERE p.numeroPokedex = :numeroPokedex", Pokemon.class);
+            query.setParameter("numeroPokedex", p.getNumeroPokedex());
+            List<Pokemon> resultados = query.getResultList();
+
+            if (!resultados.isEmpty()) {
+                //Si ya existe, actualizarlo
+                Pokemon pokemonExistente = resultados.get(0);
+                pokemonExistente.setAlias(p.getAlias());
+                pokemonExistente.setNivel(p.getNivel());
+                pokemonExistente.setNombrePokemon(p.getNombrePokemon());
+                pokemonExistente.setSegundoTipo(p.getSegundoTipo());
+                pokemonExistente.setTipoPokemon(p.getTipoPokemon());
+                pokemonExistente.setHabilidad(p.getHabilidad());
+                em.merge(pokemonExistente);
+            } else {
+                //Si no existe, insertarlo
+                em.persist(p);
+            }
+        }
+
+        em.getTransaction().commit();
+    } catch (Exception e) {
+        if (em.getTransaction().isActive()) {
+            em.getTransaction().rollback();
+        }
+        e.printStackTrace();
+    } finally {
+        em.close();
     }
+}
+
+
 
     // ----------------------------------------------------------------------------
     /*

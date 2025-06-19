@@ -5,14 +5,12 @@
 package Views;
 
 import Controladores.AtaquesController;
-import Controladores.JPanelimagen;
+import ControladoresExtras.JPanelimagen;
 import Entidades.Ataque;
 import Entidades.Pokemon;
 import Entidades.PokemonAtaque;
 import java.awt.Color;
 import java.util.List;
-import javax.persistence.EntityManagerFactory;
-import javax.swing.JButton;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
@@ -195,7 +193,7 @@ public class MostrarAtaques extends javax.swing.JDialog {
     }
 
     int idAtaque = obtenerIdAtaqueDesdeFila(filaSeleccionada);
-    if (idAtaque != -1) { // ✅ Verificar que se obtuvo un ID válido
+    if (idAtaque != -1) { // Verificar que se obtuvo un ID válido
         ataquesController.eliminarAtaque(pokemon.getIdPokemon(), idAtaque);
         actualizarTabla();
     }

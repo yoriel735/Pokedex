@@ -148,7 +148,7 @@ public class AñadirPokemon extends javax.swing.JDialog {
         panelCampos.add(new JLabel("Habilidad:"));
         panelCampos.add(habilidadBox);
 
-        // 🔥 Creando botones
+        //Creando botones
         JPanel panelBotones = new JPanel(new FlowLayout(FlowLayout.CENTER, 10, 10));
         JButton btnGuardar = new JButton("Guardar");
         JButton btnCancelar = new JButton("Cancelar");
@@ -159,12 +159,12 @@ public class AñadirPokemon extends javax.swing.JDialog {
         panelBotones.add(btnGuardar);
         panelBotones.add(btnCancelar);
 
-        // 🔥 Agregar componentes a la ventana correctamente
+        //Agregar componentes a la ventana correctamente
         getContentPane().setLayout(new BorderLayout(10, 10));
         getContentPane().add(panelCampos, BorderLayout.CENTER);
         getContentPane().add(panelBotones, BorderLayout.SOUTH);
 
-        pack(); // 🔥 Ajustar automáticamente el tamaño según los componentes
+        pack(); //Ajustar automáticamente el tamaño según los componentes
     }
 
     public boolean isConfirmado() {
